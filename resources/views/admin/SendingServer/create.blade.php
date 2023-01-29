@@ -158,6 +158,10 @@
                                     @case(SendingServer::TYPE_TELEAPI)
                                         <p>For Inbound Message Here is the Callback URL: <code>{{ route('inbound.teleapi') }}</code></p>
                                         @break
+                                    @case('orangesms')
+                                        <p> {!! __('locale.description.orangesms', ['brandname' => config('app.name'), 'url' => route('dlr.orangesms')]) !!}
+                                            .</p>
+                                        @break
 
                                 @endswitch
 
@@ -1917,6 +1921,50 @@
                                                 </div>
                                             </div>
 
+                                        @endif
+{{--                                        custom code pape--}}
+                                        @if($server['settings'] == "orangesms")
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label class="required" for="application_id">APP ID</label>
+                                                    <input type="text" id="application_id"
+                                                           class="form-control @error('application_id') is-invalid @enderror"
+                                                           value="{{ $server['application_id'] }}" name="application_id"
+                                                           required>
+                                                    @error('application_id')
+                                                    <div class="invalid-feedback">
+                                                        {{ $message }}
+                                                    </div>
+                                                    @enderror
+                                                </div>
+                                            </div>
+
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label class="required" for="api_key">APP Key</label>
+                                                    <input type="text" id="api_key"
+                                                           class="form-control @error('api_key') is-invalid @enderror"
+                                                           value="{{ $server['api_key'] }}" name="api_key" required>
+                                                    @error('api_key')
+                                                    <div class="invalid-feedback">
+                                                        {{ $message }}
+                                                    </div>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label class="required" for="api_token">API Token</label>
+                                                    <input type="text" id="api_token"
+                                                           class="form-control @error('api_token') is-invalid @enderror"
+                                                           value="{{ $server['api_token'] }}" name="api_token" required>
+                                                    @error('api_token')
+                                                    <div class="invalid-feedback">
+                                                        {{ $message }}
+                                                    </div>
+                                                    @enderror
+                                                </div>
+                                            </div>
                                         @endif
 
                                     </div>

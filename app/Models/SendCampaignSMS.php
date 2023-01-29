@@ -43,13 +43,12 @@ class SendCampaignSMS extends Model
      *
      * @return string
      */
-    private function sms_unicode($message): string
-    {
+    private function sms_unicode($message): string {
         $hex1 = '';
         if (function_exists('iconv')) {
             $latin = @iconv('UTF−8', 'ISO−8859−1', $message);
             if (strcmp($latin, $message)) {
-                $arr  = unpack('H*hex', @iconv('UTF-8', 'UCS-2BE', $message));
+                $arr = unpack('H*hex', @iconv('UTF-8', 'UCS-2BE', $message));
                 $hex1 = strtoupper($arr['hex']);
             }
             if ($hex1 == '') {
@@ -60,7 +59,7 @@ class SendCampaignSMS extends Model
                     $add = 4 - $len;
                     if ($len < 4) {
                         for ($j = 0; $j < $add; $j++) {
-                            $hex = "0".$hex;
+                            $hex = "0" . $hex;
                         }
                     }
                     $hex2 .= $hex;
@@ -81,11 +80,10 @@ class SendCampaignSMS extends Model
      *
      * @return int
      */
-    public function strlen_utf8($str)
-    {
-        $i     = 0;
+    public function strlen_utf8($str) {
+        $i = 0;
         $count = 0;
-        $len   = strlen($str);
+        $len = strlen($str);
         while ($i < $len) {
             $chr = ord($str[$i]);
             $count++;
@@ -114,8 +112,7 @@ class SendCampaignSMS extends Model
      *
      * @return string
      */
-    public function utf16urlencode($str)
-    {
+    public function utf16urlencode($str) {
         $str = mb_convert_encoding($str, 'UTF-16', 'UTF-8');
         $out = '';
         for ($i = 0; $i < mb_strlen($str, 'UTF-16'); $i++) {
@@ -134,13 +131,12 @@ class SendCampaignSMS extends Model
      *
      * @return array|Application|Translator|string|null
      */
-    public function sendPlainSMS($data)
-    {
-        $phone          = $data['phone'];
+    public function sendPlainSMS($data) {
+        $phone = $data['phone'];
         $sending_server = $data['sending_server'];
-        $gateway_name   = $data['sending_server']->settings;
-        $message        = null;
-        $sms_type       = $data['sms_type'];
+        $gateway_name = $data['sending_server']->settings;
+        $message = null;
+        $sms_type = $data['sms_type'];
         $get_sms_status = $data['status'];
 
         if (isset($data['message'])) {
@@ -189,15 +185,15 @@ class SendCampaignSMS extends Model
                     }
                 }
 
-                $destination_param                    = $cg_info->destination_param;
+                $destination_param = $cg_info->destination_param;
                 $send_custom_data[$destination_param] = $data['phone'];
 
-                $message_param                    = $cg_info->message_param;
+                $message_param = $cg_info->message_param;
                 $send_custom_data[$message_param] = $data['message'];
 
                 if ($cg_info->unicode_status && $data['sms_type'] == 'unicode') {
-                    $unicode_param                    = $cg_info->unicode_param;
-                    $unicode_value                    = $cg_info->unicode_value;
+                    $unicode_param = $cg_info->unicode_param;
+                    $unicode_value = $cg_info->unicode_value;
                     $send_custom_data[$unicode_param] = $unicode_value;
                 }
 
@@ -247,7 +243,7 @@ class SendCampaignSMS extends Model
 
                 //if http method get
                 if ($cg_info->http_request_method == 'get') {
-                    $gateway_url = $sending_server->api_link.'?'.$parameters;
+                    $gateway_url = $sending_server->api_link . '?' . $parameters;
 
                     curl_setopt($ch, CURLOPT_URL, $gateway_url);
                     curl_setopt($ch, CURLOPT_HTTPGET, 1);
@@ -271,28 +267,28 @@ class SendCampaignSMS extends Model
                 $headers = [];
                 //if content type value not none then insert content type in curl headers. $headers[] = "Content-Type: application/x-www-form-urlencoded";
                 if ($cg_info->content_type != 'none') {
-                    $headers[] = "Content-Type: ".$cg_info->content_type;
+                    $headers[] = "Content-Type: " . $cg_info->content_type;
                 }
 
                 //if content type accept value not none then insert content type accept in curl headers. $headers[] = "Accept: application/json";
                 if ($cg_info->content_type_accept != 'none') {
-                    $headers[] = "Accept: ".$cg_info->content_type_accept;
+                    $headers[] = "Accept: " . $cg_info->content_type_accept;
                 }
 
                 //if content encoding value not none then insert content type accept in curl headers. $headers[] = "charset=utf-8";
                 if ($cg_info->character_encoding != 'none') {
-                    $headers[] = "charset=".$cg_info->character_encoding;
+                    $headers[] = "charset=" . $cg_info->character_encoding;
                 }
                 // if authorization set Bearer then add this line on curl header $header[] = "Authorization: Bearer ".$gateway_user_name;
 
                 if ($cg_info->authorization == 'bearer_token') {
-                    $headers[] = "Authorization: Bearer ".$username_value;
+                    $headers[] = "Authorization: Bearer " . $username_value;
                 }
 
                 // if authorization set basic auth then add this line on curl header $header[] = "Authorization: Basic ".base64_encode("$gateway_user_name:$gateway_password");
 
                 if ($cg_info->authorization == 'basic_auth') {
-                    $headers[] = "Authorization: Basic ".base64_encode("$username_value:$password_value");
+                    $headers[] = "Authorization: Basic " . base64_encode("$username_value:$password_value");
                 }
 
                 if (count($headers)) {
@@ -312,7 +308,7 @@ class SendCampaignSMS extends Model
             } elseif ($sending_server->type == 'smpp') {
 
                 $sender_id = $data['sender_id'];
-                $message   = $data['message'];
+                $message = $data['message'];
 
 
 //                try {
@@ -357,18 +353,18 @@ class SendCampaignSMS extends Model
 
                     if ($sms_type == 'unicode') {
                         $output = (new SmsBuilder($sending_server->api_link, $sending_server->port, $sending_server->username, $sending_server->password, 10000))
-                                ->setSender($data['sender_id'], $source_ton)
-                                ->setRecipient($phone, $destination_ton)
-                                ->sendMessage($message, true);
+                            ->setSender($data['sender_id'], $source_ton)
+                            ->setRecipient($phone, $destination_ton)
+                            ->sendMessage($message, true);
                     } else {
                         $output = (new SmsBuilder($sending_server->api_link, $sending_server->port, $sending_server->username, $sending_server->password, 10000))
-                                ->setSender($data['sender_id'], $source_ton)
-                                ->setRecipient($phone, $destination_ton)
-                                ->sendMessage($message);
+                            ->setSender($data['sender_id'], $source_ton)
+                            ->setRecipient($phone, $destination_ton)
+                            ->sendMessage($message);
                     }
 
                     if ($output || str_contains($output, '0x6')) {
-                        $get_sms_status = 'Delivered|'.(int) $output;
+                        $get_sms_status = 'Delivered|' . (int)$output;
                     } else {
                         $get_sms_status = __('locale.labels.failed');
                     }
@@ -388,26 +384,26 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_TWILIO:
 
                         $sender_id = str_replace(['(', ')', '+', '-', ' '], '', $data['sender_id']);
-                        $phone     = '+'.str_replace(['(', ')', '+', '-', ' '], '', $phone);
+                        $phone = '+' . str_replace(['(', ')', '+', '-', ' '], '', $phone);
 
                         if (is_numeric($sender_id)) {
-                            $sender_id = '+'.$sender_id;
+                            $sender_id = '+' . $sender_id;
                         } else {
                             $sender_id = $data['sender_id'];
                         }
 
                         try {
-                            $client       = new Client($sending_server->account_sid, $sending_server->auth_token);
+                            $client = new Client($sending_server->account_sid, $sending_server->auth_token);
                             $get_response = $client->messages->create($phone, [
-                                    'from'           => $sender_id,
-                                    'body'           => $message,
-                                    'statusCallback' => route('dlr.twilio'),
+                                'from' => $sender_id,
+                                'body' => $message,
+                                'statusCallback' => route('dlr.twilio'),
                             ]);
 
                             if ($get_response->status == 'queued' || $get_response->status == 'accepted') {
-                                $get_sms_status = 'Delivered|'.$get_response->sid;
+                                $get_sms_status = 'Delivered|' . $get_response->sid;
                             } else {
-                                $get_sms_status = $get_response->status.'|'.$get_response->sid;
+                                $get_sms_status = $get_response->status . '|' . $get_response->sid;
                             }
 
                         } catch (ConfigurationException|TwilioException $e) {
@@ -418,26 +414,26 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_TWILIOCOPILOT:
 
                         $sender_id = str_replace(['(', ')', '+', '-', ' '], '', $data['sender_id']);
-                        $phone     = '+'.str_replace(['(', ')', '+', '-', ' '], '', $phone);
+                        $phone = '+' . str_replace(['(', ')', '+', '-', ' '], '', $phone);
 
                         if (is_numeric($sender_id)) {
-                            $sender_id = '+'.$sender_id;
+                            $sender_id = '+' . $sender_id;
                         } else {
                             $sender_id = $data['sender_id'];
                         }
 
 
                         try {
-                            $client       = new Client($sending_server->account_sid, $sending_server->auth_token);
+                            $client = new Client($sending_server->account_sid, $sending_server->auth_token);
                             $get_response = $client->messages->create($phone, [
-                                    'messagingServiceSid' => $sender_id,
-                                    'body'                => $message,
+                                'messagingServiceSid' => $sender_id,
+                                'body' => $message,
                             ]);
 
                             if ($get_response->status == 'queued' || $get_response->status == 'accepted') {
-                                $get_sms_status = 'Delivered|'.$get_response->sid;
+                                $get_sms_status = 'Delivered|' . $get_response->sid;
                             } else {
-                                $get_sms_status = $get_response->status.'|'.$get_response->sid;
+                                $get_sms_status = $get_response->status . '|' . $get_response->sid;
                             }
 
                         } catch (ConfigurationException|TwilioException $e) {
@@ -446,12 +442,12 @@ class SendCampaignSMS extends Model
                         break;
 
                     case SendingServer::TYPE_CLICKATELLTOUCH:
-                        $send_message     = urlencode($message);
-                        $sms_sent_to_user = $gateway_url."?apiKey=$sending_server->api_key"."&to=$phone"."&content=$send_message";
+                        $send_message = urlencode($message);
+                        $sms_sent_to_user = $gateway_url . "?apiKey=$sending_server->api_key" . "&to=$phone" . "&content=$send_message";
 
                         if ($data['sender_id']) {
-                            $sender_id        = str_replace(['(', ')', '+', '-', ' '], '', $data['sender_id']);
-                            $sms_sent_to_user .= "&from=".$sender_id;
+                            $sender_id = str_replace(['(', ')', '+', '-', ' '], '', $data['sender_id']);
+                            $sms_sent_to_user .= "&from=" . $sender_id;
                         }
 
 
@@ -470,7 +466,7 @@ class SendCampaignSMS extends Model
                                 $get_result = json_decode($response);
 
                                 if (isset($get_result->messages[0]->accepted) && $get_result->messages[0]->accepted) {
-                                    $get_sms_status = 'Delivered|'.$get_result->messages[0]->apiMessageId;
+                                    $get_sms_status = 'Delivered|' . $get_result->messages[0]->apiMessageId;
                                 } elseif (isset($get_result->messages[0]->errorDescription) && $get_result->messages[0]->errorDescription != '') {
                                     $get_sms_status = $get_result->messages[0]->errorDescription;
                                 } elseif (isset($get_result->errorDescription) && $get_result->errorDescription != '') {
@@ -490,11 +486,11 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_CLICKATELLCENTRAL:
 
                         $parameters = [
-                                'user'     => $sending_server->username,
-                                'password' => $sending_server->password,
-                                'api_id'   => $sending_server->api_key,
-                                'to'       => $phone,
-                                'text'     => $message,
+                            'user' => $sending_server->username,
+                            'password' => $sending_server->password,
+                            'api_id' => $sending_server->api_key,
+                            'to' => $phone,
+                            'text' => $message,
                         ];
 
                         if ($sms_type == 'unicode') {
@@ -503,7 +499,7 @@ class SendCampaignSMS extends Model
                             $parameters['unicode'] = 0;
                         }
 
-                        $sending_url = $gateway_url.'?'.http_build_query($parameters);
+                        $sending_url = $gateway_url . '?' . http_build_query($parameters);
 
                         try {
                             $ch = curl_init();
@@ -527,22 +523,22 @@ class SendCampaignSMS extends Model
 
                     case SendingServer::TYPE_ROUTEMOBILE:
                         $parameters = [
-                                'username'    => $sending_server->username,
-                                'password'    => $sending_server->password,
-                                'source'      => $data['sender_id'],
-                                'destination' => $phone,
-                                'dlr'         => 1,
+                            'username' => $sending_server->username,
+                            'password' => $sending_server->password,
+                            'source' => $data['sender_id'],
+                            'destination' => $phone,
+                            'dlr' => 1,
                         ];
 
                         if ($sms_type == 'unicode') {
-                            $parameters['type']    = 2;
+                            $parameters['type'] = 2;
                             $parameters['message'] = $this->sms_unicode($message);
                         } else {
-                            $parameters['type']    = 0;
+                            $parameters['type'] = 0;
                             $parameters['message'] = $message;
                         }
 
-                        $sending_url = $gateway_url.'?'.http_build_query($parameters);
+                        $sending_url = $gateway_url . '?' . http_build_query($parameters);
 
                         try {
                             $ch = curl_init();
@@ -559,17 +555,17 @@ class SendCampaignSMS extends Model
 
                                 if (is_array($get_data) && array_key_exists('0', $get_data)) {
                                     $get_sms_status = match ($get_data[0]) {
-                                        '1701'  => 'Delivered|'.$get_data['2'],
-                                        '1702'  => 'Invalid URL',
-                                        '1703'  => 'Invalid User or Password',
-                                        '1704'  => 'Invalid Type',
-                                        '1705'  => 'Invalid SMS',
-                                        '1706'  => 'Invalid receiver',
-                                        '1707'  => 'Invalid sender',
-                                        '1709'  => 'User Validation Failed',
-                                        '1710'  => 'Internal Error',
-                                        '1715'  => 'Response Timeout',
-                                        '1025'  => 'Insufficient Credit',
+                                        '1701' => 'Delivered|' . $get_data['2'],
+                                        '1702' => 'Invalid URL',
+                                        '1703' => 'Invalid User or Password',
+                                        '1704' => 'Invalid Type',
+                                        '1705' => 'Invalid SMS',
+                                        '1706' => 'Invalid receiver',
+                                        '1707' => 'Invalid sender',
+                                        '1709' => 'User Validation Failed',
+                                        '1710' => 'Internal Error',
+                                        '1715' => 'Response Timeout',
+                                        '1025' => 'Insufficient Credit',
                                         default => 'Invalid request',
                                     };
                                 } else {
@@ -587,16 +583,16 @@ class SendCampaignSMS extends Model
                         $unique_id = time();
 
                         $parameters = [
-                                'apikey'      => $sending_server->api_key,
-                                'numbers'     => $phone,
-                                'sender'      => $data['sender_id'],
-                                'receipt_url' => route('dlr.textlocal'),
-                                'custom'      => $unique_id,
+                            'apikey' => $sending_server->api_key,
+                            'numbers' => $phone,
+                            'sender' => $data['sender_id'],
+                            'receipt_url' => route('dlr.textlocal'),
+                            'custom' => $unique_id,
                         ];
 
                         if ($sms_type == 'unicode') {
                             $parameters['unicode'] = true;
-                            $message               = $this->sms_unicode($message);
+                            $message = $this->sms_unicode($message);
                         }
 
                         $parameters['message'] = $message;
@@ -607,7 +603,7 @@ class SendCampaignSMS extends Model
                             curl_setopt($ch, CURLOPT_POSTFIELDS, $parameters);
                             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                             $response = curl_exec($ch);
-                            $err      = curl_error($ch);
+                            $err = curl_error($ch);
                             curl_close($ch);
 
                             if ($err) {
@@ -621,7 +617,7 @@ class SendCampaignSMS extends Model
                                             $get_sms_status = $err['message'];
                                         }
                                     } elseif ($get_data['status'] == 'success') {
-                                        $get_sms_status = 'Delivered|'.$unique_id;
+                                        $get_sms_status = 'Delivered|' . $unique_id;
                                     } else {
                                         $get_sms_status = $response;
                                     }
@@ -639,13 +635,13 @@ class SendCampaignSMS extends Model
                         $client = new RestClient($sending_server->auth_id, $sending_server->auth_token);
                         try {
                             $response = $client->messages->create(
-                                    $data['sender_id'],
-                                    [$phone],
-                                    $message,
-                                    ['url' => route('dlr.plivo')],
+                                $data['sender_id'],
+                                [$phone],
+                                $message,
+                                ['url' => route('dlr.plivo')],
                             );
 
-                            $get_sms_status = 'Delivered|'.$response->getmessageUuid(0)[0];
+                            $get_sms_status = 'Delivered|' . $response->getmessageUuid(0)[0];
 
                         } catch (PlivoResponseException $e) {
                             $get_sms_status = $e->getMessage();
@@ -658,14 +654,14 @@ class SendCampaignSMS extends Model
                         $client = new RestClient($sending_server->auth_id, $sending_server->auth_token);
                         try {
                             $response = $client->messages->create(
-                                    null,
-                                    [$phone],
-                                    $message,
-                                    ['url' => route('dlr.plivo')],
-                                    $data['sender_id']
+                                null,
+                                [$phone],
+                                $message,
+                                ['url' => route('dlr.plivo')],
+                                $data['sender_id']
                             );
 
-                            $get_sms_status = 'Delivered|'.$response->getmessageUuid(0)[0];
+                            $get_sms_status = 'Delivered|' . $response->getmessageUuid(0)[0];
 
                         } catch (PlivoResponseException $e) {
                             $get_sms_status = $e->getMessage();
@@ -676,19 +672,19 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_SMSGLOBAL:
 
                         $parameters = [
-                                'action'   => 'sendsms',
-                                'user'     => $sending_server->username,
-                                'password' => $sending_server->password,
-                                'from'     => $data['sender_id'],
-                                'to'       => $phone,
-                                'text'     => $message,
+                            'action' => 'sendsms',
+                            'user' => $sending_server->username,
+                            'password' => $sending_server->password,
+                            'from' => $data['sender_id'],
+                            'to' => $phone,
+                            'text' => $message,
                         ];
 
                         if (strlen($message) > 160) {
                             $parameters['maxsplit'] = 9;
                         }
 
-                        $sending_url = $gateway_url.'?'.http_build_query($parameters);
+                        $sending_url = $gateway_url . '?' . http_build_query($parameters);
 
                         try {
 
@@ -703,7 +699,7 @@ class SendCampaignSMS extends Model
                             if (substr_count($get_sms_status, 'OK') == 1) {
                                 $get_sms_status = explode(':', $get_sms_status);
                                 if (isset($get_sms_status) && is_array($get_sms_status) && array_key_exists('3', $get_sms_status)) {
-                                    $get_sms_status = 'Delivered|'.trim($get_sms_status['3']);
+                                    $get_sms_status = 'Delivered|' . trim($get_sms_status['3']);
                                 } else {
                                     $get_sms_status = 'Delivered';
                                 }
@@ -718,9 +714,9 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_BULKSMS:
 
                         $parameters = [
-                                'longMessageMaxParts' => 6,
-                                'to'                  => $phone,
-                                'body'                => $message,
+                            'longMessageMaxParts' => 6,
+                            'to' => $phone,
+                            'body' => $message,
                         ];
 
                         if (isset($data['sender_id'])) {
@@ -728,13 +724,13 @@ class SendCampaignSMS extends Model
                         }
 
                         try {
-                            $ch      = curl_init();
+                            $ch = curl_init();
                             $headers = [
-                                    'Content-Type:application/json',
-                                    'Authorization:Basic '.base64_encode("$sending_server->username:$sending_server->password"),
+                                'Content-Type:application/json',
+                                'Authorization:Basic ' . base64_encode("$sending_server->username:$sending_server->password"),
                             ];
                             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-                            curl_setopt($ch, CURLOPT_URL, $gateway_url."?auto-unicode=true");
+                            curl_setopt($ch, CURLOPT_URL, $gateway_url . "?auto-unicode=true");
                             curl_setopt($ch, CURLOPT_POST, 1);
                             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($parameters));
@@ -745,7 +741,7 @@ class SendCampaignSMS extends Model
 
                             if (isset($get_data) && is_array($get_data) && array_key_exists('0', $get_data)) {
                                 if (array_key_exists('id', $get_data[0])) {
-                                    $get_sms_status = 'Delivered|'.$get_data[0]['id'];
+                                    $get_sms_status = 'Delivered|' . $get_data[0]['id'];
                                 } elseif (array_key_exists('detail', $get_data)) {
                                     $get_sms_status = $get_data['detail'];
                                 }
@@ -759,14 +755,14 @@ class SendCampaignSMS extends Model
 
                     case SendingServer::TYPE_VONAGE:
                         $client = new \Vonage\Client(new Basic($sending_server->api_key, $sending_server->api_secret));
-                        $text   = new SMS($phone, $data['sender_id'], $message);
+                        $text = new SMS($phone, $data['sender_id'], $message);
 
                         try {
                             $response = $client->sms()->send($text);
-                            $output   = $response->current();
+                            $output = $response->current();
 
                             if ($output->getStatus() == 0 || $output->getStatus() == 'sent') {
-                                $get_sms_status = 'Delivered|'.$output->getMessageId();
+                                $get_sms_status = 'Delivered|' . $output->getMessageId();
                             } else {
                                 $get_sms_status = $output->getStatus();
                             }
@@ -778,18 +774,18 @@ class SendCampaignSMS extends Model
 
                     case SendingServer::TYPE_INFOBIP:
                         $destination = [
-                                'messageId' => time(),
-                                'to'        => $phone,
+                            'messageId' => time(),
+                            'to' => $phone,
                         ];
 
                         $parameters = [
-                                'messages' => [
-                                        "from"              => $data['sender_id'],
-                                        "destinations"      => [$destination],
-                                        'text'              => $message,
-                                        'notifyUrl'         => route('dlr.infobip'),
-                                        'notifyContentType' => 'application/json',
-                                ],
+                            'messages' => [
+                                "from" => $data['sender_id'],
+                                "destinations" => [$destination],
+                                'text' => $message,
+                                'notifyUrl' => route('dlr.infobip'),
+                                'notifyContentType' => 'application/json',
+                            ],
                         ];
 
                         if (isset($sending_server->c1)) {
@@ -802,11 +798,11 @@ class SendCampaignSMS extends Model
 
                         try {
 
-                            $ch     = curl_init();
+                            $ch = curl_init();
                             $header = [
-                                    "Authorization: App $sending_server->api_key",
-                                    "Content-Type: application/json",
-                                    "Accept: application/json",
+                                "Authorization: App $sending_server->api_key",
+                                "Content-Type: application/json",
+                                "Accept: application/json",
                             ];
 
                             // setting options
@@ -827,7 +823,7 @@ class SendCampaignSMS extends Model
                             if (is_array($get_data)) {
                                 if (array_key_exists('messages', $get_data)) {
                                     foreach ($get_data['messages'] as $msg) {
-                                        $get_sms_status = 'Delivered|'.$msg['messageId'];
+                                        $get_sms_status = 'Delivered|' . $msg['messageId'];
                                     }
                                 } elseif (array_key_exists('requestError', $get_data)) {
                                     foreach ($get_data['requestError'] as $msg) {
@@ -848,23 +844,23 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_1S2U:
 
                         if ($sms_type == 'unicode') {
-                            $mt      = 1;
+                            $mt = 1;
                             $message = bin2hex(mb_convert_encoding($message, "UTF-16", "UTF-8"));
                         } else {
                             $mt = 0;
                         }
 
                         $parameters = [
-                                "username" => $sending_server->username,
-                                "password" => $sending_server->password,
-                                "mno"      => $phone,
-                                "msg"      => $message,
-                                "sid"      => $data['sender_id'],
-                                "mt"       => $mt,
-                                "fl"       => 0,
+                            "username" => $sending_server->username,
+                            "password" => $sending_server->password,
+                            "mno" => $phone,
+                            "msg" => $message,
+                            "sid" => $data['sender_id'],
+                            "mt" => $mt,
+                            "fl" => 0,
                         ];
 
-                        $sending_url = $gateway_url.'?'.http_build_query($parameters);
+                        $sending_url = $gateway_url . '?' . http_build_query($parameters);
 
                         try {
 
@@ -878,22 +874,22 @@ class SendCampaignSMS extends Model
                             curl_close($ch);
 
                             if (str_contains($get_sms_status, 'OK')) {
-                                $get_sms_status = 'Delivered|'.trim(str_replace('OK: ', '', $get_sms_status));
+                                $get_sms_status = 'Delivered|' . trim(str_replace('OK: ', '', $get_sms_status));
                             } else {
                                 $get_sms_status = match ($get_sms_status) {
-                                    '0005'         => 'Invalid Sender',
-                                    '0010'         => 'Username not provided',
-                                    '0011'         => 'Password not provided',
-                                    '00'           => 'Invalid username/password',
-                                    '0020'         => 'Insufficient Credits',
-                                    '0030'         => 'Invalid Sender ID',
-                                    '0040'         => 'Mobile number not provided',
-                                    '0041'         => 'Invalid mobile number',
+                                    '0005' => 'Invalid Sender',
+                                    '0010' => 'Username not provided',
+                                    '0011' => 'Password not provided',
+                                    '00' => 'Invalid username/password',
+                                    '0020' => 'Insufficient Credits',
+                                    '0030' => 'Invalid Sender ID',
+                                    '0040' => 'Mobile number not provided',
+                                    '0041' => 'Invalid mobile number',
                                     '0066', '0042' => 'Network not supported',
-                                    '0050'         => 'Invalid message',
-                                    '0060'         => 'Invalid quantity specified',
-                                    '0000'         => 'Message not sent',
-                                    default        => 'Unknown Error',
+                                    '0050' => 'Invalid message',
+                                    '0060' => 'Invalid quantity specified',
+                                    '0000' => 'Message not sent',
+                                    default => 'Unknown Error',
                                 };
 
                             }
@@ -904,10 +900,10 @@ class SendCampaignSMS extends Model
 
                     case SendingServer::TYPE_MESSAGEBIRD:
                         $parameters = [
-                                'recipients' => $phone,
-                                'originator' => $data['sender_id'],
-                                'body'       => $message,
-                                'datacoding' => 'auto',
+                            'recipients' => $phone,
+                            'originator' => $data['sender_id'],
+                            'body' => $message,
+                            'datacoding' => 'auto',
                         ];
 
                         $ch = curl_init();
@@ -917,7 +913,7 @@ class SendCampaignSMS extends Model
                         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($parameters));
                         curl_setopt($ch, CURLOPT_POST, 1);
 
-                        $headers   = [];
+                        $headers = [];
                         $headers[] = "Authorization: AccessKey $sending_server->api_key";
                         $headers[] = "Content-Type: application/x-www-form-urlencoded";
                         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -929,7 +925,7 @@ class SendCampaignSMS extends Model
                             $response = json_decode($result, true);
 
                             if (is_array($response) && array_key_exists('id', $response)) {
-                                $get_sms_status = 'Delivered|'.$response['id'];
+                                $get_sms_status = 'Delivered|' . $response['id'];
                             } elseif (is_array($response) && array_key_exists('errors', $response)) {
                                 $get_sms_status = $response['errors'][0]['description'];
                             } else {
@@ -941,32 +937,32 @@ class SendCampaignSMS extends Model
 
                     case SendingServer::TYPE_AMAZONSNS:
                         $credentials = [
-                                'credentials' => [
-                                        'key'    => $sending_server->access_key,
-                                        'secret' => $sending_server->secret_access,
-                                ],
-                                'region'      => $sending_server->region, // < your aws from SNS Topic region
-                                'version'     => 'latest',
+                            'credentials' => [
+                                'key' => $sending_server->access_key,
+                                'secret' => $sending_server->secret_access,
+                            ],
+                            'region' => $sending_server->region, // < your aws from SNS Topic region
+                            'version' => 'latest',
                         ];
 
                         $sns = new SnsClient($credentials);
 
                         $parameters = [
-                                'MessageAttributes' => [
-                                        'AWS.SNS.SMS.SenderID' => [
-                                                'DataType'    => 'String',
-                                                'StringValue' => $data['sender_id'],
-                                        ],
+                            'MessageAttributes' => [
+                                'AWS.SNS.SMS.SenderID' => [
+                                    'DataType' => 'String',
+                                    'StringValue' => $data['sender_id'],
                                 ],
-                                "SMSType"           => $sending_server->route,
-                                "PhoneNumber"       => '+'.$phone,
-                                "Message"           => $message,
+                            ],
+                            "SMSType" => $sending_server->route,
+                            "PhoneNumber" => '+' . $phone,
+                            "Message" => $message,
                         ];
 
                         try {
                             $result = $sns->publish($parameters)->toArray();
                             if (is_array($result) && array_key_exists('MessageId', $result)) {
-                                $get_sms_status = 'Delivered|'.$result['MessageId'];
+                                $get_sms_status = 'Delivered|' . $result['MessageId'];
                             } else {
                                 $get_sms_status = 'Unknown error';
                             }
@@ -978,9 +974,9 @@ class SendCampaignSMS extends Model
 
                     case SendingServer::TYPE_TYNTEC:
                         $parameters = [
-                                'from'    => $data['sender_id'],
-                                'to'      => $phone,
-                                'message' => $message,
+                            'from' => $data['sender_id'],
+                            'to' => $phone,
+                            'message' => $message,
                         ];
 
                         try {
@@ -990,9 +986,9 @@ class SendCampaignSMS extends Model
                             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($parameters));
                             curl_setopt($ch, CURLOPT_POST, 1);
-                            curl_setopt($ch, CURLOPT_USERPWD, "$sending_server->username".":"."$sending_server->password");
+                            curl_setopt($ch, CURLOPT_USERPWD, "$sending_server->username" . ":" . "$sending_server->password");
 
-                            $headers   = [];
+                            $headers = [];
                             $headers[] = "Content-Type: application/json";
                             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
@@ -1021,24 +1017,24 @@ class SendCampaignSMS extends Model
 //                        }
 
                         $parameters = [
-                                'channel'     => 'sms',
-                                'source'      => $data['sender_id'],
-                                'destination' => ['+'.$phone],
-                                'content'     => [
-                                        'text' => $message,
-                                ],
+                            'channel' => 'sms',
+                            'source' => $data['sender_id'],
+                            'destination' => ['+' . $phone],
+                            'content' => [
+                                'text' => $message,
+                            ],
                         ];
 
                         try {
 
                             $headers = [
-                                    'Content-Type:application/json',
+                                'Content-Type:application/json',
                             ];
 
                             $ch = curl_init();
                             curl_setopt($ch, CURLOPT_URL, $gateway_url);
                             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-                            curl_setopt($ch, CURLOPT_USERPWD, "$sending_server->auth_id".":"."$sending_server->auth_token");
+                            curl_setopt($ch, CURLOPT_USERPWD, "$sending_server->auth_id" . ":" . "$sending_server->auth_token");
                             curl_setopt($ch, CURLOPT_TIMEOUT, 30);
                             curl_setopt($ch, CURLOPT_POST, 1);
                             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($parameters));
@@ -1051,7 +1047,7 @@ class SendCampaignSMS extends Model
                             if (isset($get_response) && is_array($get_response)) {
                                 if (array_key_exists('objects', $get_response)) {
                                     if ($get_response['objects']['0']['status'] == 'queued') {
-                                        $get_sms_status = 'Delivered|'.$get_response['objects']['0']['account_uid'];
+                                        $get_sms_status = 'Delivered|' . $get_response['objects']['0']['account_uid'];
                                     } else {
                                         $get_sms_status = $get_response['objects']['0']['status'];
                                     }
@@ -1072,12 +1068,12 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_SIGNALWIRE:
 
                         $parameters = [
-                                'From' => '+'.$data['sender_id'],
-                                'Body' => $message,
-                                'To'   => '+'.$phone,
+                            'From' => '+' . $data['sender_id'],
+                            'Body' => $message,
+                            'To' => '+' . $phone,
                         ];
 
-                        $sending_url = $gateway_url."/api/laml/2010-04-01/Accounts/$sending_server->project_id/Messages.json";
+                        $sending_url = $gateway_url . "/api/laml/2010-04-01/Accounts/$sending_server->project_id/Messages.json";
 
                         $ch = curl_init();
 
@@ -1085,7 +1081,7 @@ class SendCampaignSMS extends Model
                         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                         curl_setopt($ch, CURLOPT_POST, 1);
                         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($parameters));
-                        curl_setopt($ch, CURLOPT_USERPWD, "$sending_server->project_id".":"."$sending_server->api_token");
+                        curl_setopt($ch, CURLOPT_USERPWD, "$sending_server->project_id" . ":" . "$sending_server->api_token");
 
                         $get_response = curl_exec($ch);
 
@@ -1097,7 +1093,7 @@ class SendCampaignSMS extends Model
 
                             if (isset($result) && is_array($result) && array_key_exists('status', $result) && array_key_exists('error_code', $result)) {
                                 if ($result['status'] == 'queued' && $result['error_code'] === null) {
-                                    $get_sms_status = 'Delivered|'.$result['sid'];
+                                    $get_sms_status = 'Delivered|' . $result['sid'];
                                 } else {
                                     $get_sms_status = $result['error_message'];
                                 }
@@ -1117,18 +1113,18 @@ class SendCampaignSMS extends Model
 
                     case SendingServer::TYPE_TELNYX:
 
-                        $phone     = str_replace(['+', '(', ')', '-', " "], '', $phone);
+                        $phone = str_replace(['+', '(', ')', '-', " "], '', $phone);
                         $sender_id = str_replace(['+', '(', ')', '-', " "], '', $data['sender_id']);
 
                         $parameters = [
-                                "to"   => '+'.$phone,
-                                "text" => $message,
+                            "to" => '+' . $phone,
+                            "text" => $message,
                         ];
 
                         if (is_numeric($data['sender_id'])) {
-                            $parameters['from'] = '+'.$sender_id;
+                            $parameters['from'] = '+' . $sender_id;
                         } else {
-                            $parameters['from']                 = $data['sender_id'];
+                            $parameters['from'] = $data['sender_id'];
                             $parameters['messaging_profile_id'] = $sending_server->c1;
                         }
 
@@ -1136,8 +1132,8 @@ class SendCampaignSMS extends Model
                         try {
 
                             $headers = [
-                                    'Content-Type:application/json',
-                                    'Authorization: Bearer '.$sending_server->api_key,
+                                'Content-Type:application/json',
+                                'Authorization: Bearer ' . $sending_server->api_key,
                             ];
 
                             $ch = curl_init();
@@ -1154,11 +1150,11 @@ class SendCampaignSMS extends Model
 
                             if (isset($get_response) && is_array($get_response)) {
                                 if (array_key_exists('data', $get_response) && array_key_exists('to', $get_response['data']) && $get_response['data']['to'][0]['status'] == 'queued') {
-                                    $get_sms_status = 'Delivered|'.$get_response['data']['id'];
+                                    $get_sms_status = 'Delivered|' . $get_response['data']['id'];
                                 } elseif (array_key_exists('errors', $get_response)) {
                                     $get_sms_status = $get_response['errors'][0]['detail'];
                                 } else {
-                                    $get_sms_status = (string) $response;
+                                    $get_sms_status = (string)$response;
                                 }
                             } else {
                                 $get_sms_status = 'Unknown error';
@@ -1172,16 +1168,16 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_TELNYXNUMBERPOOL:
 
                         $parameters = [
-                                "to"                   => '+'.$phone,
-                                "text"                 => $message,
-                                "messaging_profile_id" => $sending_server->c1,
+                            "to" => '+' . $phone,
+                            "text" => $message,
+                            "messaging_profile_id" => $sending_server->c1,
                         ];
 
                         try {
 
                             $headers = [
-                                    'Content-Type:application/json',
-                                    'Authorization: Bearer '.$sending_server->api_key,
+                                'Content-Type:application/json',
+                                'Authorization: Bearer ' . $sending_server->api_key,
                             ];
 
                             $ch = curl_init();
@@ -1202,7 +1198,7 @@ class SendCampaignSMS extends Model
                                 } elseif (array_key_exists('errors', $get_response)) {
                                     $get_sms_status = $get_response['errors'][0]['detail'];
                                 } else {
-                                    $get_sms_status = (string) $response;
+                                    $get_sms_status = (string)$response;
                                 }
                             } else {
                                 $get_sms_status = 'Unknown error';
@@ -1216,10 +1212,10 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_BANDWIDTH:
 
                         $parameters = [
-                                'from'          => '+'.$data['sender_id'],
-                                'to'            => ['+'.$phone],
-                                'text'          => $message,
-                                'applicationId' => $sending_server->application_id,
+                            'from' => '+' . $data['sender_id'],
+                            'to' => ['+' . $phone],
+                            'text' => $message,
+                            'applicationId' => $sending_server->application_id,
                         ];
 
                         try {
@@ -1230,9 +1226,9 @@ class SendCampaignSMS extends Model
                             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($parameters));
                             curl_setopt($ch, CURLOPT_POST, 1);
-                            curl_setopt($ch, CURLOPT_USERPWD, $sending_server->api_token.':'.$sending_server->api_secret);
+                            curl_setopt($ch, CURLOPT_USERPWD, $sending_server->api_token . ':' . $sending_server->api_secret);
 
-                            $headers   = [];
+                            $headers = [];
                             $headers[] = 'Content-Type: application/json';
                             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
@@ -1246,11 +1242,11 @@ class SendCampaignSMS extends Model
 
                                 if (isset($result) && is_array($result)) {
                                     if (array_key_exists('id', $result)) {
-                                        $get_sms_status = 'Delivered|'.$result['id'];
+                                        $get_sms_status = 'Delivered|' . $result['id'];
                                     } elseif (array_key_exists('error', $result)) {
                                         $get_sms_status = $result['error'];
                                     } elseif (array_key_exists('fieldErrors', $result)) {
-                                        $get_sms_status = $result['fieldErrors'][0]['fieldName'].' '.$result['fieldErrors'][0]['description'];
+                                        $get_sms_status = $result['fieldErrors'][0]['fieldName'] . ' ' . $result['fieldErrors'][0]['description'];
                                     } else {
                                         $get_sms_status = implode(" ", $result);
                                     }
@@ -1269,22 +1265,22 @@ class SendCampaignSMS extends Model
                         $curl = curl_init();
 
                         curl_setopt_array($curl, [
-                                CURLOPT_URL            => "https://auth.routee.net/oauth/token",
-                                CURLOPT_RETURNTRANSFER => true,
-                                CURLOPT_ENCODING       => "",
-                                CURLOPT_MAXREDIRS      => 10,
-                                CURLOPT_TIMEOUT        => 30,
-                                CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
-                                CURLOPT_CUSTOMREQUEST  => "POST",
-                                CURLOPT_POSTFIELDS     => "grant_type=client_credentials",
-                                CURLOPT_HTTPHEADER     => [
-                                        "authorization: Basic ".base64_encode($sending_server->application_id.":".$sending_server->api_secret),
-                                        "content-type: application/x-www-form-urlencoded",
-                                ],
+                            CURLOPT_URL => "https://auth.routee.net/oauth/token",
+                            CURLOPT_RETURNTRANSFER => true,
+                            CURLOPT_ENCODING => "",
+                            CURLOPT_MAXREDIRS => 10,
+                            CURLOPT_TIMEOUT => 30,
+                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                            CURLOPT_CUSTOMREQUEST => "POST",
+                            CURLOPT_POSTFIELDS => "grant_type=client_credentials",
+                            CURLOPT_HTTPHEADER => [
+                                "authorization: Basic " . base64_encode($sending_server->application_id . ":" . $sending_server->api_secret),
+                                "content-type: application/x-www-form-urlencoded",
+                            ],
                         ]);
 
                         $response = curl_exec($curl);
-                        $err      = curl_error($curl);
+                        $err = curl_error($curl);
 
                         curl_close($curl);
 
@@ -1297,31 +1293,31 @@ class SendCampaignSMS extends Model
                                 $access_token = $response['access_token'];
 
                                 $parameters = [
-                                        'body' => $message,
-                                        'to'   => '+'.$phone,
-                                        'from' => $data['sender_id'],
+                                    'body' => $message,
+                                    'to' => '+' . $phone,
+                                    'from' => $data['sender_id'],
                                 ];
 
                                 $sendSMS = json_encode($parameters);
-                                $curl    = curl_init();
+                                $curl = curl_init();
 
                                 curl_setopt_array($curl, [
-                                        CURLOPT_URL            => $gateway_url,
-                                        CURLOPT_RETURNTRANSFER => true,
-                                        CURLOPT_ENCODING       => "",
-                                        CURLOPT_MAXREDIRS      => 10,
-                                        CURLOPT_TIMEOUT        => 30,
-                                        CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
-                                        CURLOPT_CUSTOMREQUEST  => "POST",
-                                        CURLOPT_POSTFIELDS     => $sendSMS,
-                                        CURLOPT_HTTPHEADER     => [
-                                                "authorization: Bearer ".$access_token,
-                                                "content-type: application/json",
-                                        ],
+                                    CURLOPT_URL => $gateway_url,
+                                    CURLOPT_RETURNTRANSFER => true,
+                                    CURLOPT_ENCODING => "",
+                                    CURLOPT_MAXREDIRS => 10,
+                                    CURLOPT_TIMEOUT => 30,
+                                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                    CURLOPT_CUSTOMREQUEST => "POST",
+                                    CURLOPT_POSTFIELDS => $sendSMS,
+                                    CURLOPT_HTTPHEADER => [
+                                        "authorization: Bearer " . $access_token,
+                                        "content-type: application/json",
+                                    ],
                                 ]);
 
                                 $response = curl_exec($curl);
-                                $err      = curl_error($curl);
+                                $err = curl_error($curl);
 
                                 curl_close($curl);
 
@@ -1349,18 +1345,18 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_HUTCHLK:
 
                         $auth_data = [
-                                "username" => $sending_server->username,
-                                "password" => $sending_server->password,
+                            "username" => $sending_server->username,
+                            "password" => $sending_server->password,
                         ];
 
 
                         $headers = [
-                                'Content-Type: application/json',
-                                'Accept: */*',
-                                'X-API-VERSION: v1',
+                            'Content-Type: application/json',
+                            'Accept: */*',
+                            'X-API-VERSION: v1',
                         ];
 
-                        $login_url = rtrim($gateway_url, '/').'/api/login';
+                        $login_url = rtrim($gateway_url, '/') . '/api/login';
 
                         try {
 
@@ -1377,14 +1373,14 @@ class SendCampaignSMS extends Model
 
                             if (isset($get_response) && is_array($get_response) && array_key_exists('accessToken', $get_response)) {
                                 $parameters = [
-                                        'campaignName' => str_random(10),
-                                        'mask'         => $data['sender_id'],
-                                        'numbers'      => $phone,
-                                        'content'      => $message,
+                                    'campaignName' => str_random(10),
+                                    'mask' => $data['sender_id'],
+                                    'numbers' => $phone,
+                                    'content' => $message,
                                 ];
 
-                                $sending_url = rtrim($gateway_url, '/').'/api/sendsms';
-                                $headers[]   = "Authorization: Bearer ".$get_response['accessToken'];
+                                $sending_url = rtrim($gateway_url, '/') . '/api/sendsms';
+                                $headers[] = "Authorization: Bearer " . $get_response['accessToken'];
 
                                 $ch = curl_init();
                                 curl_setopt($ch, CURLOPT_URL, $sending_url);
@@ -1399,7 +1395,7 @@ class SendCampaignSMS extends Model
 
                                 if (isset($get_response) && is_array($get_response)) {
                                     if (array_key_exists('serverRef', $get_response)) {
-                                        $get_sms_status = 'Delivered|'.$get_response['serverRef'];
+                                        $get_sms_status = 'Delivered|' . $get_response['serverRef'];
                                     }
                                     if (array_key_exists('message', $get_response)) {
                                         $get_sms_status = $get_response['message'];
@@ -1422,25 +1418,25 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_TELETOPIASMS:
 
                         $parameters = [
-                                'username'  => $sending_server->username,
-                                'password'  => $sending_server->password,
-                                'recipient' => $phone,
-                                'text'      => $message,
+                            'username' => $sending_server->username,
+                            'password' => $sending_server->password,
+                            'recipient' => $phone,
+                            'text' => $message,
                         ];
 
                         if ($data['sender_id'] != '') {
                             $parameters['sender'] = $data['sender_id'];
                         }
 
-                        $parameters  = http_build_query($parameters);
-                        $gateway_url = $gateway_url.'?'.$parameters;
+                        $parameters = http_build_query($parameters);
+                        $gateway_url = $gateway_url . '?' . $parameters;
 
                         $ch = curl_init();
 
                         curl_setopt($ch, CURLOPT_URL, $gateway_url);
                         curl_setopt($ch, CURLOPT_HTTPGET, 1);
                         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                        $headers   = [];
+                        $headers = [];
                         $headers[] = "Content-Type: application/x-www-form-urlencoded";
                         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
@@ -1461,12 +1457,12 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_BROADCASTERMOBILE:
 
                         $dataFields = [
-                                'apiKey'  => (int) $sending_server->api_key,
-                                'country' => $sending_server->c1,
-                                'dial'    => (int) $data['sender_id'],
-                                'tag'     => 'Prueba',
-                                'message' => $message,
-                                'msisdns' => [$phone],
+                            'apiKey' => (int)$sending_server->api_key,
+                            'country' => $sending_server->c1,
+                            'dial' => (int)$data['sender_id'],
+                            'tag' => 'Prueba',
+                            'message' => $message,
+                            'msisdns' => [$phone],
                         ];
 
                         try {
@@ -1480,8 +1476,8 @@ class SendCampaignSMS extends Model
                             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                             curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36");
                             $headers = [
-                                    'Content-Type: application/json',
-                                    'Authorization: '.$sending_server->api_token,
+                                'Content-Type: application/json',
+                                'Authorization: ' . $sending_server->api_token,
                             ];
 
                             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -1510,24 +1506,24 @@ class SendCampaignSMS extends Model
 
                     case SendingServer::TYPE_SOLUTIONS4MOBILES:
 
-                        $host         = 'sms.solutions4mobiles.com';
+                        $host = 'sms.solutions4mobiles.com';
                         $authEndpoint = "https://$host/apis/auth";
                         $sendEndpoint = "https://$host/apis/sms/mt/v2/send";
 
-                        $auth_body = (object) [
-                                "type"     => "access_token",
-                                "username" => $sending_server->username,
-                                "password" => $sending_server->password,
+                        $auth_body = (object)[
+                            "type" => "access_token",
+                            "username" => $sending_server->username,
+                            "password" => $sending_server->password,
                         ];
 
                         $auth_curl_params = [
-                                CURLOPT_RETURNTRANSFER => true,
-                                CURLOPT_POST           => true,
-                                CURLOPT_URL            => $authEndpoint,
-                                CURLOPT_CONNECTTIMEOUT => 10,
-                                CURLOPT_TIMEOUT        => 10,
-                                CURLOPT_HTTPHEADER     => ["cache-control: no-cache", "content-type: application/json"],
-                                CURLOPT_POSTFIELDS     => json_encode($auth_body),
+                            CURLOPT_RETURNTRANSFER => true,
+                            CURLOPT_POST => true,
+                            CURLOPT_URL => $authEndpoint,
+                            CURLOPT_CONNECTTIMEOUT => 10,
+                            CURLOPT_TIMEOUT => 10,
+                            CURLOPT_HTTPHEADER => ["cache-control: no-cache", "content-type: application/json"],
+                            CURLOPT_POSTFIELDS => json_encode($auth_body),
                         ];
 
                         //Setup request and execute
@@ -1541,26 +1537,26 @@ class SendCampaignSMS extends Model
                         //If server returned HTTP Status 200 the request was successful
                         if ($info['http_code'] == 200) {
                             //Store access token - Valid for 30 minutes - We must log in every 30 minutes
-                            $arr_res      = json_decode($result);
+                            $arr_res = json_decode($result);
                             $access_token = $arr_res->payload->access_token;
                             //Send SMS
                             //Setup body
                             $send_body = [
-                                    (object) [
-                                            'to'      => [$phone],
-                                            'from'    => $data['sender_id'],
-                                            'message' => $message,
-                                    ],
+                                (object)[
+                                    'to' => [$phone],
+                                    'from' => $data['sender_id'],
+                                    'message' => $message,
+                                ],
                             ];
 
                             $send_curl_params = [
-                                    CURLOPT_RETURNTRANSFER => true,
-                                    CURLOPT_POST           => true,
-                                    CURLOPT_URL            => $sendEndpoint,
-                                    CURLOPT_CONNECTTIMEOUT => 10,
-                                    CURLOPT_TIMEOUT        => 10,
-                                    CURLOPT_HTTPHEADER     => ["cache-control: no-cache", "content-type: application/json", "Authorization: Bearer $access_token"],
-                                    CURLOPT_POSTFIELDS     => json_encode($send_body),
+                                CURLOPT_RETURNTRANSFER => true,
+                                CURLOPT_POST => true,
+                                CURLOPT_URL => $sendEndpoint,
+                                CURLOPT_CONNECTTIMEOUT => 10,
+                                CURLOPT_TIMEOUT => 10,
+                                CURLOPT_HTTPHEADER => ["cache-control: no-cache", "content-type: application/json", "Authorization: Bearer $access_token"],
+                                CURLOPT_POSTFIELDS => json_encode($send_body),
                             ];
 
                             //Setup request and execute
@@ -1576,7 +1572,7 @@ class SendCampaignSMS extends Model
                             //If server returned HTTP Status 200 the request was successful
                             if ($send_info['http_code'] == 200) {
                                 if (isset($output) && is_array($output) && array_key_exists('payload', $output)) {
-                                    $get_sms_status = 'Delivered|'.$output['payload'][0]['id'];
+                                    $get_sms_status = 'Delivered|' . $output['payload'][0]['id'];
                                 } else {
                                     $get_sms_status = json_decode($result);
                                 }
@@ -1598,11 +1594,11 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_BEEMAFRICA:
 
                         $parameters = [
-                                'source_addr'   => $data['sender_id'],
-                                'encoding'      => 0,
-                                'schedule_time' => '',
-                                'message'       => $message,
-                                'recipients'    => [['recipient_id' => rand(1000, 99999), 'dest_addr' => (string) $phone]],
+                            'source_addr' => $data['sender_id'],
+                            'encoding' => 0,
+                            'schedule_time' => '',
+                            'message' => $message,
+                            'recipients' => [['recipient_id' => rand(1000, 99999), 'dest_addr' => (string)$phone]],
                         ];
 
                         $ch = curl_init($gateway_url);
@@ -1610,13 +1606,13 @@ class SendCampaignSMS extends Model
                         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
                         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
                         curl_setopt_array($ch, [
-                                CURLOPT_POST           => true,
-                                CURLOPT_RETURNTRANSFER => true,
-                                CURLOPT_HTTPHEADER     => [
-                                        'Authorization:Basic '.base64_encode("$sending_server->api_key:$sending_server->api_secret"),
-                                        'Content-Type: application/json',
-                                ],
-                                CURLOPT_POSTFIELDS     => json_encode($parameters),
+                            CURLOPT_POST => true,
+                            CURLOPT_RETURNTRANSFER => true,
+                            CURLOPT_HTTPHEADER => [
+                                'Authorization:Basic ' . base64_encode("$sending_server->api_key:$sending_server->api_secret"),
+                                'Content-Type: application/json',
+                            ],
+                            CURLOPT_POSTFIELDS => json_encode($parameters),
                         ]);
                         $response = curl_exec($ch);
 
@@ -1627,12 +1623,12 @@ class SendCampaignSMS extends Model
 
                             if (isset($output) && is_array($output) && array_key_exists('code', $output)) {
                                 if ($output['code'] == 100) {
-                                    $get_sms_status = 'Delivered|'.$output['request_id'];
+                                    $get_sms_status = 'Delivered|' . $output['request_id'];
                                 } else {
                                     $get_sms_status = $output['message'];
                                 }
                             } else {
-                                $get_sms_status = (string) $response;
+                                $get_sms_status = (string)$response;
                             }
                         }
                         break;
@@ -1640,10 +1636,10 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_BULKSMSONLINE:
 
                         $parameters = [
-                                'username' => $sending_server->username,
-                                'password' => $sending_server->password,
-                                'to'       => $phone,
-                                'message'  => $message,
+                            'username' => $sending_server->username,
+                            'password' => $sending_server->password,
+                            'to' => $phone,
+                            'message' => $message,
                         ];
 
                         if ($sms_type == 'unicode' || $sms_type == 'arabic') {
@@ -1652,7 +1648,7 @@ class SendCampaignSMS extends Model
                             $parameters['type'] = 't';
                         }
 
-                        $gateway_url = $gateway_url.'?'.http_build_query($parameters).'&source='.$data['sender_id'];
+                        $gateway_url = $gateway_url . '?' . http_build_query($parameters) . '&source=' . $data['sender_id'];
 
 
                         try {
@@ -1671,7 +1667,7 @@ class SendCampaignSMS extends Model
                                 $get_sms_status = curl_error($ch);
                             } else {
                                 if (str_contains($get_sms_status, 'OK')) {
-                                    $get_sms_status = 'Delivered|'.str_replace('OK: ', '', $get_sms_status);
+                                    $get_sms_status = 'Delivered|' . str_replace('OK: ', '', $get_sms_status);
                                 } else {
 
                                     switch ($get_sms_status) {
@@ -1730,18 +1726,18 @@ class SendCampaignSMS extends Model
                         break;
 
                     case SendingServer::TYPE_FLOWROUTE:
-                        $phone     = str_replace(['+', '(', ')', '-', " "], '', $phone);
+                        $phone = str_replace(['+', '(', ')', '-', " "], '', $phone);
                         $sender_id = str_replace(['+', '(', ')', '-', " "], '', $data['sender_id']);
 
                         $sms = [
-                                "from" => $sender_id,
-                                "to"   => $phone,
-                                "body" => $message,
+                            "from" => $sender_id,
+                            "to" => $phone,
+                            "body" => $message,
                         ];
 
                         try {
 
-                            $headers   = [];
+                            $headers = [];
                             $headers[] = 'Content-Type: application/vnd.api+json';
 
                             $ch = curl_init();
@@ -1751,7 +1747,7 @@ class SendCampaignSMS extends Model
                             curl_setopt($ch, CURLOPT_POST, 1);
                             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($sms));
                             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                            curl_setopt($ch, CURLOPT_USERPWD, $sending_server->access_key.':'.$sending_server->api_secret);
+                            curl_setopt($ch, CURLOPT_USERPWD, $sending_server->access_key . ':' . $sending_server->api_secret);
 
                             $response = curl_exec($ch);
                             curl_close($ch);
@@ -1764,10 +1760,10 @@ class SendCampaignSMS extends Model
                                 } elseif (array_key_exists('errors', $get_response)) {
                                     $get_sms_status = $get_response['errors'][0]['detail'];
                                 } else {
-                                    $get_sms_status = (string) $response;
+                                    $get_sms_status = (string)$response;
                                 }
                             } else {
-                                $get_sms_status = (string) $response;
+                                $get_sms_status = (string)$response;
                             }
 
                         } catch (Exception $ex) {
@@ -1778,12 +1774,12 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_CHEAPGLOBALSMS:
 
                         $parameters = [
-                                'sub_account'      => $sending_server->username,
-                                'sub_account_pass' => $sending_server->password,
-                                'action'           => 'send_sms',
-                                'sender_id'        => $data['sender_id'],
-                                'recipients'       => $phone,
-                                'message'          => $message,
+                            'sub_account' => $sending_server->username,
+                            'sub_account_pass' => $sending_server->password,
+                            'action' => 'send_sms',
+                            'sender_id' => $data['sender_id'],
+                            'recipients' => $phone,
+                            'message' => $message,
                         ];
 
                         if ($sms_type == 'unicode') {
@@ -1796,7 +1792,7 @@ class SendCampaignSMS extends Model
                         curl_setopt($ch, CURLOPT_POSTFIELDS, $parameters);
                         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-                        $response      = curl_exec($ch);
+                        $response = curl_exec($ch);
                         $response_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
                         if ($response_code != 200) {
                             $get_sms_status = curl_error($ch);
@@ -1808,10 +1804,10 @@ class SendCampaignSMS extends Model
 
                                 if ($json === null) {
                                     $get_sms_status = "INVALID RESPONSE: $response";
-                                } elseif ( ! empty($json['error'])) {
+                                } elseif (!empty($json['error'])) {
                                     $get_sms_status = $json['error'];
                                 } else {
-                                    $get_sms_status = 'Delivered|'.$json['batch_id'];
+                                    $get_sms_status = 'Delivered|' . $json['batch_id'];
                                 }
                             }
                         }
@@ -1820,10 +1816,10 @@ class SendCampaignSMS extends Model
 
                     case SendingServer::TYPE_ELITBUZZBD:
                         $parameters = [
-                                'api_key'  => $sending_server->api_key,
-                                'contacts' => $phone,
-                                'senderid' => $data['sender_id'],
-                                'msg'      => $message,
+                            'api_key' => $sending_server->api_key,
+                            'contacts' => $phone,
+                            'senderid' => $data['sender_id'],
+                            'msg' => $message,
                         ];
 
                         if ($sms_type == 'unicode' || $sms_type == 'arabic') {
@@ -1832,7 +1828,7 @@ class SendCampaignSMS extends Model
                             $parameters['type'] = 'text';
                         }
 
-                        $gateway_url = $gateway_url.'?'.http_build_query($parameters);
+                        $gateway_url = $gateway_url . '?' . http_build_query($parameters);
 
 
                         try {
@@ -1918,9 +1914,9 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_GREENWEBBD:
 
                         $parameters = [
-                                'to'      => $phone,
-                                'message' => $message,
-                                'token'   => $sending_server->api_token,
+                            'to' => $phone,
+                            'message' => $message,
+                            'token' => $sending_server->api_token,
                         ];
 
                         $ch = curl_init();
@@ -1942,7 +1938,7 @@ class SendCampaignSMS extends Model
                                     $get_sms_status = $output[0]['statusmsg'];
                                 }
                             } else {
-                                $get_sms_status = (string) $response;
+                                $get_sms_status = (string)$response;
                             }
                         }
 
@@ -1952,14 +1948,14 @@ class SendCampaignSMS extends Model
 
                     case SendingServer::TYPE_HABLAMEV2:
                         $parameters = [
-                                'account'           => $sending_server->c1,
-                                'apiKey'            => $sending_server->api_key,
-                                'token'             => $sending_server->api_token,
-                                'toNumber'          => $phone,
-                                'sms'               => $message,
-                                'isPriority'        => 1,
-                                'flash'             => 0,
-                                'request_dlvr_rcpt' => 0,
+                            'account' => $sending_server->c1,
+                            'apiKey' => $sending_server->api_key,
+                            'token' => $sending_server->api_token,
+                            'toNumber' => $phone,
+                            'sms' => $message,
+                            'isPriority' => 1,
+                            'flash' => 0,
+                            'request_dlvr_rcpt' => 0,
                         ];
 
                         if (isset($data['sender_id'])) {
@@ -2005,17 +2001,17 @@ class SendCampaignSMS extends Model
                         }
 
                         $parameters = http_build_query([
-                                'username' => $sending_server->username,
-                                'password' => $sending_server->password,
-                                'to'       => $phone,
-                                'text'     => $message,
-                                'type'     => $data_encoding,
-                                'from'     => $sender_id,
+                            'username' => $sending_server->username,
+                            'password' => $sending_server->password,
+                            'to' => $phone,
+                            'text' => $message,
+                            'type' => $data_encoding,
+                            'from' => $sender_id,
                         ]);
 
                         try {
 
-                            $sms_sent_to_user = $gateway_url."?".$parameters;
+                            $sms_sent_to_user = $gateway_url . "?" . $parameters;
 
                             $ch = curl_init();
 
@@ -2029,21 +2025,21 @@ class SendCampaignSMS extends Model
 
                             $result = explode(":", $get_response);
                             if (isset($result) && is_array($result) && count($result) > 0 && $result['0'] == 'OK') {
-                                $get_sms_status = 'Delivered|'.trim($result['1']);
+                                $get_sms_status = 'Delivered|' . trim($result['1']);
                             } else {
 
                                 $data_code = filter_var($get_response, FILTER_SANITIZE_NUMBER_INT);
 
                                 $get_sms_status = match ($data_code) {
-                                    '1001'  => 'Invalid URL. This means that one of the parameters was not provided or left blank',
-                                    '1002'  => 'Invalid username or password parameter',
-                                    '1003'  => 'Invalid type parameter',
-                                    '1004'  => 'Invalid message',
-                                    '1005'  => 'Invalid mobile number',
-                                    '1006'  => 'Invalid Sender name',
-                                    '1007'  => 'Insufficient credit',
-                                    '1008'  => 'Internal error',
-                                    '1009'  => 'Service not available',
+                                    '1001' => 'Invalid URL. This means that one of the parameters was not provided or left blank',
+                                    '1002' => 'Invalid username or password parameter',
+                                    '1003' => 'Invalid type parameter',
+                                    '1004' => 'Invalid message',
+                                    '1005' => 'Invalid mobile number',
+                                    '1006' => 'Invalid Sender name',
+                                    '1007' => 'Insufficient credit',
+                                    '1008' => 'Internal error',
+                                    '1009' => 'Service not available',
                                     default => 'Unknown error',
                                 };
 
@@ -2057,16 +2053,16 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_ZAMTELCOZM:
 
                         $parameters = [
-                                'key'      => $sending_server->api_key,
-                                'senderid' => $data['sender_id'],
-                                'contacts' => $phone,
-                                'message'  => $message,
+                            'key' => $sending_server->api_key,
+                            'senderid' => $data['sender_id'],
+                            'contacts' => $phone,
+                            'message' => $message,
                         ];
 
                         $parameters = http_build_query($parameters);
 
                         try {
-                            $gateway_url = $gateway_url.'?'.$parameters;
+                            $gateway_url = $gateway_url . '?' . $parameters;
 
 
                             $ch = curl_init();
@@ -2104,8 +2100,8 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_CELLCAST:
 
                         $parameters = [
-                                'sms_text' => $message,
-                                'numbers'  => [$phone],
+                            'sms_text' => $message,
+                            'numbers' => [$phone],
                         ];
 
                         if (isset($data['sender_id'])) {
@@ -2115,9 +2111,9 @@ class SendCampaignSMS extends Model
                         try {
 
                             $headers = [
-                                    'APPKEY:'.$sending_server->api_key,
-                                    'Accept: application/json',
-                                    'Content-Type: application/json',
+                                'APPKEY:' . $sending_server->api_key,
+                                'Accept: application/json',
+                                'Content-Type: application/json',
                             ];
 
                             $ch = curl_init(); //open connection
@@ -2127,7 +2123,7 @@ class SendCampaignSMS extends Model
                             curl_setopt($ch, CURLOPT_POST, count($parameters));
                             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($parameters));
                             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                            if ( ! $result = curl_exec($ch)) {
+                            if (!$result = curl_exec($ch)) {
                                 $get_sms_status = json_decode(curl_error($ch));
                             } else {
                                 $output = json_decode($result, true);
@@ -2149,18 +2145,18 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_AFRICASTALKING:
 
                         $parameters = [
-                                'username' => $sending_server->username,
-                                'message'  => $message,
-                                'to'       => $phone,
-                                'from'     => $data['sender_id'],
+                            'username' => $sending_server->username,
+                            'message' => $message,
+                            'to' => $phone,
+                            'from' => $data['sender_id'],
                         ];
 
                         try {
 
                             $headers = [
-                                    'apiKey:'.$sending_server->api_key,
-                                    'Accept: application/json',
-                                    'Content-Type: application/x-www-form-urlencoded',
+                                'apiKey:' . $sending_server->api_key,
+                                'Accept: application/json',
+                                'Content-Type: application/x-www-form-urlencoded',
                             ];
 
                             $ch = curl_init(); //open connection
@@ -2171,14 +2167,14 @@ class SendCampaignSMS extends Model
                             curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($parameters));
                             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-                            if ( ! $result = curl_exec($ch)) {
+                            if (!$result = curl_exec($ch)) {
                                 $get_sms_status = json_decode(curl_error($ch));
                             } else {
                                 $output = json_decode($result, true);
 
                                 if (isset($output) && is_array($output) && array_key_exists('SMSMessageData', $output)) {
                                     if (str_contains($output['SMSMessageData']['Message'], 'Sent')) {
-                                        $get_sms_status = 'Delivered|'.$output['SMSMessageData']['Recipients']['0']['messageId'];
+                                        $get_sms_status = 'Delivered|' . $output['SMSMessageData']['Recipients']['0']['messageId'];
                                     } else {
                                         $get_sms_status = $output['SMSMessageData']['Message'];
                                     }
@@ -2194,11 +2190,11 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_CAIHCOM:
 
                         $parameters = [
-                                'toNumber'  => $phone,
-                                'message'   => $message,
-                                'requestId' => time(),
-                                'sendType'  => 'S0001',
-                                'token'     => $sending_server->api_token,
+                            'toNumber' => $phone,
+                            'message' => $message,
+                            'requestId' => time(),
+                            'sendType' => 'S0001',
+                            'token' => $sending_server->api_token,
                         ];
 
                         if (isset($data['sender_id'])) {
@@ -2206,13 +2202,13 @@ class SendCampaignSMS extends Model
                         }
                         $parameters = json_encode($parameters);
 
-                        $md5Sum = md5($parameters.$sending_server->c1);
+                        $md5Sum = md5($parameters . $sending_server->c1);
 
                         try {
 
                             $headers = [
-                                    'Content-Type:application/json;charset=UTF-8',
-                                    'md5Sum: '.$md5Sum,
+                                'Content-Type:application/json;charset=UTF-8',
+                                'md5Sum: ' . $md5Sum,
                             ];
 
                             $ch = curl_init(); //open connection
@@ -2222,14 +2218,14 @@ class SendCampaignSMS extends Model
                             curl_setopt($ch, CURLOPT_POSTFIELDS, $parameters);
                             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-                            if ( ! $result = curl_exec($ch)) {
+                            if (!$result = curl_exec($ch)) {
                                 $get_sms_status = json_decode(curl_error($ch));
                             } else {
                                 $output = json_decode($result, true);
 
                                 if (isset($output) && is_array($output) && array_key_exists('success', $output) && array_key_exists('desc', $output)) {
                                     if ($output['success']) {
-                                        $get_sms_status = 'Delivered|'.$output['messageId'];
+                                        $get_sms_status = 'Delivered|' . $output['messageId'];
                                     } else {
                                         $get_sms_status = $output['desc'];
                                     }
@@ -2245,18 +2241,18 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_KECCELSMS:
 
                         $parameters = [
-                                'pass'   => $sending_server->password,
-                                'id'     => $sending_server->application_id,
-                                'from'   => $data['sender_id'],
-                                'to'     => $phone,
-                                'text'   => $message,
-                                'dlrreq' => 1,
+                            'pass' => $sending_server->password,
+                            'id' => $sending_server->application_id,
+                            'from' => $data['sender_id'],
+                            'to' => $phone,
+                            'text' => $message,
+                            'dlrreq' => 1,
                         ];
 
                         $parameters = http_build_query($parameters);
 
                         try {
-                            $gateway_url = $gateway_url.'?user=&'.$parameters;
+                            $gateway_url = $gateway_url . '?user=&' . $parameters;
 
                             $ch = curl_init();
                             curl_setopt($ch, CURLOPT_URL, $gateway_url);
@@ -2271,7 +2267,7 @@ class SendCampaignSMS extends Model
                                 $get_sms_status = curl_error($ch);
                             } else {
                                 if (is_numeric($get_sms_status)) {
-                                    $get_sms_status = 'Delivered|'.$get_sms_status;
+                                    $get_sms_status = 'Delivered|' . $get_sms_status;
                                 } else {
                                     $get_sms_status = 'Invalid gateway information';
                                 }
@@ -2287,10 +2283,10 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_JOHNSONCONNECT:
 
                         $parameters = [
-                                'appkey'    => $sending_server->api_key,
-                                'secretkey' => $sending_server->api_secret,
-                                'phone'     => $phone,
-                                'content'   => $message,
+                            'appkey' => $sending_server->api_key,
+                            'secretkey' => $sending_server->api_secret,
+                            'phone' => $phone,
+                            'content' => $message,
                         ];
 
                         if (isset($data['sender_id'])) {
@@ -2300,7 +2296,7 @@ class SendCampaignSMS extends Model
                         $parameters = http_build_query($parameters);
 
                         try {
-                            $gateway_url = $gateway_url.'?'.$parameters;
+                            $gateway_url = $gateway_url . '?' . $parameters;
 
                             $ch = curl_init();
                             curl_setopt($ch, CURLOPT_URL, $gateway_url);
@@ -2319,12 +2315,12 @@ class SendCampaignSMS extends Model
 
                                 if (isset($output) && is_array($output) && array_key_exists('code', $output) && array_key_exists('result', $output)) {
                                     if ($output['code'] == 0) {
-                                        $get_sms_status = 'Delivered|'.$output['messageid'];
+                                        $get_sms_status = 'Delivered|' . $output['messageid'];
                                     } else {
                                         $get_sms_status = $output['result'];
                                     }
                                 } else {
-                                    $get_sms_status = (string) $result;
+                                    $get_sms_status = (string)$result;
                                 }
                             }
 
@@ -2339,12 +2335,12 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_SMSALA:
 
                         $parameters = [
-                                'api_id'       => $sending_server->auth_id,
-                                'api_password' => $sending_server->password,
-                                'sms_type'     => 'P',
-                                'phonenumber'  => $phone,
-                                'sender_id'    => $data['sender_id'],
-                                'textmessage'  => $message,
+                            'api_id' => $sending_server->auth_id,
+                            'api_password' => $sending_server->password,
+                            'sms_type' => 'P',
+                            'phonenumber' => $phone,
+                            'sender_id' => $data['sender_id'],
+                            'textmessage' => $message,
                         ];
 
                         if ($sms_type == 'unicode' || $sms_type == 'arabic') {
@@ -2353,7 +2349,7 @@ class SendCampaignSMS extends Model
                             $parameters['encoding'] = 'T';
                         }
 
-                        $gateway_url = $gateway_url.'?'.http_build_query($parameters);
+                        $gateway_url = $gateway_url . '?' . http_build_query($parameters);
 
                         $ch = curl_init();
                         curl_setopt($ch, CURLOPT_URL, $gateway_url);
@@ -2370,7 +2366,7 @@ class SendCampaignSMS extends Model
 
                             if (is_array($get_data) && array_key_exists('status', $get_data)) {
                                 if ($get_data['status'] == 'S') {
-                                    $get_sms_status = 'Delivered|'.$get_data['message_id'];
+                                    $get_sms_status = 'Delivered|' . $get_data['message_id'];
                                 } else {
                                     $get_sms_status = $get_data['remarks'];
                                 }
@@ -2382,17 +2378,17 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_TEXT2WORLD:
 
                         $parameters = http_build_query([
-                                'username' => $sending_server->username,
-                                'password' => $sending_server->password,
-                                'type'     => 'TEXT',
-                                'mobile'   => $phone,
-                                'message'  => $message,
-                                'sender'   => $data['sender_id'],
+                            'username' => $sending_server->username,
+                            'password' => $sending_server->password,
+                            'type' => 'TEXT',
+                            'mobile' => $phone,
+                            'message' => $message,
+                            'sender' => $data['sender_id'],
                         ]);
 
                         try {
 
-                            $sms_sent_to_user = $gateway_url."?".$parameters;
+                            $sms_sent_to_user = $gateway_url . "?" . $parameters;
 
                             $ch = curl_init();
 
@@ -2417,18 +2413,18 @@ class SendCampaignSMS extends Model
 
                     case SendingServer::TYPE_ENABLEX:
 
-                        $headers   = [];
+                        $headers = [];
                         $headers[] = "Content-Type: application/json";
-                        $headers[] = "Authorization: Basic ".base64_encode("$sending_server->application_id:$sending_server->api_key");
+                        $headers[] = "Authorization: Basic " . base64_encode("$sending_server->application_id:$sending_server->api_key");
 
                         $parameters = [
-                                'body'        => $message,
-                                'type'        => 'sms',
-                                'campaign_id' => $sending_server->c1,
-                                'template_id' => $sending_server->c2,
-                                'to'          => [
-                                        $phone,
-                                ],
+                            'body' => $message,
+                            'type' => 'sms',
+                            'campaign_id' => $sending_server->c1,
+                            'template_id' => $sending_server->c2,
+                            'to' => [
+                                $phone,
+                            ],
                         ];
 
                         if (isset($data['sender_id'])) {
@@ -2456,12 +2452,12 @@ class SendCampaignSMS extends Model
 
                             if (isset($get_response) && is_array($get_response) && array_key_exists('result', $get_response)) {
                                 if ($get_response['result'] == '0') {
-                                    $get_sms_status = 'Delivered|'.$get_response['job_id'];
+                                    $get_sms_status = 'Delivered|' . $get_response['job_id'];
                                 } else {
                                     $get_sms_status = $get_response['desc'];
                                 }
                             } else {
-                                $get_sms_status = (string) $response;
+                                $get_sms_status = (string)$response;
                             }
 
                         } catch (Exception $ex) {
@@ -2475,11 +2471,11 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_REALSMS:
 
                         $parameters = [
-                                'apikey'   => $sending_server->api_key,
-                                'apitoken' => $sending_server->api_token,
-                                'to'       => $phone,
-                                'from'     => $data['sender_id'],
-                                'text'     => $message,
+                            'apikey' => $sending_server->api_key,
+                            'apitoken' => $sending_server->api_token,
+                            'to' => $phone,
+                            'from' => $data['sender_id'],
+                            'text' => $message,
                         ];
 
 
@@ -2489,8 +2485,8 @@ class SendCampaignSMS extends Model
                             $parameters['type'] = 'sms';
                         }
 
-                        $parameters  = http_build_query($parameters);
-                        $gateway_url = $gateway_url.'?sendsms&'.$parameters;
+                        $parameters = http_build_query($parameters);
+                        $gateway_url = $gateway_url . '?sendsms&' . $parameters;
 
                         $ch = curl_init();
                         curl_setopt($ch, CURLOPT_URL, $gateway_url);
@@ -2518,16 +2514,16 @@ class SendCampaignSMS extends Model
 
                     case SendingServer::TYPE_CALLR:
 
-                        $random_data        = str_random(10);
-                        $options            = new stdClass();
+                        $random_data = str_random(10);
+                        $options = new stdClass();
                         $options->user_data = $random_data;
 
                         $phone = str_replace(['+', '(', ')', '-', " "], '', $phone);
 
                         $parameters = [
-                                'to'      => '+'.$phone,
-                                'body'    => $message,
-                                'options' => $options,
+                            'to' => '+' . $phone,
+                            'body' => $message,
+                            'options' => $options,
                         ];
 
                         if (isset($data['sender_id'])) {
@@ -2544,8 +2540,8 @@ class SendCampaignSMS extends Model
                             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
                             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 
-                            $headers   = [];
-                            $headers[] = "Authorization: Basic ".base64_encode("$sending_server->username:$sending_server->password");
+                            $headers = [];
+                            $headers[] = "Authorization: Basic " . base64_encode("$sending_server->username:$sending_server->password");
                             $headers[] = "Content-Type: application/json";
                             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
@@ -2559,7 +2555,7 @@ class SendCampaignSMS extends Model
                                 if ($result['status'] == 'error') {
                                     $get_sms_status = $result['data']['message'];
                                 } else {
-                                    $get_sms_status = 'Delivered|'.$random_data;
+                                    $get_sms_status = 'Delivered|' . $random_data;
                                 }
 
                             } else {
@@ -2574,12 +2570,12 @@ class SendCampaignSMS extends Model
 
                     case SendingServer::TYPE_SKYETEL:
                         $parameters = [
-                                'to'   => $phone,
-                                'text' => $message,
+                            'to' => $phone,
+                            'text' => $message,
                         ];
 
                         if (isset($data['sender_id'])) {
-                            $gateway_url .= "?from=".$data['sender_id'];
+                            $gateway_url .= "?from=" . $data['sender_id'];
                         }
 
                         try {
@@ -2592,8 +2588,8 @@ class SendCampaignSMS extends Model
                             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
                             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 
-                            $headers   = [];
-                            $headers[] = "Authorization: Basic ".base64_encode("$sending_server->account_sid:$sending_server->api_secret");
+                            $headers = [];
+                            $headers[] = "Authorization: Basic " . base64_encode("$sending_server->account_sid:$sending_server->api_secret");
                             $headers[] = "Content-Type: application/json";
                             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
@@ -2622,12 +2618,12 @@ class SendCampaignSMS extends Model
                     case 'LTR':
 
                         $parameters = [
-                                'username' => $sending_server->username,
-                                'password' => $sending_server->password,
-                                'api_key'  => $sending_server->api_key,
-                                'phone'    => $phone,
-                                'message'  => $message,
-                                'sender'   => $data['sender_id'],
+                            'username' => $sending_server->username,
+                            'password' => $sending_server->password,
+                            'api_key' => $sending_server->api_key,
+                            'phone' => $phone,
+                            'message' => $message,
+                            'sender' => $data['sender_id'],
                         ];
 
                         if ($sms_type == 'unicode') {
@@ -2638,7 +2634,7 @@ class SendCampaignSMS extends Model
 
                         try {
 
-                            $sms_sent_to_user = $gateway_url."?".http_build_query($parameters);
+                            $sms_sent_to_user = $gateway_url . "?" . http_build_query($parameters);
 
                             $ch = curl_init();
 
@@ -2667,12 +2663,12 @@ class SendCampaignSMS extends Model
                     case 'Bulksmsplans':
 
                         $parameters = [
-                                'api_id'       => $sending_server->auth_id,
-                                'api_password' => $sending_server->password,
-                                'sms_type'     => $sending_server->route,
-                                'number'       => $phone,
-                                'message'      => $message,
-                                'sender'       => $data['sender_id'],
+                            'api_id' => $sending_server->auth_id,
+                            'api_password' => $sending_server->password,
+                            'sms_type' => $sending_server->route,
+                            'number' => $phone,
+                            'message' => $message,
+                            'sender' => $data['sender_id'],
                         ];
 
                         if ($sms_type == 'unicode') {
@@ -2683,7 +2679,7 @@ class SendCampaignSMS extends Model
 
                         try {
 
-                            $sms_sent_to_user = $gateway_url."?".http_build_query($parameters);
+                            $sms_sent_to_user = $gateway_url . "?" . http_build_query($parameters);
 
                             $ch = curl_init();
 
@@ -2717,11 +2713,11 @@ class SendCampaignSMS extends Model
 
                     case 'Sinch':
                         $parameters = [
-                                'from' => urlencode($data['sender_id']),
-                                'to'   => [
-                                        $phone,
-                                ],
-                                'body' => $message,
+                            'from' => urlencode($data['sender_id']),
+                            'to' => [
+                                $phone,
+                            ],
+                            'body' => $message,
                         ];
 
                         try {
@@ -2733,7 +2729,7 @@ class SendCampaignSMS extends Model
                             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($parameters));
                             curl_setopt($ch, CURLOPT_POST, 1);
 
-                            $headers   = [];
+                            $headers = [];
                             $headers[] = "Authorization: Bearer $sending_server->api_token";
                             $headers[] = "Content-Type: application/json";
                             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -2744,17 +2740,17 @@ class SendCampaignSMS extends Model
                             $result = json_decode($result, true);
 
                             if (is_array($result) && array_key_exists('id', $result)) {
-                                $batch_id  = $result['id'];
+                                $batch_id = $result['id'];
                                 $recipient = $result['to'][0];
 
                                 $curl = curl_init();
 
-                                curl_setopt($curl, CURLOPT_URL, $gateway_url."/".$batch_id."/delivery_report/".$recipient);
+                                curl_setopt($curl, CURLOPT_URL, $gateway_url . "/" . $batch_id . "/delivery_report/" . $recipient);
                                 curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
                                 curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
 
 
-                                $headers   = [];
+                                $headers = [];
                                 $headers[] = "Authorization: Bearer $sending_server->api_token";
                                 curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 
@@ -2783,19 +2779,19 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_D7NETWORKS:
 
                         $parameters = [
-                                'messages'        => [
-                                        [
-                                                'channel'     => 'sms',
-                                                'recipients'  => [$phone],
-                                                'content'     => $message,
-                                                'msg_type'    => 'text',
-                                                'data_coding' => 'text',
-                                        ],
+                            'messages' => [
+                                [
+                                    'channel' => 'sms',
+                                    'recipients' => [$phone],
+                                    'content' => $message,
+                                    'msg_type' => 'text',
+                                    'data_coding' => 'text',
                                 ],
-                                'message_globals' => [
-                                        'originator' => $data['sender_id'],
-                                        'report_url' => route('dlr.d7networks'),
-                                ],
+                            ],
+                            'message_globals' => [
+                                'originator' => $data['sender_id'],
+                                'report_url' => route('dlr.d7networks'),
+                            ],
                         ];
 
 
@@ -2813,7 +2809,7 @@ class SendCampaignSMS extends Model
                             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($parameters));
                             curl_setopt($ch, CURLOPT_POST, 1);
 
-                            $headers   = [];
+                            $headers = [];
                             $headers[] = "Authorization: Bearer $sending_server->api_token";
                             $headers[] = "Content-Type: application/json";
                             $headers[] = "Accept: application/json";
@@ -2826,7 +2822,7 @@ class SendCampaignSMS extends Model
 
                             if (is_array($result) && array_key_exists('status', $result)) {
                                 if ($result['status'] == 'accepted') {
-                                    $get_sms_status = 'Delivered|'.$result['request_id'];
+                                    $get_sms_status = 'Delivered|' . $result['request_id'];
                                 } else {
                                     $get_sms_status = $result['status'];
                                 }
@@ -2848,35 +2844,35 @@ class SendCampaignSMS extends Model
                         $random_data = str_random(10);
 
                         $parameters = [
-                                'messages' => [
-                                        'authentication' => [
-                                                'productToken' => $sending_server->api_token,
-                                        ],
-                                        'msg'            => [
-                                                [
-                                                        'from'                        => $data['sender_id'],
-                                                        'body'                        => [
-                                                                'content' => $message,
-                                                                'type'    => 'auto',
-                                                        ],
-                                                        'minimumNumberOfMessageParts' => 1,
-                                                        'maximumNumberOfMessageParts' => 8,
-                                                        'to'                          => [
-                                                                [
-                                                                        'number' => '+'.$phone,
-                                                                ],
-                                                        ],
-                                                        'allowedChannels'             => [
-                                                                'SMS',
-                                                        ],
-                                                        'reference'                   => $random_data,
-                                                ],
-                                        ],
+                            'messages' => [
+                                'authentication' => [
+                                    'productToken' => $sending_server->api_token,
                                 ],
+                                'msg' => [
+                                    [
+                                        'from' => $data['sender_id'],
+                                        'body' => [
+                                            'content' => $message,
+                                            'type' => 'auto',
+                                        ],
+                                        'minimumNumberOfMessageParts' => 1,
+                                        'maximumNumberOfMessageParts' => 8,
+                                        'to' => [
+                                            [
+                                                'number' => '+' . $phone,
+                                            ],
+                                        ],
+                                        'allowedChannels' => [
+                                            'SMS',
+                                        ],
+                                        'reference' => $random_data,
+                                    ],
+                                ],
+                            ],
                         ];
 
                         $headers = [
-                                'Content-Type:application/json;charset=UTF-8',
+                            'Content-Type:application/json;charset=UTF-8',
                         ];
 
                         $ch = curl_init(); //open connection
@@ -2886,19 +2882,19 @@ class SendCampaignSMS extends Model
                         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($parameters));
                         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-                        if ( ! $result = curl_exec($ch)) {
+                        if (!$result = curl_exec($ch)) {
                             $get_sms_status = json_decode(curl_error($ch));
                         } else {
                             $output = json_decode($result, true);
 
                             if (isset($output) && is_array($output) && array_key_exists('errorCode', $output) && array_key_exists('details', $output)) {
                                 if ($output['errorCode'] == 0) {
-                                    $get_sms_status = 'Delivered|'.$random_data;
+                                    $get_sms_status = 'Delivered|' . $random_data;
                                 } else {
                                     $get_sms_status = $output['details'];
                                 }
                             } else {
-                                $get_sms_status = (string) $output;
+                                $get_sms_status = (string)$output;
                             }
                         }
                         curl_close($ch);
@@ -2906,20 +2902,20 @@ class SendCampaignSMS extends Model
 
                     case 'PitchWink':
                         $parameters = [
-                                'version'        => '4.00',
-                                'credential'     => $sending_server->c1,
-                                'token'          => $sending_server->api_token,
-                                'function'       => 'SEND_MESSAGE',
-                                'principal_user' => "",
-                                'messages'       => [
-                                        [
-                                                'id_extern'    => $data['sender_id'],
-                                                'aux_user'     => uniqid(),
-                                                'mobile'       => $phone,
-                                                'send_project' => 'N',
-                                                'message'      => $message,
-                                        ],
+                            'version' => '4.00',
+                            'credential' => $sending_server->c1,
+                            'token' => $sending_server->api_token,
+                            'function' => 'SEND_MESSAGE',
+                            'principal_user' => "",
+                            'messages' => [
+                                [
+                                    'id_extern' => $data['sender_id'],
+                                    'aux_user' => uniqid(),
+                                    'mobile' => $phone,
+                                    'send_project' => 'N',
+                                    'message' => $message,
                                 ],
+                            ],
                         ];
 
                         try {
@@ -2930,7 +2926,7 @@ class SendCampaignSMS extends Model
                             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($parameters));
                             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-                            if ( ! $result = curl_exec($ch)) {
+                            if (!$result = curl_exec($ch)) {
                                 $get_sms_status = curl_error($ch);
                             } else {
                                 $output = json_decode($result, true);
@@ -2996,7 +2992,7 @@ class SendCampaignSMS extends Model
                                     }
 
                                 } else {
-                                    $get_sms_status = (string) $output;
+                                    $get_sms_status = (string)$output;
                                 }
                             }
                             curl_close($ch);
@@ -3008,14 +3004,14 @@ class SendCampaignSMS extends Model
 
                     case 'Wavy':
                         $parameters = [
-                                "destination" => $phone,
-                                "messageText" => $message,
+                            "destination" => $phone,
+                            "messageText" => $message,
                         ];
 
                         $headers = [
-                                "authenticationtoken: $sending_server->auth_token",
-                                "username: $sending_server->username",
-                                "content-type: application/json",
+                            "authenticationtoken: $sending_server->auth_token",
+                            "username: $sending_server->username",
+                            "content-type: application/json",
                         ];
 
                         $ch = curl_init();
@@ -3049,17 +3045,17 @@ class SendCampaignSMS extends Model
 
                     case 'Solucoesdigitais':
                         $parameters = [
-                                'usuario'              => $sending_server->username,
-                                'senha'                => $sending_server->password,
-                                'centro_custo_interno' => $sending_server->c1,
-                                'id_campanha'          => str_random(10),
-                                'numero'               => $phone,
-                                'mensagem'             => $message,
+                            'usuario' => $sending_server->username,
+                            'senha' => $sending_server->password,
+                            'centro_custo_interno' => $sending_server->c1,
+                            'id_campanha' => str_random(10),
+                            'numero' => $phone,
+                            'mensagem' => $message,
                         ];
 
                         try {
 
-                            $sms_sent_to_user = $gateway_url."?".http_build_query($parameters);
+                            $sms_sent_to_user = $gateway_url . "?" . http_build_query($parameters);
 
                             $ch = curl_init();
 
@@ -3094,12 +3090,12 @@ class SendCampaignSMS extends Model
 
                     case 'SmartVision':
                         $parameters = [
-                                'key'      => $sending_server->api_key,
-                                'senderid' => $data['sender_id'],
-                                'contacts' => $phone,
-                                'campaign' => '6940',
-                                'routeid'  => '39',
-                                'msg'      => $message,
+                            'key' => $sending_server->api_key,
+                            'senderid' => $data['sender_id'],
+                            'contacts' => $phone,
+                            'campaign' => '6940',
+                            'routeid' => '39',
+                            'msg' => $message,
                         ];
 
                         if ($sms_type == 'unicode') {
@@ -3110,7 +3106,7 @@ class SendCampaignSMS extends Model
 
                         try {
 
-                            $sms_sent_to_user = $gateway_url."?".http_build_query($parameters);
+                            $sms_sent_to_user = $gateway_url . "?" . http_build_query($parameters);
 
                             $ch = curl_init();
 
@@ -3169,11 +3165,11 @@ class SendCampaignSMS extends Model
                     case 'ZipComIo':
 
                         $parameters = [
-                                'to'        => $phone,
-                                'from'      => $data['sender_id'],
-                                'content'   => $message,
-                                'type'      => 'sms',
-                                'simulated' => true,
+                            'to' => $phone,
+                            'from' => $data['sender_id'],
+                            'content' => $message,
+                            'type' => 'sms',
+                            'simulated' => true,
                         ];
 
                         try {
@@ -3185,7 +3181,7 @@ class SendCampaignSMS extends Model
                             curl_setopt($ch, CURLOPT_POST, 1);
 
 
-                            $headers   = [];
+                            $headers = [];
                             $headers[] = "x-api-key: $sending_server->api_key";
                             $headers[] = "Content-Type: application/json";
                             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -3211,21 +3207,21 @@ class SendCampaignSMS extends Model
                     case 'GlobalSMSCN':
 
                         $time = time();
-                        $sign = md5($sending_server->api_key.$sending_server->api_secret.$time);
+                        $sign = md5($sending_server->api_key . $sending_server->api_secret . $time);
 
                         $parameters = [
-                                'appId'   => $sending_server->application_id,
-                                'numbers' => $phone,
-                                'content' => $message,
+                            'appId' => $sending_server->application_id,
+                            'numbers' => $phone,
+                            'content' => $message,
                         ];
 
                         if ($data['sender_id']) {
                             $parameters['senderID'] = $data['sender_id'];
                         }
 
-                        $gateway_url = $gateway_url.'?'.http_build_query($parameters);
+                        $gateway_url = $gateway_url . '?' . http_build_query($parameters);
 
-                        $headers   = [];
+                        $headers = [];
                         $headers[] = "Sign: $sign";
                         $headers[] = "Timestamp: $time";
                         $headers[] = "Api-Key: $sending_server->api_key";
@@ -3323,17 +3319,17 @@ class SendCampaignSMS extends Model
                         $curl = curl_init();
 
                         curl_setopt_array($curl, [
-                                CURLOPT_URL            => 'https://api.web2sms237.com/token',
-                                CURLOPT_RETURNTRANSFER => true,
-                                CURLOPT_ENCODING       => '',
-                                CURLOPT_MAXREDIRS      => 10,
-                                CURLOPT_TIMEOUT        => 0,
-                                CURLOPT_FOLLOWLOCATION => true,
-                                CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
-                                CURLOPT_CUSTOMREQUEST  => 'POST',
-                                CURLOPT_HTTPHEADER     => [
-                                        'Authorization: Basic '.base64_encode($sending_server->api_key.':'.$sending_server->api_secret),
-                                ],
+                            CURLOPT_URL => 'https://api.web2sms237.com/token',
+                            CURLOPT_RETURNTRANSFER => true,
+                            CURLOPT_ENCODING => '',
+                            CURLOPT_MAXREDIRS => 10,
+                            CURLOPT_TIMEOUT => 0,
+                            CURLOPT_FOLLOWLOCATION => true,
+                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                            CURLOPT_CUSTOMREQUEST => 'POST',
+                            CURLOPT_HTTPHEADER => [
+                                'Authorization: Basic ' . base64_encode($sending_server->api_key . ':' . $sending_server->api_secret),
+                            ],
                         ]);
 
                         $response = curl_exec($curl);
@@ -3347,32 +3343,32 @@ class SendCampaignSMS extends Model
                             $access_token = $response['access_token'];
 
                             $parameters = [
-                                    'text'      => $message,
-                                    'phone'     => '+'.$phone,
-                                    'sender_id' => $data['sender_id'],
-                                    'flash'     => false,
+                                'text' => $message,
+                                'phone' => '+' . $phone,
+                                'sender_id' => $data['sender_id'],
+                                'flash' => false,
                             ];
 
                             $sendSMS = json_encode($parameters);
-                            $curl    = curl_init();
+                            $curl = curl_init();
 
                             curl_setopt_array($curl, [
-                                    CURLOPT_URL            => $gateway_url,
-                                    CURLOPT_RETURNTRANSFER => true,
-                                    CURLOPT_ENCODING       => "",
-                                    CURLOPT_MAXREDIRS      => 10,
-                                    CURLOPT_TIMEOUT        => 30,
-                                    CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
-                                    CURLOPT_CUSTOMREQUEST  => "POST",
-                                    CURLOPT_POSTFIELDS     => $sendSMS,
-                                    CURLOPT_HTTPHEADER     => [
-                                            "authorization: Bearer ".$access_token,
-                                            "content-type: application/json",
-                                    ],
+                                CURLOPT_URL => $gateway_url,
+                                CURLOPT_RETURNTRANSFER => true,
+                                CURLOPT_ENCODING => "",
+                                CURLOPT_MAXREDIRS => 10,
+                                CURLOPT_TIMEOUT => 30,
+                                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                CURLOPT_CUSTOMREQUEST => "POST",
+                                CURLOPT_POSTFIELDS => $sendSMS,
+                                CURLOPT_HTTPHEADER => [
+                                    "authorization: Bearer " . $access_token,
+                                    "content-type: application/json",
+                                ],
                             ]);
 
                             $response = curl_exec($curl);
-                            $err      = curl_error($curl);
+                            $err = curl_error($curl);
 
                             curl_close($curl);
 
@@ -3403,16 +3399,16 @@ class SendCampaignSMS extends Model
 
                     case 'BongaTech':
                         $parameters = [
-                                'username' => $sending_server->username,
-                                'password' => $sending_server->password,
-                                'phone'    => $phone,
-                                'message'  => $message,
-                                'sender'   => $data['sender_id'],
+                            'username' => $sending_server->username,
+                            'password' => $sending_server->password,
+                            'phone' => $phone,
+                            'message' => $message,
+                            'sender' => $data['sender_id'],
                         ];
 
                         try {
 
-                            $sms_sent_to_user = $gateway_url."?".http_build_query($parameters);
+                            $sms_sent_to_user = $gateway_url . "?" . http_build_query($parameters);
 
                             $ch = curl_init();
 
@@ -3429,7 +3425,7 @@ class SendCampaignSMS extends Model
                                 $get_data = json_decode($get_sms_status, true);
 
                                 if (is_array($get_data) && array_key_exists('status', $get_data)) {
-                                    if ( ! $get_data['status']) {
+                                    if (!$get_data['status']) {
                                         $get_sms_status = $get_data['message'];
                                     } else {
                                         $get_sms_status = 'Delivered';
@@ -3445,14 +3441,14 @@ class SendCampaignSMS extends Model
 
                     case 'FloatSMS':
                         $parameters = [
-                                'key'     => $sending_server->api_key,
-                                'phone'   => $phone,
-                                'message' => $message,
+                            'key' => $sending_server->api_key,
+                            'phone' => $phone,
+                            'message' => $message,
                         ];
 
                         try {
 
-                            $sms_sent_to_user = $gateway_url."?".http_build_query($parameters);
+                            $sms_sent_to_user = $gateway_url . "?" . http_build_query($parameters);
 
                             $ch = curl_init();
 
@@ -3484,20 +3480,20 @@ class SendCampaignSMS extends Model
                     case 'MaisSMS':
 
                         $parameters = [
-                                [
-                                        "numero"      => $phone,
-                                        "mensagem"    => $message,
-                                        "servico"     => 'short',
-                                        "parceiro_id" => $sending_server->c1,
-                                        "codificacao" => "0",
-                                ],
+                            [
+                                "numero" => $phone,
+                                "mensagem" => $message,
+                                "servico" => 'short',
+                                "parceiro_id" => $sending_server->c1,
+                                "codificacao" => "0",
+                            ],
                         ];
 
                         try {
 
                             $headers = [
-                                    'Content-Type:application/json',
-                                    'Authorization: Bearer '.$sending_server->api_token,
+                                'Content-Type:application/json',
+                                'Authorization: Bearer ' . $sending_server->api_token,
                             ];
 
                             $ch = curl_init();
@@ -3517,7 +3513,7 @@ class SendCampaignSMS extends Model
                                     if ($get_response['status'] == '200') {
                                         $get_sms_status = 'Delivered';
                                     } else {
-                                        $get_sms_status = 'Status Code: '.$get_response['status'];
+                                        $get_sms_status = 'Status Code: ' . $get_response['status'];
                                     }
                                 } else {
                                     $get_sms_status = 'Authentication failed';
@@ -3534,12 +3530,12 @@ class SendCampaignSMS extends Model
                     case 'EasySmsXyz':
 
                         $parameters = [
-                                "number"   => $phone,
-                                "message"  => $message,
-                                "schedule" => null,
-                                "key"      => $sending_server->api_key,
-                                "devices"  => "0",
-                                "type"     => "sms",
+                            "number" => $phone,
+                            "message" => $message,
+                            "schedule" => null,
+                            "key" => $sending_server->api_key,
+                            "devices" => "0",
+                            "type" => "sms",
                         ];
 
                         $ch = curl_init();
@@ -3555,7 +3551,7 @@ class SendCampaignSMS extends Model
                             if ($httpCode == 200) {
                                 $json = json_decode($response, true);
 
-                                if ( ! $json) {
+                                if (!$json) {
                                     if (empty($response)) {
                                         $get_sms_status = 'Missing data in request. Please provide all the required information to send messages.';
                                     } else {
@@ -3569,7 +3565,7 @@ class SendCampaignSMS extends Model
                                     }
                                 }
                             } else {
-                                $get_sms_status = 'Error Code: '.$httpCode;
+                                $get_sms_status = 'Error Code: ' . $httpCode;
                             }
                         }
                         curl_close($ch);
@@ -3577,18 +3573,18 @@ class SendCampaignSMS extends Model
 
                     case 'Sozuri':
                         $parameters = [
-                                'project' => $sending_server->project_id,
-                                'from'    => $data['sender_id'],
-                                'to'      => $phone,
-                                'channel' => 'sms',
-                                'message' => $message,
-                                'type'    => 'promotional',
+                            'project' => $sending_server->project_id,
+                            'from' => $data['sender_id'],
+                            'to' => $phone,
+                            'channel' => 'sms',
+                            'message' => $message,
+                            'type' => 'promotional',
                         ];
 
                         $headers = [
-                                "authorization: Bearer $sending_server->api_key",
-                                "Content-Type: application/json",
-                                "Accept: application/json",
+                            "authorization: Bearer $sending_server->api_key",
+                            "Content-Type: application/json",
+                            "Accept: application/json",
                         ];
 
 
@@ -3624,12 +3620,12 @@ class SendCampaignSMS extends Model
                     case 'ExpertTexting':
 
                         $parameters = [
-                                'username'   => $sending_server->username,
-                                'api_key'    => $sending_server->api_key,
-                                'api_secret' => $sending_server->api_secret,
-                                'from'       => $data['sender_id'],
-                                'to'         => $phone,
-                                'text'       => $message,
+                            'username' => $sending_server->username,
+                            'api_key' => $sending_server->api_key,
+                            'api_secret' => $sending_server->api_secret,
+                            'from' => $data['sender_id'],
+                            'to' => $phone,
+                            'text' => $message,
                         ];
 
                         if ($sms_type == 'unicode') {
@@ -3660,7 +3656,7 @@ class SendCampaignSMS extends Model
                                         $get_sms_status = $result['ErrorMessage'];
                                     }
                                 } else {
-                                    $get_sms_status = (string) $response;
+                                    $get_sms_status = (string)$response;
                                 }
                             }
                             curl_close($ch);
@@ -3674,27 +3670,27 @@ class SendCampaignSMS extends Model
                     case 'Ejoin':
 
                         $parameters = [
-                                "type"     => "send-sms",
-                                "task_num" => 1,
-                                "tasks"    => [
-                                        [
-                                                'tid'  => str_random(),
-                                                "from" => $data['sender_id'],
-                                                "to"   => $phone,
-                                                "sms"  => $message,
-                                        ],
+                            "type" => "send-sms",
+                            "task_num" => 1,
+                            "tasks" => [
+                                [
+                                    'tid' => str_random(),
+                                    "from" => $data['sender_id'],
+                                    "to" => $phone,
+                                    "sms" => $message,
                                 ],
+                            ],
                         ];
 
                         $headers = [
-                                'Content-Type: text/plain',
-                                'Authorization: Basic '.base64_encode($sending_server->username.":".$sending_server->password),
+                            'Content-Type: text/plain',
+                            'Authorization: Basic ' . base64_encode($sending_server->username . ":" . $sending_server->password),
                         ];
 
 
                         $ch = curl_init();
                         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-                        curl_setopt($ch, CURLOPT_URL, $gateway_url."?username=".$sending_server->username."&password=".$sending_server->password);
+                        curl_setopt($ch, CURLOPT_URL, $gateway_url . "?username=" . $sending_server->username . "&password=" . $sending_server->password);
                         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
                         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -3724,16 +3720,16 @@ class SendCampaignSMS extends Model
 
                     case 'BulkSMSNigeria':
                         $parameters = [
-                                'api_token' => $sending_server->api_token,
-                                'dnd'       => $sending_server->c1,
-                                'from'      => $data['sender_id'],
-                                'to'        => $phone,
-                                'body'      => $message,
+                            'api_token' => $sending_server->api_token,
+                            'dnd' => $sending_server->c1,
+                            'from' => $data['sender_id'],
+                            'to' => $phone,
+                            'body' => $message,
                         ];
 
                         try {
 
-                            $sms_sent_to_user = $gateway_url."?".http_build_query($parameters);
+                            $sms_sent_to_user = $gateway_url . "?" . http_build_query($parameters);
 
                             $ch = curl_init();
 
@@ -3768,16 +3764,16 @@ class SendCampaignSMS extends Model
                     case 'SendSMSGate':
 
                         $parameters = http_build_query([
-                                'user' => $sending_server->username,
-                                'pwd'  => $sending_server->password,
-                                'dadr' => $phone,
-                                'text' => $message,
-                                'sadr' => $data['sender_id'],
+                            'user' => $sending_server->username,
+                            'pwd' => $sending_server->password,
+                            'dadr' => $phone,
+                            'text' => $message,
+                            'sadr' => $data['sender_id'],
                         ]);
 
                         try {
 
-                            $sms_sent_to_user = $gateway_url."?".$parameters;
+                            $sms_sent_to_user = $gateway_url . "?" . $parameters;
 
                             $ch = curl_init();
 
@@ -3801,15 +3797,15 @@ class SendCampaignSMS extends Model
 
                     case 'Gateway360':
                         $parameters = [
-                                'api_key'  => $sending_server->api_key,
-                                'concat'   => 1,
-                                'messages' => [
-                                        [
-                                                'from' => $data['sender_id'],
-                                                'to'   => $phone,
-                                                'text' => $message,
-                                        ],
+                            'api_key' => $sending_server->api_key,
+                            'concat' => 1,
+                            'messages' => [
+                                [
+                                    'from' => $data['sender_id'],
+                                    'to' => $phone,
+                                    'text' => $message,
                                 ],
+                            ],
                         ];
 
                         try {
@@ -3821,7 +3817,7 @@ class SendCampaignSMS extends Model
                             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($parameters));
                             curl_setopt($ch, CURLOPT_POST, 1);
 
-                            $headers   = [];
+                            $headers = [];
                             $headers[] = 'Content-Type: application/json';
                             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
@@ -3853,16 +3849,16 @@ class SendCampaignSMS extends Model
                     case 'AjuraTech':
 
                         $parameters = [
-                                'apikey'         => $sending_server->api_key,
-                                'secretkey'      => $sending_server->api_secret,
-                                'callerID'       => $data['sender_id'],
-                                'toUser'         => $phone,
-                                'messageContent' => $message,
+                            'apikey' => $sending_server->api_key,
+                            'secretkey' => $sending_server->api_secret,
+                            'callerID' => $data['sender_id'],
+                            'toUser' => $phone,
+                            'messageContent' => $message,
                         ];
 
                         try {
 
-                            $sms_sent_to_user = $gateway_url."?".http_build_query($parameters);
+                            $sms_sent_to_user = $gateway_url . "?" . http_build_query($parameters);
 
                             $ch = curl_init();
 
@@ -3901,18 +3897,18 @@ class SendCampaignSMS extends Model
                     case 'SMSCloudCI':
 
                         $parameters = [
-                                'sender'     => $data['sender_id'],
-                                'content'    => $message,
-                                'recipients' => [$phone],
+                            'sender' => $data['sender_id'],
+                            'content' => $message,
+                            'recipients' => [$phone],
                         ];
 
 
                         try {
 
                             $headers = [
-                                    'Content-Type: application/json',
-                                    'cache-control: no-cache',
-                                    'Authorization: Bearer '.$sending_server->api_token,
+                                'Content-Type: application/json',
+                                'cache-control: no-cache',
+                                'Authorization: Bearer ' . $sending_server->api_token,
                             ];
 
                             $ch = curl_init();
@@ -3935,12 +3931,12 @@ class SendCampaignSMS extends Model
                                         $get_sms_status = $get_response['statusMessage'];
                                     }
                                 } elseif (array_key_exists('id', $get_response)) {
-                                    $get_sms_status = 'Delivered|'.$get_response['id'];
+                                    $get_sms_status = 'Delivered|' . $get_response['id'];
                                 } else {
-                                    $get_sms_status = (string) $response;
+                                    $get_sms_status = (string)$response;
                                 }
                             } else {
-                                $get_sms_status = (string) $response;
+                                $get_sms_status = (string)$response;
                             }
 
                         } catch (Exception $e) {
@@ -3952,11 +3948,11 @@ class SendCampaignSMS extends Model
                     case 'LifetimeSMS':
 
                         $parameters = [
-                                'api_token'  => $sending_server->api_token,
-                                'api_secret' => $sending_server->api_secret,
-                                'from'       => $data['sender_id'],
-                                'message'    => $message,
-                                'to'         => $phone,
+                            'api_token' => $sending_server->api_token,
+                            'api_secret' => $sending_server->api_secret,
+                            'from' => $data['sender_id'],
+                            'message' => $message,
+                            'to' => $phone,
                         ];
 
 
@@ -3977,7 +3973,7 @@ class SendCampaignSMS extends Model
                             if (substr_count($get_sms_status, 'OK') == 1) {
                                 $get_sms_status = explode(':', $get_sms_status);
                                 if (isset($get_sms_status) && is_array($get_sms_status) && array_key_exists('3', $get_sms_status)) {
-                                    $get_sms_status = 'Delivered|'.trim($get_sms_status['3']);
+                                    $get_sms_status = 'Delivered|' . trim($get_sms_status['3']);
                                 } else {
                                     $get_sms_status = 'Delivered';
                                 }
@@ -3993,12 +3989,12 @@ class SendCampaignSMS extends Model
                     case 'PARATUS':
 
                         $parameters = [
-                                'app' => 'ws',
-                                'u'   => $sending_server->username,
-                                'h'   => $sending_server->api_token,
-                                'to'  => $phone,
-                                'op'  => 'pv',
-                                'msg' => $message,
+                            'app' => 'ws',
+                            'u' => $sending_server->username,
+                            'h' => $sending_server->api_token,
+                            'to' => $phone,
+                            'op' => 'pv',
+                            'msg' => $message,
                         ];
 
                         if (isset($data['sender_id'])) {
@@ -4006,7 +4002,7 @@ class SendCampaignSMS extends Model
                         }
 
                         try {
-                            $sms_sent_to_user = $gateway_url."?".http_build_query($parameters);
+                            $sms_sent_to_user = $gateway_url . "?" . http_build_query($parameters);
 
                             $ch = curl_init();
 
@@ -4024,11 +4020,11 @@ class SendCampaignSMS extends Model
                                 $response = json_decode($result, true);
 
                                 if (is_array($response) && array_key_exists('data', $response)) {
-                                    $get_sms_status = 'Delivered|'.$response['data'][0]['smslog_id'];
+                                    $get_sms_status = 'Delivered|' . $response['data'][0]['smslog_id'];
                                 } elseif (is_array($response) && array_key_exists('error', $response)) {
                                     $get_sms_status = $response['error_string'];
                                 } else {
-                                    $get_sms_status = (string) $result;
+                                    $get_sms_status = (string)$result;
                                 }
                             }
                             curl_close($ch);
@@ -4040,21 +4036,21 @@ class SendCampaignSMS extends Model
                     case 'MOOVCI':
 
                         $timestamp = date('Y-m-d H:i:s');
-                        $token     = md5("$sending_server->c1"."$sending_server->api_key".$timestamp);
+                        $token = md5("$sending_server->c1" . "$sending_server->api_key" . $timestamp);
 
                         $parameters = [
-                                'recipients' => $phone,
-                                'sendmode'   => 0,
-                                'message'    => utf8_decode($message),
-                                'smstype'    => 'normal',
-                                'sendername' => $data['sender_id'],
+                            'recipients' => $phone,
+                            'sendmode' => 0,
+                            'message' => utf8_decode($message),
+                            'smstype' => 'normal',
+                            'sendername' => $data['sender_id'],
                         ];
 
                         $headers = [
-                                'apiKey: '.$sending_server->api_key,
-                                'login: '.$sending_server->c1,
-                                'timeStamp: '.$timestamp,
-                                'token: '.$token,
+                            'apiKey: ' . $sending_server->api_key,
+                            'login: ' . $sending_server->c1,
+                            'timeStamp: ' . $timestamp,
+                            'token: ' . $token,
                         ];
 
                         try {
@@ -4084,18 +4080,18 @@ class SendCampaignSMS extends Model
                     case 'LeTexto':
 
                         $parameters = [
-                                'campaignType' => 'SIMPLE',
-                                'sender'       => $data['sender_id'],
-                                'message'      => $message,
-                                'recipients'   => [['phone' => $phone]],
+                            'campaignType' => 'SIMPLE',
+                            'sender' => $data['sender_id'],
+                            'message' => $message,
+                            'recipients' => [['phone' => $phone]],
                         ];
 
 
                         try {
 
                             $headers = [
-                                    'Content-Type: application/json',
-                                    'Authorization: Bearer '.$sending_server->api_token,
+                                'Content-Type: application/json',
+                                'Authorization: Bearer ' . $sending_server->api_token,
                             ];
 
                             $ch = curl_init();
@@ -4118,12 +4114,12 @@ class SendCampaignSMS extends Model
                                         $get_sms_status = $get_response['message'];
                                     }
                                 } elseif (array_key_exists('id', $get_response)) {
-                                    $get_sms_status = 'Delivered|'.$get_response['id'];
+                                    $get_sms_status = 'Delivered|' . $get_response['id'];
                                 } else {
-                                    $get_sms_status = (string) $response;
+                                    $get_sms_status = (string)$response;
                                 }
                             } else {
-                                $get_sms_status = (string) $response;
+                                $get_sms_status = (string)$response;
                             }
 
                         } catch (Exception $e) {
@@ -4134,21 +4130,21 @@ class SendCampaignSMS extends Model
 
                     case 'SMSCarrierEU':
                         $parameters = [
-                                'user'       => $sending_server->username,
-                                'password'   => $sending_server->password,
-                                'sender'     => $data['sender_id'],
-                                'recipients' => $phone,
-                                'dlr'        => 0,
+                            'user' => $sending_server->username,
+                            'password' => $sending_server->password,
+                            'sender' => $data['sender_id'],
+                            'recipients' => $phone,
+                            'dlr' => 0,
                         ];
 
                         if ($sms_type == 'unicode') {
                             $parameters['message'] = $this->sms_unicode($message);
-                            $gateway_url           = 'https://smsc.i-digital-m.com/smsgw/sendunicode.php';
+                            $gateway_url = 'https://smsc.i-digital-m.com/smsgw/sendunicode.php';
                         } else {
                             $parameters['message'] = $message;
                         }
 
-                        $sending_url = $gateway_url.'?'.http_build_query($parameters);
+                        $sending_url = $gateway_url . '?' . http_build_query($parameters);
 
                         try {
                             $ch = curl_init();
@@ -4177,15 +4173,15 @@ class SendCampaignSMS extends Model
 
                     case 'MSMPusher':
                         $parameters = [
-                                'api_private_key' => $sending_server->c1,
-                                'api_public_key'  => $sending_server->c2,
-                                'sender'          => $data['sender_id'],
-                                'numbers'         => $phone,
-                                'message'         => $message,
+                            'api_private_key' => $sending_server->c1,
+                            'api_public_key' => $sending_server->c2,
+                            'sender' => $data['sender_id'],
+                            'numbers' => $phone,
+                            'message' => $message,
                         ];
 
 
-                        $sending_url = $gateway_url.'?'.http_build_query($parameters);
+                        $sending_url = $gateway_url . '?' . http_build_query($parameters);
 
                         try {
                             $ch = curl_init();
@@ -4261,11 +4257,11 @@ class SendCampaignSMS extends Model
 
                     case 'TxTria':
                         $parameters = [
-                                'sys_id'     => $sending_server->c1,
-                                'auth_token' => $sending_server->auth_token,
-                                'From'       => $data['sender_id'],
-                                'To'         => $phone,
-                                'Body'       => urlencode($message),
+                            'sys_id' => $sending_server->c1,
+                            'auth_token' => $sending_server->auth_token,
+                            'From' => $data['sender_id'],
+                            'To' => $phone,
+                            'Body' => urlencode($message),
                         ];
 
                         try {
@@ -4289,10 +4285,10 @@ class SendCampaignSMS extends Model
                                     } elseif (array_key_exists('error', $get_response) && $get_response['error'] == 1) {
                                         $get_sms_status = $get_response['message'];
                                     } else {
-                                        $get_sms_status = (string) $response;
+                                        $get_sms_status = (string)$response;
                                     }
                                 } else {
-                                    $get_sms_status = (string) $response;
+                                    $get_sms_status = (string)$response;
                                 }
                             }
                             curl_close($ch);
@@ -4303,19 +4299,19 @@ class SendCampaignSMS extends Model
 
                     case 'Gatewayapi':
 
-                        $sms_counter  = new SMSCounter();
+                        $sms_counter = new SMSCounter();
                         $message_data = $sms_counter->count($message);
 
                         $parameters = [
-                                'message'      => $message,
-                                'sender'       => $data['sender_id'],
-                                'callback_url' => route('dlr.gatewayapi'),
-                                'max_parts'    => 9,
-                                'recipients'   => [
-                                        [
-                                                'msisdn' => $phone,
-                                        ],
+                            'message' => $message,
+                            'sender' => $data['sender_id'],
+                            'callback_url' => route('dlr.gatewayapi'),
+                            'max_parts' => 9,
+                            'recipients' => [
+                                [
+                                    'msisdn' => $phone,
                                 ],
+                            ],
                         ];
 
                         if ($message_data->encoding == 'UTF16') {
@@ -4324,8 +4320,8 @@ class SendCampaignSMS extends Model
 
 
                         $headers = [
-                                'Accept: application/json',
-                                'Content-Type: application/json',
+                            'Accept: application/json',
+                            'Content-Type: application/json',
                         ];
 
                         try {
@@ -4335,7 +4331,7 @@ class SendCampaignSMS extends Model
                             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                             curl_setopt($ch, CURLOPT_POST, 1);
                             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($parameters));
-                            curl_setopt($ch, CURLOPT_USERPWD, $sending_server->api_token.":");
+                            curl_setopt($ch, CURLOPT_USERPWD, $sending_server->api_token . ":");
                             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
                             $response = curl_exec($ch);
 
@@ -4346,12 +4342,12 @@ class SendCampaignSMS extends Model
 
                                 if (isset($get_response) && is_array($get_response)) {
                                     if (array_key_exists('ids', $get_response)) {
-                                        $get_sms_status = 'Delivered|'.$get_response['ids'][0];
+                                        $get_sms_status = 'Delivered|' . $get_response['ids'][0];
                                     } else {
                                         $get_sms_status = $get_response['message'];
                                     }
                                 } else {
-                                    $get_sms_status = (string) $response;
+                                    $get_sms_status = (string)$response;
                                 }
                             }
                             curl_close($ch);
@@ -4363,15 +4359,15 @@ class SendCampaignSMS extends Model
                     case 'CamooCM':
 
                         $parameters = [
-                                'api_key'    => $sending_server->api_key,
-                                'api_secret' => $sending_server->api_secret,
-                                'from'       => $data['sender_id'],
-                                'to'         => $phone,
-                                'message'    => $message,
+                            'api_key' => $sending_server->api_key,
+                            'api_secret' => $sending_server->api_secret,
+                            'from' => $data['sender_id'],
+                            'to' => $phone,
+                            'message' => $message,
                         ];
 
-                        $parameters  = http_build_query($parameters);
-                        $gateway_url = $gateway_url.'?'.$parameters;
+                        $parameters = http_build_query($parameters);
+                        $gateway_url = $gateway_url . '?' . $parameters;
 
                         $ch = curl_init();
 
@@ -4392,7 +4388,7 @@ class SendCampaignSMS extends Model
                                     $get_sms_status = $get_response['_message'];
                                 }
                             } else {
-                                $get_sms_status = (string) $get_data;
+                                $get_sms_status = (string)$get_data;
                             }
                         }
 
@@ -4402,10 +4398,10 @@ class SendCampaignSMS extends Model
                     case 'SemySMS':
 
                         $parameters = [
-                                "phone"  => $phone,
-                                "msg"    => $message,
-                                "device" => $sending_server->device_id,
-                                "token"  => $sending_server->api_token,
+                            "phone" => $phone,
+                            "msg" => $message,
+                            "device" => $sending_server->device_id,
+                            "token" => $sending_server->api_token,
                         ];
 
                         try {
@@ -4436,16 +4432,16 @@ class SendCampaignSMS extends Model
 
                     case 'BurstSMS':
                         $parameters = [
-                                'to'      => $phone,
-                                'message' => $message,
+                            'to' => $phone,
+                            'message' => $message,
                         ];
 
                         if (isset($data['sender_id'])) {
                             $parameters['from'] = $data['sender_id'];
                         }
 
-                        $parameters  = http_build_query($parameters);
-                        $gateway_url = $gateway_url.'?'.$parameters;
+                        $parameters = http_build_query($parameters);
+                        $gateway_url = $gateway_url . '?' . $parameters;
 
                         try {
                             $ch = curl_init();
@@ -4456,8 +4452,8 @@ class SendCampaignSMS extends Model
                             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
                             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 
-                            $headers   = [];
-                            $headers[] = "Authorization: Basic ".base64_encode("$sending_server->api_key:$sending_server->api_secret");
+                            $headers = [];
+                            $headers[] = "Authorization: Basic " . base64_encode("$sending_server->api_key:$sending_server->api_secret");
                             $headers[] = "Content-Type: application/json";
                             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
@@ -4468,12 +4464,12 @@ class SendCampaignSMS extends Model
 
                             if (is_array($result) && array_key_exists('error', $result) && array_key_exists('code', $result['error'])) {
                                 if ($result['error']['code'] == 'SUCCESS') {
-                                    $get_sms_status = 'Delivered|'.$result['message_id'];
+                                    $get_sms_status = 'Delivered|' . $result['message_id'];
                                 } else {
                                     $get_sms_status = $result['error']['description'];
                                 }
                             } else {
-                                $get_sms_status = (string) $result;
+                                $get_sms_status = (string)$result;
                             }
 
                         } catch (Exception $e) {
@@ -4485,9 +4481,9 @@ class SendCampaignSMS extends Model
                     case 'Inteliquent':
 
                         $parameters = [
-                                'from' => $data['sender_id'],
-                                'text' => $message,
-                                'to'   => [$phone],
+                            'from' => $data['sender_id'],
+                            'text' => $message,
+                            'to' => [$phone],
                         ];
 
                         $ch = curl_init();
@@ -4497,8 +4493,8 @@ class SendCampaignSMS extends Model
                         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
                         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($parameters));
                         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                                'Authorization: Bearer '.$sending_server->api_token,
-                                'Content-Type: application/json',
+                            'Authorization: Bearer ' . $sending_server->api_token,
+                            'Content-Type: application/json',
                         ]);
                         $result = curl_exec($ch);
                         curl_close($ch);
@@ -4512,15 +4508,15 @@ class SendCampaignSMS extends Model
                                 $get_sms_status = $result['detail'];
                             }
                         } else {
-                            $get_sms_status = (string) $result;
+                            $get_sms_status = (string)$result;
                         }
                         break;
 
                     case 'VisionUp':
 
                         $parameters = [
-                                'message' => $message,
-                                'phone'   => $phone,
+                            'message' => $message,
+                            'phone' => $phone,
                         ];
 
                         $ch = curl_init();
@@ -4530,8 +4526,8 @@ class SendCampaignSMS extends Model
                         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
                         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($parameters));
                         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                                'Authorization: Basic '.base64_encode("$sending_server->username:$sending_server->password"),
-                                'Content-Type: application/json',
+                            'Authorization: Basic ' . base64_encode("$sending_server->username:$sending_server->password"),
+                            'Content-Type: application/json',
                         ]);
                         $result = curl_exec($ch);
                         curl_close($ch);
@@ -4540,23 +4536,23 @@ class SendCampaignSMS extends Model
 
                         if (is_array($get_result)) {
                             if (array_key_exists('id', $get_result)) {
-                                $get_sms_status = 'Delivered|'.$get_result['id'];
+                                $get_sms_status = 'Delivered|' . $get_result['id'];
                             } elseif (array_key_exists('message', $get_result)) {
                                 $get_sms_status = $get_result['message'];
                             } else {
-                                $get_sms_status = (string) $result;
+                                $get_sms_status = (string)$result;
                             }
                         } else {
-                            $get_sms_status = (string) $result;
+                            $get_sms_status = (string)$result;
                         }
                         break;
 
                     case 'FHMCloud':
 
                         $parameters = [
-                                'message'   => $message,
-                                'recipient' => $phone,
-                                'type'      => 'plain',
+                            'message' => $message,
+                            'recipient' => $phone,
+                            'type' => 'plain',
                         ];
 
                         if (isset($data['sender_id'])) {
@@ -4572,8 +4568,8 @@ class SendCampaignSMS extends Model
                         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
                         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($parameters));
                         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                                'Authorization: Bearer '.$sending_server->api_key,
-                                'Content-Type: application/json',
+                            'Authorization: Bearer ' . $sending_server->api_key,
+                            'Content-Type: application/json',
                         ]);
                         $result = curl_exec($ch);
                         if (curl_errno($ch)) {
@@ -4590,7 +4586,7 @@ class SendCampaignSMS extends Model
                                     $get_sms_status = $get_result['status'];
                                 }
                             } else {
-                                $get_sms_status = (string) $result;
+                                $get_sms_status = (string)$result;
                             }
                         }
 
@@ -4600,8 +4596,8 @@ class SendCampaignSMS extends Model
                     case 'SMSTO':
 
                         $parameters = [
-                                'message' => $message,
-                                'to'      => $phone,
+                            'message' => $message,
+                            'to' => $phone,
                         ];
 
                         if (isset($data['sender_id'])) {
@@ -4615,9 +4611,9 @@ class SendCampaignSMS extends Model
                         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
                         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($parameters));
                         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                                'Authorization: Bearer '.$sending_server->api_key,
-                                'Content-Type: application/json',
-                                'Accept: application/json',
+                            'Authorization: Bearer ' . $sending_server->api_key,
+                            'Content-Type: application/json',
+                            'Accept: application/json',
                         ]);
                         $result = curl_exec($ch);
                         curl_close($ch);
@@ -4626,21 +4622,21 @@ class SendCampaignSMS extends Model
 
                         if (is_array($get_result) && array_key_exists('success', $get_result)) {
                             if ($get_result['success']) {
-                                $get_sms_status = 'Delivered|'.$get_result['message_id'];
+                                $get_sms_status = 'Delivered|' . $get_result['message_id'];
                             } else {
                                 $get_sms_status = $get_result['message'];
                             }
                         } else {
-                            $get_sms_status = (string) $result;
+                            $get_sms_status = (string)$result;
                         }
                         break;
 
                     case 'TextBelt':
 
                         $parameters = [
-                                'key'     => $sending_server->api_key,
-                                'phone'   => $phone,
-                                'message' => $message,
+                            'key' => $sending_server->api_key,
+                            'phone' => $phone,
+                            'message' => $message,
                         ];
 
                         try {
@@ -4658,12 +4654,12 @@ class SendCampaignSMS extends Model
 
                             if ($response && is_array($response) && array_key_exists('success', $response)) {
                                 if ($response['success']) {
-                                    $get_sms_status = 'Delivered|'.$response['textId'];
+                                    $get_sms_status = 'Delivered|' . $response['textId'];
                                 } else {
                                     $get_sms_status = $response['error'];
                                 }
                             } else {
-                                $get_sms_status = (string) $result;
+                                $get_sms_status = (string)$result;
                             }
                         } catch (Exception $e) {
                             $get_sms_status = $e->getMessage();
@@ -4673,14 +4669,14 @@ class SendCampaignSMS extends Model
                     case 'IntelTele':
 
                         $parameters = [
-                                'username' => $sending_server->username,
-                                'api_key'  => $sending_server->api_key,
-                                'from'     => $data['sender_id'],
-                                'to'       => $phone,
-                                'message'  => $message,
+                            'username' => $sending_server->username,
+                            'api_key' => $sending_server->api_key,
+                            'from' => $data['sender_id'],
+                            'to' => $phone,
+                            'message' => $message,
                         ];
 
-                        $gateway_url = $gateway_url.'?'.http_build_query($parameters);
+                        $gateway_url = $gateway_url . '?' . http_build_query($parameters);
 
                         try {
                             $ch = curl_init();
@@ -4705,7 +4701,7 @@ class SendCampaignSMS extends Model
                             } elseif (is_array($result) && array_key_exists('message', $result)) {
                                 $get_sms_status = $result['message'];
                             } else {
-                                $get_sms_status = (string) $result;
+                                $get_sms_status = (string)$result;
                             }
 
                         } catch (Exception $e) {
@@ -4715,18 +4711,18 @@ class SendCampaignSMS extends Model
 
                     case 'GatewaySa':
                         $parameters = [
-                                'ApiKey'        => $sending_server->api_key,
-                                'ClientId'      => $sending_server->c1,
-                                'SenderId'      => $data['sender_id'],
-                                'MobileNumbers' => $phone,
-                                'Message'       => $message,
+                            'ApiKey' => $sending_server->api_key,
+                            'ClientId' => $sending_server->c1,
+                            'SenderId' => $data['sender_id'],
+                            'MobileNumbers' => $phone,
+                            'Message' => $message,
                         ];
 
                         if ($sms_type == 'unicode') {
                             $parameters['Is_Unicode'] = true;
                         }
 
-                        $gateway_url = $gateway_url.'?'.http_build_query($parameters);
+                        $gateway_url = $gateway_url . '?' . http_build_query($parameters);
 
                         try {
                             $ch = curl_init();
@@ -4737,7 +4733,7 @@ class SendCampaignSMS extends Model
                             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
                             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 
-                            $headers   = [];
+                            $headers = [];
                             $headers[] = "Content-Type: application/json";
                             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
@@ -4758,7 +4754,7 @@ class SendCampaignSMS extends Model
                                         $get_sms_status = $result['ErrorDescription'];
                                     }
                                 } else {
-                                    $get_sms_status = (string) $response;
+                                    $get_sms_status = (string)$response;
                                 }
                             }
                             curl_close($ch);
@@ -4771,24 +4767,24 @@ class SendCampaignSMS extends Model
                     case 'OnBuka':
 
                         $time = time();
-                        $sign = md5($sending_server->api_key.$sending_server->api_secret.$time);
+                        $sign = md5($sending_server->api_key . $sending_server->api_secret . $time);
 
                         $parameters = [
-                                'appId'   => $sending_server->application_id,
-                                'numbers' => $phone,
-                                'content' => $message,
+                            'appId' => $sending_server->application_id,
+                            'numbers' => $phone,
+                            'content' => $message,
                         ];
 
                         if (isset($data['sender_id'])) {
                             $parameters['senderID'] = $data['sender_id'];
                         }
 
-                        $gateway_url = $gateway_url.'?'.http_build_query($parameters);
-                        $headers     = [];
-                        $headers[]   = "Sign: $sign";
-                        $headers[]   = "Timestamp: $time";
-                        $headers[]   = "Api-Key: $sending_server->api_key";
-                        $headers[]   = "Content-Type: application/json;charset=UTF-8";
+                        $gateway_url = $gateway_url . '?' . http_build_query($parameters);
+                        $headers = [];
+                        $headers[] = "Sign: $sign";
+                        $headers[] = "Timestamp: $time";
+                        $headers[] = "Api-Key: $sending_server->api_key";
+                        $headers[] = "Content-Type: application/json;charset=UTF-8";
 
                         try {
 
@@ -4902,14 +4898,14 @@ class SendCampaignSMS extends Model
                     case 'BulkGate':
 
                         $parameters = [
-                                'application_id'    => $sending_server->application_id,
-                                'application_token' => $sending_server->api_token,
-                                'number'            => $phone,
-                                'text'              => $message,
+                            'application_id' => $sending_server->application_id,
+                            'application_token' => $sending_server->api_token,
+                            'number' => $phone,
+                            'text' => $message,
                         ];
 
                         if (isset($data['sender_id'])) {
-                            $parameters['sender_id']       = 'gText';
+                            $parameters['sender_id'] = 'gText';
                             $parameters['sender_id_value'] = $data['sender_id'];
                         }
 
@@ -4924,17 +4920,17 @@ class SendCampaignSMS extends Model
                             $curl = curl_init();
 
                             curl_setopt_array($curl, [
-                                    CURLOPT_URL            => $gateway_url,
-                                    CURLOPT_RETURNTRANSFER => true,
-                                    CURLOPT_SSL_VERIFYPEER => false,
-                                    CURLOPT_TIMEOUT        => 30,
-                                    CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
-                                    CURLOPT_CUSTOMREQUEST  => 'POST',
-                                    CURLOPT_POSTFIELDS     => json_encode($parameters),
-                                    CURLOPT_HTTPHEADER     => [
-                                            'Content-Type: application/json',
-                                            'Cache-Control: no-cache',
-                                    ],
+                                CURLOPT_URL => $gateway_url,
+                                CURLOPT_RETURNTRANSFER => true,
+                                CURLOPT_SSL_VERIFYPEER => false,
+                                CURLOPT_TIMEOUT => 30,
+                                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                CURLOPT_CUSTOMREQUEST => 'POST',
+                                CURLOPT_POSTFIELDS => json_encode($parameters),
+                                CURLOPT_HTTPHEADER => [
+                                    'Content-Type: application/json',
+                                    'Cache-Control: no-cache',
+                                ],
                             ]);
 
                             $response = curl_exec($curl);
@@ -4965,14 +4961,14 @@ class SendCampaignSMS extends Model
                     case 'SMSVas':
 
                         $parameters = [
-                                'Username'    => $sending_server->username,
-                                'Password'    => $sending_server->password,
-                                'SMSText'     => $message,
-                                'SMSSender'   => $data['sender_id'],
-                                'SMSReceiver' => $phone,
-                                'SMSID'       => Tool::GUID(),
-                                'CampaignID'  => Tool::GUID(),
-                                'DLRURL'      => route('dlr.smsvas'),
+                            'Username' => $sending_server->username,
+                            'Password' => $sending_server->password,
+                            'SMSText' => $message,
+                            'SMSSender' => $data['sender_id'],
+                            'SMSReceiver' => $phone,
+                            'SMSID' => Tool::GUID(),
+                            'CampaignID' => Tool::GUID(),
+                            'DLRURL' => route('dlr.smsvas'),
                         ];
 
                         if ($sms_type == 'unicode') {
@@ -4984,7 +4980,7 @@ class SendCampaignSMS extends Model
                         try {
                             $ch = curl_init();
 
-                            $headers   = [];
+                            $headers = [];
                             $headers[] = "Content-Type: application/json";
 
                             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -5002,21 +4998,21 @@ class SendCampaignSMS extends Model
                                 $get_sms_status = curl_error($ch);
                             } else {
                                 $get_sms_status = match ($result) {
-                                    '0'     => 'Delivered',
-                                    '-1'    => 'Invalid Credentials',
-                                    '-2'    => 'Invalid Account IP',
-                                    '-3'    => 'Invalid ANI Black List',
-                                    '-5'    => 'Out Of Credit',
-                                    '-6'    => 'Database Down',
-                                    '-7'    => 'Inactive Account',
-                                    '-11'   => 'Account Is Expired',
-                                    '-12'   => 'SMS is Empty',
-                                    '-13'   => 'Invalid Sender With Connection',
-                                    '-14'   => 'SMS Sending Failed Try Again',
-                                    '-100'  => 'Other Error',
-                                    '-16'   => 'User Can Not Send With DLR',
-                                    '-18'   => 'Invalid ANI',
-                                    '-19'   => 'SMS ID is Exist',
+                                    '0' => 'Delivered',
+                                    '-1' => 'Invalid Credentials',
+                                    '-2' => 'Invalid Account IP',
+                                    '-3' => 'Invalid ANI Black List',
+                                    '-5' => 'Out Of Credit',
+                                    '-6' => 'Database Down',
+                                    '-7' => 'Inactive Account',
+                                    '-11' => 'Account Is Expired',
+                                    '-12' => 'SMS is Empty',
+                                    '-13' => 'Invalid Sender With Connection',
+                                    '-14' => 'SMS Sending Failed Try Again',
+                                    '-100' => 'Other Error',
+                                    '-16' => 'User Can Not Send With DLR',
+                                    '-18' => 'Invalid ANI',
+                                    '-19' => 'SMS ID is Exist',
                                     default => 'Failed',
                                 };
                             }
@@ -5030,15 +5026,15 @@ class SendCampaignSMS extends Model
 
                     case 'IconGlobalCoUK':
                         $parameters = [
-                                'username'    => $sending_server->username,
-                                'apiId'       => $sending_server->application_id,
-                                'source'      => $data['sender_id'],
-                                'destination' => $phone,
-                                'text'        => $message,
-                                'json'        => 'true',
+                            'username' => $sending_server->username,
+                            'apiId' => $sending_server->application_id,
+                            'source' => $data['sender_id'],
+                            'destination' => $phone,
+                            'text' => $message,
+                            'json' => 'true',
                         ];
 
-                        $gateway_url = $gateway_url.'?'.http_build_query($parameters);
+                        $gateway_url = $gateway_url . '?' . http_build_query($parameters);
 
                         try {
                             $ch = curl_init();
@@ -5061,7 +5057,7 @@ class SendCampaignSMS extends Model
                                         $get_sms_status = $result['Description'];
                                     }
                                 } else {
-                                    $get_sms_status = (string) $response;
+                                    $get_sms_status = (string)$response;
                                 }
                             }
                             curl_close($ch);
@@ -5075,16 +5071,16 @@ class SendCampaignSMS extends Model
 
                             $upload_path = storage_path('SendPulse/');
 
-                            if ( ! file_exists($upload_path)) {
+                            if (!file_exists($upload_path)) {
                                 mkdir($upload_path, 0777, true);
                             }
 
                             $SPApiClient = new ApiClient($sending_server->c1, $sending_server->api_secret, new FileStorage($upload_path));
 
                             $parameters = [
-                                    'sender'        => $data['sender_id'],
-                                    'body'          => $message,
-                                    'transliterate' => 0,
+                                'sender' => $data['sender_id'],
+                                'body' => $message,
+                                'transliterate' => 0,
                             ];
 
                             $get_data = $SPApiClient->sendSmsByList([$phone], $parameters, []);
@@ -5104,8 +5100,8 @@ class SendCampaignSMS extends Model
 
                     case 'SpewHub':
                         $parameters = [
-                                'text'    => $message,
-                                'numbers' => [$phone],
+                            'text' => $message,
+                            'numbers' => [$phone],
                         ];
 
                         $ch = curl_init();
@@ -5115,9 +5111,9 @@ class SendCampaignSMS extends Model
                         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
                         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($parameters));
                         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                                'X-RGM-KEY:'.$sending_server->c1,
-                                'Content-Type: application/json',
-                                'Accept: application/json',
+                            'X-RGM-KEY:' . $sending_server->c1,
+                            'Content-Type: application/json',
+                            'Accept: application/json',
                         ]);
                         $result = curl_exec($ch);
                         curl_close($ch);
@@ -5139,13 +5135,13 @@ class SendCampaignSMS extends Model
 
                     case 'CCSSMS':
                         $parameters = [
-                                'username'        => $sending_server->username,
-                                'password'        => $sending_server->password,
-                                'dnis'            => $phone,
-                                'ani'             => $data['sender_id'],
-                                'message'         => $message,
-                                'command'         => 'submit',
-                                'longMessageMode' => 'split',
+                            'username' => $sending_server->username,
+                            'password' => $sending_server->password,
+                            'dnis' => $phone,
+                            'ani' => $data['sender_id'],
+                            'message' => $message,
+                            'command' => 'submit',
+                            'longMessageMode' => 'split',
                         ];
 
                         if ($sms_type == 'unicode') {
@@ -5154,7 +5150,7 @@ class SendCampaignSMS extends Model
                             $parameters['dataCoding'] = 0;
                         }
 
-                        $gateway_url = $gateway_url.'?'.http_build_query($parameters);
+                        $gateway_url = $gateway_url . '?' . http_build_query($parameters);
 
                         try {
                             $ch = curl_init();
@@ -5190,14 +5186,14 @@ class SendCampaignSMS extends Model
 
                     case 'TeleSign':
                         $parameters = [
-                                "phone_number" => $phone,
-                                "message"      => $message,
-                                "message_type" => 'ARN',
+                            "phone_number" => $phone,
+                            "message" => $message,
+                            "message_type" => 'ARN',
                         ];
 
                         $headers = [
-                                'Content-Type: application/x-www-form-urlencoded',
-                                'Authorization: Basic '.base64_encode("$sending_server->c1:$sending_server->api_key"),
+                            'Content-Type: application/x-www-form-urlencoded',
+                            'Authorization: Basic ' . base64_encode("$sending_server->c1:$sending_server->api_key"),
                         ];
 
                         $ch = curl_init();
@@ -5237,16 +5233,16 @@ class SendCampaignSMS extends Model
 
                     case 'ClearComMX':
                         $parameters = [
-                                "auth"  => $sending_server->api_token,
-                                "phone" => substr($phone, -10),
-                                "msg"   => $message,
+                            "auth" => $sending_server->api_token,
+                            "phone" => substr($phone, -10),
+                            "msg" => $message,
                         ];
 
                         if (isset($data['sender_id'])) {
                             $parameters['sender'] = $data['sender_id'];
                         }
 
-                        $gateway_url = $gateway_url.'?'.http_build_query($parameters);
+                        $gateway_url = $gateway_url . '?' . http_build_query($parameters);
 
                         try {
                             $ch = curl_init();
@@ -5282,16 +5278,16 @@ class SendCampaignSMS extends Model
                     case 'CyberGateLK':
 
                         $parameters = [
-                                'from_number'   => $data['sender_id'],
-                                'to_number'     => '+'.$phone,
-                                'message'       => $message,
-                                'delivery'      => 1,
-                                'user_auth_key' => $sending_server->auth_key,
+                            'from_number' => $data['sender_id'],
+                            'to_number' => '+' . $phone,
+                            'message' => $message,
+                            'delivery' => 1,
+                            'user_auth_key' => $sending_server->auth_key,
                         ];
 
                         $headers = [
-                                'Content-Type:application/json',
-                                'Authorization: Bearer '.$sending_server->api_token,
+                            'Content-Type:application/json',
+                            'Authorization: Bearer ' . $sending_server->api_token,
                         ];
 
                         try {
@@ -5324,12 +5320,12 @@ class SendCampaignSMS extends Model
 
                     case 'LuxSMS':
                         $parameters = [
-                                "api_id"       => $sending_server->c1,
-                                "api_password" => $sending_server->password,
-                                "sms_type"     => $sending_server->sms_type,
-                                "sender_id"    => $data['sender_id'],
-                                "phonenumber"  => $phone,
-                                "textmessage " => $message,
+                            "api_id" => $sending_server->c1,
+                            "api_password" => $sending_server->password,
+                            "sms_type" => $sending_server->sms_type,
+                            "sender_id" => $data['sender_id'],
+                            "phonenumber" => $phone,
+                            "textmessage " => $message,
                         ];
 
 
@@ -5339,7 +5335,7 @@ class SendCampaignSMS extends Model
                             $parameters['encoding'] = 'T';
                         }
 
-                        $gateway_url = $gateway_url.'?'.http_build_query($parameters);
+                        $gateway_url = $gateway_url . '?' . http_build_query($parameters);
 
                         try {
                             $ch = curl_init();
@@ -5374,35 +5370,35 @@ class SendCampaignSMS extends Model
 
                     case SendingServer::TYPE_SAFARICOM:
 
-                        $auth_url = rtrim($gateway_url, '/').'/auth/login';
+                        $auth_url = rtrim($gateway_url, '/') . '/auth/login';
 
                         $login_data = [
-                                "username" => $sending_server->username,
-                                "password" => $sending_server->password,
+                            "username" => $sending_server->username,
+                            "password" => $sending_server->password,
                         ];
 
                         $ch = curl_init();
 
                         curl_setopt_array($ch, [
-                                CURLOPT_URL            => $auth_url,
-                                CURLOPT_RETURNTRANSFER => true,
-                                CURLOPT_ENCODING       => "",
-                                CURLOPT_MAXREDIRS      => 10,
-                                CURLOPT_TIMEOUT        => 0,
-                                CURLOPT_FOLLOWLOCATION => true,
-                                CURLOPT_SSL_VERIFYHOST => false,
-                                CURLOPT_SSL_VERIFYPEER => false,
-                                CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
-                                CURLOPT_CUSTOMREQUEST  => "POST",
-                                CURLOPT_POSTFIELDS     => json_encode($login_data),
-                                CURLOPT_HTTPHEADER     => [
-                                        "Content-Type: application/json",
-                                        "X-Requested-With: XMLHttpRequest",
-                                ],
+                            CURLOPT_URL => $auth_url,
+                            CURLOPT_RETURNTRANSFER => true,
+                            CURLOPT_ENCODING => "",
+                            CURLOPT_MAXREDIRS => 10,
+                            CURLOPT_TIMEOUT => 0,
+                            CURLOPT_FOLLOWLOCATION => true,
+                            CURLOPT_SSL_VERIFYHOST => false,
+                            CURLOPT_SSL_VERIFYPEER => false,
+                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                            CURLOPT_CUSTOMREQUEST => "POST",
+                            CURLOPT_POSTFIELDS => json_encode($login_data),
+                            CURLOPT_HTTPHEADER => [
+                                "Content-Type: application/json",
+                                "X-Requested-With: XMLHttpRequest",
+                            ],
                         ]);
 
                         $response = curl_exec($ch);
-                        $err      = curl_error($ch);
+                        $err = curl_error($ch);
 
                         curl_close($ch);
 
@@ -5413,27 +5409,27 @@ class SendCampaignSMS extends Model
 
                             if (isset($response) && is_array($response) && array_key_exists('token', $response)) {
                                 $access_token = $response['token'];
-                                $send_sms_url = rtrim($gateway_url, '/').'/public/CMS/bulksms';
+                                $send_sms_url = rtrim($gateway_url, '/') . '/public/CMS/bulksms';
 
-                                $headers   = [];
+                                $headers = [];
                                 $headers[] = "X-Authorization: Bearer $access_token";
                                 $headers[] = "Content-Type: application/json";
                                 $headers[] = "X-Requested-With: XMLHttpRequest";
                                 $headers[] = "Accept: application/json";
 
                                 $parameters = [
-                                        'timeStamp' => date('Ymd'),
-                                        'dataSet'   => [
-                                                [
-                                                        'userName'  => $sending_server->c1,
-                                                        'channel'   => 'sms',
-                                                        'packageId' => $sending_server->project_id,
-                                                        'oa'        => $data['sender_id'],
-                                                        'msisdn'    => $phone,
-                                                        'message'   => $message,
-                                                        'uniqueId'  => date('YmdHms'),
-                                                ],
+                                    'timeStamp' => date('Ymd'),
+                                    'dataSet' => [
+                                        [
+                                            'userName' => $sending_server->c1,
+                                            'channel' => 'sms',
+                                            'packageId' => $sending_server->project_id,
+                                            'oa' => $data['sender_id'],
+                                            'msisdn' => $phone,
+                                            'message' => $message,
+                                            'uniqueId' => date('YmdHms'),
                                         ],
+                                    ],
                                 ];
 
                                 $ch = curl_init($send_sms_url);
@@ -5444,7 +5440,7 @@ class SendCampaignSMS extends Model
                                 curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
                                 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
                                 $result = curl_exec($ch);
-                                $err    = curl_error($ch);
+                                $err = curl_error($ch);
 
                                 curl_close($ch);
 
@@ -5461,7 +5457,7 @@ class SendCampaignSMS extends Model
                                             $get_sms_status = $get_data['message'];
                                         }
                                     } else {
-                                        $get_sms_status = (string) $result;
+                                        $get_sms_status = (string)$result;
                                     }
                                 }
                             } else {
@@ -5473,17 +5469,17 @@ class SendCampaignSMS extends Model
                     case 'SMSCrab':
 
                         $parameters = [
-                                'sender_id' => $data['sender_id'],
-                                'recipient' => $phone,
-                                'type'      => 'plain',
-                                'message'   => $message,
+                            'sender_id' => $data['sender_id'],
+                            'recipient' => $phone,
+                            'type' => 'plain',
+                            'message' => $message,
                         ];
 
 
                         $headers = [
-                                'Content-Type:application/json',
-                                'Accept: application/json',
-                                'Authorization: Bearer '.$sending_server->api_token,
+                            'Content-Type:application/json',
+                            'Accept: application/json',
+                            'Authorization: Bearer ' . $sending_server->api_token,
                         ];
 
                         try {
@@ -5517,17 +5513,17 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_FACILITAMOVEL:
 
                         $parameters = [
-                                "user"         => $sending_server->username,
-                                "password"     => $sending_server->password,
-                                "destinatario" => $phone,
-                                "msg"          => $message,
+                            "user" => $sending_server->username,
+                            "password" => $sending_server->password,
+                            "destinatario" => $phone,
+                            "msg" => $message,
                         ];
 
                         if (isset($data['sender_id'])) {
                             $parameters['externalkey'] = $data['sender_id'];
                         }
 
-                        $gateway_url = $gateway_url.'?'.http_build_query($parameters);
+                        $gateway_url = $gateway_url . '?' . http_build_query($parameters);
 
                         try {
                             $ch = curl_init();
@@ -5563,14 +5559,14 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_SMSDELIVERER:
 
                         $parameters = [
-                                "username" => $sending_server->username,
-                                "password" => $sending_server->password,
-                                "to"       => $phone,
-                                "message"  => $message,
+                            "username" => $sending_server->username,
+                            "password" => $sending_server->password,
+                            "to" => $phone,
+                            "message" => $message,
                         ];
 
 
-                        $gateway_url = $gateway_url.'?'.http_build_query($parameters);
+                        $gateway_url = $gateway_url . '?' . http_build_query($parameters);
 
                         try {
                             $ch = curl_init();
@@ -5598,11 +5594,11 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_ROUNDSMS:
 
                         $parameters = [
-                                "authkey" => $sending_server->auth_key,
-                                "route"   => $sending_server->route,
-                                "mobiles" => $phone,
-                                "sander"  => $data['sender_id'],
-                                "message" => $message,
+                            "authkey" => $sending_server->auth_key,
+                            "route" => $sending_server->route,
+                            "mobiles" => $phone,
+                            "sander" => $data['sender_id'],
+                            "message" => $message,
                         ];
 
                         if ($sms_type == 'unicode') {
@@ -5611,7 +5607,7 @@ class SendCampaignSMS extends Model
                             $parameters['type'] = '1';
                         }
 
-                        $gateway_url = $gateway_url.'?'.http_build_query($parameters);
+                        $gateway_url = $gateway_url . '?' . http_build_query($parameters);
 
                         try {
                             $ch = curl_init();
@@ -5630,7 +5626,7 @@ class SendCampaignSMS extends Model
 
                                 if (is_array($get_response) && array_key_exists('error', $get_response) && array_key_exists('msg_id', $get_response)) {
                                     if ($get_response['msg_id'] != null) {
-                                        $get_sms_status = 'Delivered|'.$get_response['msg_id'];
+                                        $get_sms_status = 'Delivered|' . $get_response['msg_id'];
                                     } else {
                                         $get_sms_status = $get_response['error'];
                                     }
@@ -5648,14 +5644,14 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_YOSMS:
 
                         $parameters = [
-                                "ybsacctno"    => $sending_server->username,
-                                "password"     => $sending_server->password,
-                                "origin"       => '6969',
-                                "destinations" => $phone,
-                                "sms_content"  => $message,
+                            "ybsacctno" => $sending_server->username,
+                            "password" => $sending_server->password,
+                            "origin" => '6969',
+                            "destinations" => $phone,
+                            "sms_content" => $message,
                         ];
 
-                        $gateway_url = $gateway_url.'?'.http_build_query($parameters);
+                        $gateway_url = $gateway_url . '?' . http_build_query($parameters);
 
                         try {
                             $ch = curl_init();
@@ -5688,11 +5684,11 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_DIGINTRA:
 
                         $parameters = [
-                                "ApiKey"        => $sending_server->api_key,
-                                "ClientId"      => $sending_server->c1,
-                                "SenderId"      => $data['sender_id'],
-                                "MobileNumbers" => $phone,
-                                "Message"       => $message,
+                            "ApiKey" => $sending_server->api_key,
+                            "ClientId" => $sending_server->c1,
+                            "SenderId" => $data['sender_id'],
+                            "MobileNumbers" => $phone,
+                            "Message" => $message,
                         ];
 
                         if ($sms_type == 'unicode') {
@@ -5701,7 +5697,7 @@ class SendCampaignSMS extends Model
                             $parameters['Is_Unicode'] = false;
                         }
 
-                        $gateway_url = $gateway_url.'?'.http_build_query($parameters);
+                        $gateway_url = $gateway_url . '?' . http_build_query($parameters);
 
 
                         try {
@@ -5740,8 +5736,8 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_ALLMYSMS:
 
                         $parameters = [
-                                'to'   => $phone,
-                                'text' => $message,
+                            'to' => $phone,
+                            'text' => $message,
                         ];
 
                         if (isset($data['sender_id'])) {
@@ -5750,9 +5746,9 @@ class SendCampaignSMS extends Model
 
 
                         $headers = [
-                                'Content-Type:application/json',
-                                'cache-control: no-cache',
-                                'Authorization: Basic '.$sending_server->auth_key,
+                            'Content-Type:application/json',
+                            'cache-control: no-cache',
+                            'Authorization: Basic ' . $sending_server->auth_key,
                         ];
 
                         try {
@@ -5786,9 +5782,9 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_ESOLUTIONS:
 
                         $parameters = [
-                                'originator'  => $data['sender_id'],
-                                'destination' => $phone,
-                                'messageText' => $message,
+                            'originator' => $data['sender_id'],
+                            'destination' => $phone,
+                            'messageText' => $message,
                         ];
 
                         try {
@@ -5798,9 +5794,9 @@ class SendCampaignSMS extends Model
                             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($parameters));
                             curl_setopt($ch, CURLOPT_POST, 1);
-                            curl_setopt($ch, CURLOPT_USERPWD, "$sending_server->username".":"."$sending_server->password");
+                            curl_setopt($ch, CURLOPT_USERPWD, "$sending_server->username" . ":" . "$sending_server->password");
 
-                            $headers   = [];
+                            $headers = [];
                             $headers[] = "Content-Type: application/json";
                             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
@@ -5811,7 +5807,7 @@ class SendCampaignSMS extends Model
 
                             if (is_array($result) && array_key_exists('status', $result)) {
                                 if ($result['status'] == 'PENDING' || $result['status'] == 'SENT' || $result['status'] == 'DELIVRD') {
-                                    $get_sms_status = 'Delivered|'.$result['messageId'];
+                                    $get_sms_status = 'Delivered|' . $result['messageId'];
                                 } else {
                                     $get_sms_status = $result['status'];
                                 }
@@ -5828,9 +5824,9 @@ class SendCampaignSMS extends Model
 
 
                         $parameters = [
-                                "apikey"  => $sending_server->api_key,
-                                "number"  => $phone,
-                                "message" => $message,
+                            "apikey" => $sending_server->api_key,
+                            "number" => $phone,
+                            "message" => $message,
                         ];
 
                         if (isset($data['sender_id'])) {
@@ -5872,15 +5868,15 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_ESTORESMS:
 
                         $parameters = [
-                                "username"  => $sending_server->username,
-                                "password"  => $sending_server->password,
-                                "sender"    => $data['sender_id'],
-                                "recipient" => $phone,
-                                "message"   => $message,
+                            "username" => $sending_server->username,
+                            "password" => $sending_server->password,
+                            "sender" => $data['sender_id'],
+                            "recipient" => $phone,
+                            "message" => $message,
                         ];
 
 
-                        $gateway_url = $gateway_url.'?'.http_build_query($parameters);
+                        $gateway_url = $gateway_url . '?' . http_build_query($parameters);
 
 
                         try {
@@ -5970,16 +5966,16 @@ class SendCampaignSMS extends Model
 
 
                         $context = stream_context_create([
-                                'http' => [
-                                        'header' => "Authorization: Basic ".base64_encode("$sending_server->username:$sending_server->password"),
-                                ],
+                            'http' => [
+                                'header' => "Authorization: Basic " . base64_encode("$sending_server->username:$sending_server->password"),
+                            ],
                         ]);
 
                         $message = urlencode($message);
 
                         try {
-                            $get_sms_status = file_get_contents($gateway_url."?u=$sending_server->username&p=$sending_server->password&l=1&n=$phone&m=$message",
-                                    false, $context);
+                            $get_sms_status = file_get_contents($gateway_url . "?u=$sending_server->username&p=$sending_server->password&l=1&n=$phone&m=$message",
+                                false, $context);
 
                             if (str_contains($get_sms_status, 'Sending')) {
                                 $get_sms_status = 'Delivered';
@@ -5993,16 +5989,16 @@ class SendCampaignSMS extends Model
 
 
                         $parameters = [
-                                'From' => $data['sender_id'],
-                                'To'   => $phone,
-                                'Text' => $message,
+                            'From' => $data['sender_id'],
+                            'To' => $phone,
+                            'Text' => $message,
                         ];
 
 
                         $headers = [
-                                'Content-Type:application/json',
-                                'Accept: application/json',
-                                'Authorization: Bearer '.$sending_server->api_token,
+                            'Content-Type:application/json',
+                            'Accept: application/json',
+                            'Authorization: Bearer ' . $sending_server->api_token,
                         ];
 
                         try {
@@ -6038,21 +6034,21 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_ADVANCEMSGSYS:
 
                         $type = '3';
-                        $dcs  = '0';
-                        $esm  = '0';
+                        $dcs = '0';
+                        $esm = '0';
 
-                        $countch   = strlen($message);
+                        $countch = strlen($message);
                         $arabiclen = $this->strlen_utf8($message);
                         $fixarabic = $countch - $arabiclen;
 
                         if ($fixarabic <> 0) {
-                            $type    = '2';
-                            $dcs     = '8';
+                            $type = '2';
+                            $dcs = '8';
                             $message = $this->utf16urlencode($message);
                         }
 
                         if ($countch > 160 and $fixarabic == 0) {
-                            $esm  = '64';
+                            $esm = '64';
                             $type = '3';
                         }
 
@@ -6062,18 +6058,18 @@ class SendCampaignSMS extends Model
 
 
                         $parameters = [
-                                'user'       => $sending_server->username,
-                                'pass'       => $sending_server->password,
-                                'mno'        => $phone,
-                                'type'       => $type,
-                                'dcs'        => $dcs,
-                                'text'       => $message,
-                                'sid'        => $data['sender_id'],
-                                'esm'        => $esm,
-                                'respformat' => 'json',
+                            'user' => $sending_server->username,
+                            'pass' => $sending_server->password,
+                            'mno' => $phone,
+                            'type' => $type,
+                            'dcs' => $dcs,
+                            'text' => $message,
+                            'sid' => $data['sender_id'],
+                            'esm' => $esm,
+                            'respformat' => 'json',
                         ];
 
-                        $gateway_url = $gateway_url.'?'.http_build_query($parameters);
+                        $gateway_url = $gateway_url . '?' . http_build_query($parameters);
 
                         try {
                             $ch = curl_init();
@@ -6083,8 +6079,8 @@ class SendCampaignSMS extends Model
                             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
                             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-                            $headers   = [];
-                            $headers[] = "Authorization: Basic ".base64_encode("$sending_server->username:$sending_server->password");
+                            $headers = [];
+                            $headers[] = "Authorization: Basic " . base64_encode("$sending_server->username:$sending_server->password");
                             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
                             $response = curl_exec($ch);
@@ -6099,7 +6095,7 @@ class SendCampaignSMS extends Model
                                     if (str_contains($get_response['Response']['0'], 'ERROR')) {
                                         $get_sms_status = $get_response['Response']['0'];
                                     } else {
-                                        $get_sms_status = 'Delivered|'.$get_response['Response']['0'];
+                                        $get_sms_status = 'Delivered|' . $get_response['Response']['0'];
                                     }
 
                                 } else {
@@ -6116,10 +6112,10 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_UIPAPP:
 
                         $parameters = [
-                                'user_token' => $sending_server->user_token,
-                                'origin'     => $data['sender_id'],
-                                'numbers'    => ['+'.$phone],
-                                'message'    => $message,
+                            'user_token' => $sending_server->user_token,
+                            'origin' => $data['sender_id'],
+                            'numbers' => ['+' . $phone],
+                            'message' => $message,
                         ];
 
 
@@ -6141,7 +6137,7 @@ class SendCampaignSMS extends Model
 
                             if (is_array($get_response)) {
                                 if (isset($get_response['status']) && $get_response['status'] == 'successful') {
-                                    $get_sms_status = 'Delivered|'.$get_response['report_id'];
+                                    $get_sms_status = 'Delivered|' . $get_response['report_id'];
                                 } elseif (isset($get_response['message'])) {
                                     $get_sms_status = $get_response['message'];
                                 } else {
@@ -6161,14 +6157,14 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_SMSFRL:
 
                         $parameters = [
-                                'receipts' => $phone,
-                                'text'     => $message,
+                            'receipts' => $phone,
+                            'text' => $message,
                         ];
 
                         $headers = [
-                                'Content-Type:application/json',
-                                'Accept: application/json',
-                                'Authorization: Bearer '.$sending_server->api_token,
+                            'Content-Type:application/json',
+                            'Accept: application/json',
+                            'Authorization: Bearer ' . $sending_server->api_token,
                         ];
 
                         try {
@@ -6189,7 +6185,7 @@ class SendCampaignSMS extends Model
 
                                 if (is_array($get_response)) {
                                     if (array_key_exists('status', $get_response) && array_key_exists('id', $get_response)) {
-                                        $get_sms_status = 'Delivered|'.$get_response['id'];
+                                        $get_sms_status = 'Delivered|' . $get_response['id'];
                                     } elseif (array_key_exists('error', $get_response)) {
                                         $get_sms_status = $get_response['error'];
                                     } else {
@@ -6210,16 +6206,16 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_IMARTGROUP:
 
                         $parameters = [
-                                'key'      => $sending_server->api_key,
-                                'contacts' => $phone,
-                                'senderid' => $data['sender_id'],
-                                'msg'      => $message,
-                                'type'     => 'text',
-                                'routeid'  => '8',
-                                'campaign' => '1',
+                            'key' => $sending_server->api_key,
+                            'contacts' => $phone,
+                            'senderid' => $data['sender_id'],
+                            'msg' => $message,
+                            'type' => 'text',
+                            'routeid' => '8',
+                            'campaign' => '1',
                         ];
 
-                        $gateway_url = $gateway_url.'?'.http_build_query($parameters);
+                        $gateway_url = $gateway_url . '?' . http_build_query($parameters);
 
                         try {
                             $ch = curl_init();
@@ -6237,7 +6233,7 @@ class SendCampaignSMS extends Model
                                 $get_response = explode("/", $response);
 
                                 if (is_array($get_response) && array_key_exists('1', $get_response)) {
-                                    $get_sms_status = 'Delivered|'.$get_response['1'];
+                                    $get_sms_status = 'Delivered|' . $get_response['1'];
                                 } else {
                                     $get_sms_status = $response;
                                 }
@@ -6251,15 +6247,15 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_GOSMSFUN:
 
                         $parameters = [
-                                'phone'   => $phone,
-                                'sender'  => $data['sender_id'],
-                                'message' => $message,
+                            'phone' => $phone,
+                            'sender' => $data['sender_id'],
+                            'message' => $message,
                         ];
 
                         $headers = [
-                                'Content-Type:application/json',
-                                'Accept: application/json',
-                                'Token: '.$sending_server->api_token,
+                            'Content-Type:application/json',
+                            'Accept: application/json',
+                            'Token: ' . $sending_server->api_token,
                         ];
 
                         try {
@@ -6300,18 +6296,18 @@ class SendCampaignSMS extends Model
 
                     case SendingServer::TYPE_VIBER:
                         $parameters = [
-                                'receiver'        => $phone,
-                                'min_api_version' => 1,
-                                'sender'          => [
-                                        'name' => $data['sender_id'],
-                                ],
-                                'type'            => 'text',
-                                'text'            => $message,
+                            'receiver' => $phone,
+                            'min_api_version' => 1,
+                            'sender' => [
+                                'name' => $data['sender_id'],
+                            ],
+                            'type' => 'text',
+                            'text' => $message,
                         ];
 
                         $headers = [
-                                'Content-type: application/x-www-form-urlencoded',
-                                'X-Viber-Auth-Token: '.$sending_server->auth_token,
+                            'Content-type: application/x-www-form-urlencoded',
+                            'X-Viber-Auth-Token: ' . $sending_server->auth_token,
                         ];
 
                         try {
@@ -6354,13 +6350,13 @@ class SendCampaignSMS extends Model
 
 
                         $parameters = [
-                                'to'   => '+'.$phone,
-                                'from' => $data['sender_id'],
-                                'body' => $message,
+                            'to' => '+' . $phone,
+                            'from' => $data['sender_id'],
+                            'body' => $message,
                         ];
 
                         $headers = [
-                                'Authorization: Basic '.$sending_server->api_key,
+                            'Authorization: Basic ' . $sending_server->api_key,
                         ];
 
                         try {
@@ -6404,15 +6400,15 @@ class SendCampaignSMS extends Model
 
 
                         $parameters = [
-                                'action'  => 'send-sms',
-                                'api_key' => $sending_server->api_key,
-                                'to'      => $phone,
-                                'from'    => $data['sender_id'],
-                                'sms'     => $message,
+                            'action' => 'send-sms',
+                            'api_key' => $sending_server->api_key,
+                            'to' => $phone,
+                            'from' => $data['sender_id'],
+                            'sms' => $message,
                         ];
 
 
-                        $gateway_url = $gateway_url.'?'.http_build_query($parameters);
+                        $gateway_url = $gateway_url . '?' . http_build_query($parameters);
 
                         try {
                             $ch = curl_init();
@@ -6448,10 +6444,10 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_SAVEWEBHOSTNET:
 
                         $parameters = [
-                                'message'   => $message,
-                                'sender_id' => $data['sender_id'],
-                                'recipient' => $phone,
-                                'type'      => 'plain', // possible value: plain, mms, voice, whatsapp, default plain
+                            'message' => $message,
+                            'sender_id' => $data['sender_id'],
+                            'recipient' => $phone,
+                            'type' => 'plain', // possible value: plain, mms, voice, whatsapp, default plain
                         ];
 
                         $ch = curl_init();
@@ -6463,9 +6459,9 @@ class SendCampaignSMS extends Model
                         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
                         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($parameters));
                         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                                'Authorization: Bearer '.$sending_server->api_token,
-                                'Content-Type: application/json',
-                                'Accept: application/json',
+                            'Authorization: Bearer ' . $sending_server->api_token,
+                            'Content-Type: application/json',
+                            'Accept: application/json',
                         ]);
 
                         $response = curl_exec($ch);
@@ -6495,9 +6491,9 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_FAST2SMS:
 
                         $parameters = [
-                                'message' => $message,
-                                'numbers' => $phone,
-                                'route'   => 'q',
+                            'message' => $message,
+                            'numbers' => $phone,
+                            'route' => 'q',
                         ];
 
                         $ch = curl_init();
@@ -6509,9 +6505,9 @@ class SendCampaignSMS extends Model
                         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
                         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($parameters));
                         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                                'Authorization: '.$sending_server->api_key,
-                                'Content-Type: application/json',
-                                'Accept: application/json',
+                            'Authorization: ' . $sending_server->api_key,
+                            'Content-Type: application/json',
+                            'Accept: application/json',
                         ]);
 
                         $response = curl_exec($ch);
@@ -6539,9 +6535,9 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_MSG91:
 
                         $parameters = [
-                                'flow_id'   => $sending_server->c1,
-                                'short_url' => 1,
-                                'mobiles'   => $phone,
+                            'flow_id' => $sending_server->c1,
+                            'short_url' => 1,
+                            'mobiles' => $phone,
                         ];
                         if (isset($data['sender_id'])) {
                             $parameters['sender'] = $data['sender_id'];
@@ -6556,8 +6552,8 @@ class SendCampaignSMS extends Model
                         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
                         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($parameters));
                         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                                'authkey: '.$sending_server->auth_key,
-                                'Content-Type: application/json',
+                            'authkey: ' . $sending_server->auth_key,
+                            'Content-Type: application/json',
                         ]);
 
                         $response = curl_exec($ch);
@@ -6584,12 +6580,12 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_TELEAPI:
 
                         $parameters = [
-                                'source'      => $data['sender_id'],
-                                'destination' => $phone,
-                                'message'     => $message,
+                            'source' => $data['sender_id'],
+                            'destination' => $phone,
+                            'message' => $message,
                         ];
 
-                        $gateway_url .= "?token=".$sending_server->api_token;
+                        $gateway_url .= "?token=" . $sending_server->api_token;
 
                         $ch = curl_init();
                         curl_setopt($ch, CURLOPT_URL, $gateway_url);
@@ -6625,15 +6621,15 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_BUDGETSMS:
 
                         $parameters = [
-                                'username' => $sending_server->username,
-                                'userid'   => $sending_server->c1,
-                                'handle'   => $sending_server->c2,
-                                'to'       => $phone,
-                                'msg'      => $message,
-                                'from'     => $data['sender_id'],
+                            'username' => $sending_server->username,
+                            'userid' => $sending_server->c1,
+                            'handle' => $sending_server->c2,
+                            'to' => $phone,
+                            'msg' => $message,
+                            'from' => $data['sender_id'],
                         ];
 
-                        $gateway_url .= '?'.http_build_query($parameters);
+                        $gateway_url .= '?' . http_build_query($parameters);
 
                         try {
                             $ch = curl_init();
@@ -6654,52 +6650,52 @@ class SendCampaignSMS extends Model
                                 if (isset($result) && is_array($result) && count($result) > 0) {
 
                                     if ($result['0'] == 'OK') {
-                                        $get_sms_status = 'Delivered|'.$result['1'];
+                                        $get_sms_status = 'Delivered|' . $result['1'];
                                     } else {
                                         $get_sms_status = match ($result['1']) {
-                                            '1001'         => 'Not enough credits to send messages',
-                                            '1002'         => 'Identification failed. Wrong credentials',
-                                            '1003'         => 'Account not active, contact BudgetSMS',
-                                            '1004'         => 'This IP address is not added to this account. No access to the API',
-                                            '1005'         => 'No handle provided',
-                                            '1006'         => 'No UserID provided',
-                                            '1007'         => 'No Username provided',
-                                            '2001'         => 'SMS message text is empty',
-                                            '2002'         => 'SMS numeric senderid can be max. 16 numbers',
-                                            '2003'         => 'SMS alphanumeric sender can be max. 11 characters',
-                                            '2004'         => 'SMS senderid is empty or invalid',
-                                            '2005'         => 'Destination number is too short',
-                                            '2006'         => 'Destination is not numeric',
-                                            '2007'         => 'Destination is empty',
-                                            '2008'         => 'SMS text is not OK',
-                                            '2009'         => 'Parameter issue',
-                                            '2010'         => 'Destination number is invalidly formatted',
-                                            '2011'         => 'Destination is invalid',
-                                            '2012'         => 'SMS message text is too long',
-                                            '2013'         => 'SMS message is invalid',
-                                            '2014'         => 'SMS CustomID is used before',
-                                            '2015'         => 'Charset problem',
-                                            '2016'         => 'Invalid UTF-8 encoding',
-                                            '2017'         => 'Invalid SMSid',
-                                            '3001'         => 'No route to destination. Contact BudgetSMS for possible solutions',
-                                            '3002'         => 'No routes are setup. Contact BudgetSMS for a route setup',
-                                            '3003'         => 'Invalid destination. Check international mobile number formatting',
-                                            '4001'         => 'System error, related to customID',
-                                            '4002'         => 'System error, temporary issue. Try resubmitting in 2 to 3 minutes',
-                                            '4003'         => 'System error, temporary issue',
-                                            '4004'         => 'System error, temporary issue. Contact BudgetSMS',
-                                            '4005'         => 'System error, permanent',
-                                            '4006'         => 'Gateway not reachable',
-                                            '4007'         => 'System error, contact BudgetSMS',
-                                            '5001'         => 'Send error, Contact BudgetSMS with the send details',
-                                            '5002'         => 'Wrong SMS type',
-                                            '5003'         => 'Wrong operator',
-                                            '7001'         => 'No HLR provider present, Contact BudgetSMS',
-                                            '7002'         => 'Unexpected results from HLR provider',
-                                            '7003'         => 'Bad number format',
-                                            '7901'         => 'Unexpected error. Contact BudgetSMS',
+                                            '1001' => 'Not enough credits to send messages',
+                                            '1002' => 'Identification failed. Wrong credentials',
+                                            '1003' => 'Account not active, contact BudgetSMS',
+                                            '1004' => 'This IP address is not added to this account. No access to the API',
+                                            '1005' => 'No handle provided',
+                                            '1006' => 'No UserID provided',
+                                            '1007' => 'No Username provided',
+                                            '2001' => 'SMS message text is empty',
+                                            '2002' => 'SMS numeric senderid can be max. 16 numbers',
+                                            '2003' => 'SMS alphanumeric sender can be max. 11 characters',
+                                            '2004' => 'SMS senderid is empty or invalid',
+                                            '2005' => 'Destination number is too short',
+                                            '2006' => 'Destination is not numeric',
+                                            '2007' => 'Destination is empty',
+                                            '2008' => 'SMS text is not OK',
+                                            '2009' => 'Parameter issue',
+                                            '2010' => 'Destination number is invalidly formatted',
+                                            '2011' => 'Destination is invalid',
+                                            '2012' => 'SMS message text is too long',
+                                            '2013' => 'SMS message is invalid',
+                                            '2014' => 'SMS CustomID is used before',
+                                            '2015' => 'Charset problem',
+                                            '2016' => 'Invalid UTF-8 encoding',
+                                            '2017' => 'Invalid SMSid',
+                                            '3001' => 'No route to destination. Contact BudgetSMS for possible solutions',
+                                            '3002' => 'No routes are setup. Contact BudgetSMS for a route setup',
+                                            '3003' => 'Invalid destination. Check international mobile number formatting',
+                                            '4001' => 'System error, related to customID',
+                                            '4002' => 'System error, temporary issue. Try resubmitting in 2 to 3 minutes',
+                                            '4003' => 'System error, temporary issue',
+                                            '4004' => 'System error, temporary issue. Contact BudgetSMS',
+                                            '4005' => 'System error, permanent',
+                                            '4006' => 'Gateway not reachable',
+                                            '4007' => 'System error, contact BudgetSMS',
+                                            '5001' => 'Send error, Contact BudgetSMS with the send details',
+                                            '5002' => 'Wrong SMS type',
+                                            '5003' => 'Wrong operator',
+                                            '7001' => 'No HLR provider present, Contact BudgetSMS',
+                                            '7002' => 'Unexpected results from HLR provider',
+                                            '7003' => 'Bad number format',
+                                            '7901' => 'Unexpected error. Contact BudgetSMS',
                                             '7903', '7902' => 'HLR provider error. Contact BudgetSMS',
-                                            default        => 'Unknown error',
+                                            default => 'Unknown error',
                                         };
                                     }
                                 } else {
@@ -6715,14 +6711,14 @@ class SendCampaignSMS extends Model
                     case SendingServer::TYPE_OZONEDESK:
 
                         $parameters = [
-                                'api_key'   => $sending_server->api_key,
-                                'user_id'   => $sending_server->c1,
-                                'to'        => $phone,
-                                'message'   => $message,
-                                'sender_id' => $data['sender_id'],
+                            'api_key' => $sending_server->api_key,
+                            'user_id' => $sending_server->c1,
+                            'to' => $phone,
+                            'message' => $message,
+                            'sender_id' => $data['sender_id'],
                         ];
 
-                        $gateway_url .= '?'.http_build_query($parameters);
+                        $gateway_url .= '?' . http_build_query($parameters);
 
                         try {
                             $ch = curl_init();
@@ -6757,11 +6753,11 @@ class SendCampaignSMS extends Model
 
                     case SendingServer::TYPE_SKEBBY:
 
-                        $phone      = "+".$phone;
+                        $phone = "+" . $phone;
                         $parameters = [
-                                'message_type' => $sending_server->c1,
-                                'message'      => $message,
-                                'recipient'    => ['+393471234567'],
+                            'message_type' => $sending_server->c1,
+                            'message' => $message,
+                            'recipient' => ['+393471234567'],
                         ];
 
                         if (isset($data['sender_id'])) {
@@ -6777,9 +6773,9 @@ class SendCampaignSMS extends Model
                         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
                         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($parameters));
                         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                                'user_key: '.$sending_server->api_key,
-                                'Access_token: '.$sending_server->access_token,
-                                'Content-Type: application/json',
+                            'user_key: ' . $sending_server->api_key,
+                            'Access_token: ' . $sending_server->access_token,
+                            'Content-Type: application/json',
                         ]);
 
                         $response = curl_exec($ch);
@@ -6834,6 +6830,76 @@ class SendCampaignSMS extends Model
 //                            $get_sms_status = $e->getMessage();
 //                        }
 //                        break;
+                    /*custom pape*/
+                    case 'orangesms':
+                        $headers = [];
+                        $content = $message;
+                        $subject = urlencode('sms');
+                        $signature = urlencode($data['sender_id'],);
+                        $timestamp = time();
+                        $token = $sending_server->api_token;
+                        $recipient = $phone;
+
+                        $flux = [];
+                        $flux['messages'][] = [
+                            "signature" => $signature,
+                            "subject" => "sms",
+                            "content" => $content,
+                            "recipients" => [
+                                [
+                                    "value" => $phone
+                                ]
+                            ]
+                        ];
+                        $flux_json = json_encode($flux);
+                        $msgToEncrypt = $token . $flux_json . $timestamp;
+                        $key = hash_hmac('sha1', $msgToEncrypt, $sending_server->api_key);
+                        try {
+                            $queryParams = [
+                                "token" => $token,
+                                "key" => $key,
+                                "timestamp" => $timestamp
+                            ];
+
+                            $ch = curl_init();
+                            $full_url = $gateway_url . '?' . http_build_query($queryParams);
+                            curl_setopt($ch, CURLOPT_URL, $full_url);
+                            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+                            curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+
+                            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+                            curl_setopt($ch, CURLOPT_POST, 1);
+//                            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($parameters));
+                            curl_setopt($ch, CURLOPT_POSTFIELDS, $flux_json);
+                            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                            curl_setopt($ch, CURLOPT_USERPWD, $sending_server->application_id . ":" . $token);
+                            $response = curl_exec($ch);
+                            curl_close($ch);
+
+                            $get_response = json_decode($response, true);
+
+                            if (isset($get_response) && is_array($get_response) && array_key_exists('responses', $get_response)) {
+                                if ($get_response['responses']['response']) {
+                                    $message_response = reset($get_response['responses']['response']);
+                                    $remote_message = $message_response['status'];
+                                    $remote_message_code = $remote_message['status_CODE'];
+                                    $remote_message_TEXT = $remote_message['status_TEXT'];
+                                    if ($remote_message_code == 200) {
+                                        $get_sms_status = 'Delivered|' . $message_response['messagedetail_ID'];
+                                    } else {
+                                        $get_sms_status = $remote_message_TEXT;
+                                    }
+                                } else {
+                                    $get_sms_status = "Erreur d'envoi revoir la requete orange. Reponse serveur : " . (string)$response;;
+                                }
+                            } else {
+                                $get_sms_status = "Erreur d'envoi revoir la requete orange. Reponse serveur : " . (string)$response;;
+                            }
+
+                        } catch (Exception $ex) {
+                            $get_sms_status = $ex->getMessage();
+                        }
+                        break;
 
                     default:
                         $get_sms_status = __('locale.sending_servers.sending_server_not_found');
@@ -6843,13 +6909,13 @@ class SendCampaignSMS extends Model
         }
 
         $reportsData = [
-                'user_id'           => $data['user_id'],
-                'to'                => str_replace(['(', ')', '+', '-', ' '], '', $phone),
-                'message'           => $message,
-                'sms_type'          => $data['sms_type'],
-                'status'            => $get_sms_status,
-                'cost'              => $data['cost'],
-                'sending_server_id' => $sending_server->id,
+            'user_id' => $data['user_id'],
+            'to' => str_replace(['(', ')', '+', '-', ' '], '', $phone),
+            'message' => $message,
+            'sms_type' => $data['sms_type'],
+            'status' => $get_sms_status,
+            'cost' => $data['cost'],
+            'sending_server_id' => $sending_server->id,
         ];
 
         if (isset($data['sender_id'])) {
@@ -6886,15 +6952,14 @@ class SendCampaignSMS extends Model
      * @return array|Application|Translator|string|null
      * @throws Exception
      */
-    public function sendVoiceSMS($data)
-    {
-        $phone          = $data['phone'];
+    public function sendVoiceSMS($data) {
+        $phone = $data['phone'];
         $sending_server = $data['sending_server'];
-        $gateway_name   = $data['sending_server']->settings;
-        $message        = null;
+        $gateway_name = $data['sending_server']->settings;
+        $message = null;
         $get_sms_status = $data['status'];
-        $language       = $data['language'];
-        $gender         = $data['gender'];
+        $language = $data['language'];
+        $gender = $data['gender'];
 
         if (isset($data['message'])) {
             $message = $data['message'];
@@ -6919,13 +6984,13 @@ class SendCampaignSMS extends Model
                         $response->say($message, ['voice' => $voice, 'language' => $language]);
 
                         $get_response = $client->calls->create($phone, $data['sender_id'], [
-                                "twiml" => $response,
+                            "twiml" => $response,
                         ]);
 
                         if ($get_response->status == 'queued') {
                             $get_sms_status = 'Delivered';
                         } else {
-                            $get_sms_status = $get_response->status.'|'.$get_response->sid;
+                            $get_sms_status = $get_response->status . '|' . $get_response->sid;
                         }
 
                     } catch (ConfigurationException|TwilioException $e) {
@@ -6938,12 +7003,12 @@ class SendCampaignSMS extends Model
                     $client = new RestClient($sending_server->auth_id, $sending_server->auth_token);
                     try {
                         $response = $client->messages->create(
-                                $data['sender_id'],
-                                [$phone],
-                                Tool::createVoiceFile($message, 'Plivo'),
+                            $data['sender_id'],
+                            [$phone],
+                            Tool::createVoiceFile($message, 'Plivo'),
                         );
 
-                        $get_sms_status = 'Delivered|'.$response->getmessageUuid(0)[0];
+                        $get_sms_status = 'Delivered|' . $response->getmessageUuid(0)[0];
 
                     } catch (PlivoResponseException $e) {
                         $get_sms_status = $e->getMessage();
@@ -6955,34 +7020,34 @@ class SendCampaignSMS extends Model
                 case 'Infobip':
 
                     $parameters = [
-                            'text'     => $message,
-                            'language' => $data['language'],
-                            'voice'    => [
-                                    'gender' => $data['gender'],
-                            ],
-                            'from'     => $data['sender_id'],
-                            'to'       => $phone,
+                        'text' => $message,
+                        'language' => $data['language'],
+                        'voice' => [
+                            'gender' => $data['gender'],
+                        ],
+                        'from' => $data['sender_id'],
+                        'to' => $phone,
                     ];
                     try {
                         $curl = curl_init();
 
                         $header = [
-                                "Authorization: App $sending_server->api_key",
-                                "Content-Type: application/json",
-                                "Accept: application/json",
+                            "Authorization: App $sending_server->api_key",
+                            "Content-Type: application/json",
+                            "Accept: application/json",
                         ];
 
                         curl_setopt_array($curl, [
-                                CURLOPT_URL            => 'https://api.infobip.com/tts/3/single',
-                                CURLOPT_RETURNTRANSFER => true,
-                                CURLOPT_ENCODING       => '',
-                                CURLOPT_MAXREDIRS      => 10,
-                                CURLOPT_TIMEOUT        => 0,
-                                CURLOPT_FOLLOWLOCATION => true,
-                                CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
-                                CURLOPT_CUSTOMREQUEST  => 'POST',
-                                CURLOPT_POSTFIELDS     => json_encode($parameters),
-                                CURLOPT_HTTPHEADER     => $header,
+                            CURLOPT_URL => 'https://api.infobip.com/tts/3/single',
+                            CURLOPT_RETURNTRANSFER => true,
+                            CURLOPT_ENCODING => '',
+                            CURLOPT_MAXREDIRS => 10,
+                            CURLOPT_TIMEOUT => 0,
+                            CURLOPT_FOLLOWLOCATION => true,
+                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                            CURLOPT_CUSTOMREQUEST => 'POST',
+                            CURLOPT_POSTFIELDS => json_encode($parameters),
+                            CURLOPT_HTTPHEADER => $header,
                         ]);
 
 
@@ -6995,7 +7060,7 @@ class SendCampaignSMS extends Model
                             if (array_key_exists('messages', $get_data)) {
                                 foreach ($get_data['messages'] as $msg) {
                                     if ($msg['status']['name'] == 'MESSAGE_ACCEPTED' || $msg['status']['name'] == 'PENDING_ENROUTE' || $msg['status']['name'] == 'PENDING_ACCEPTED') {
-                                        $get_sms_status = 'Delivered|'.$msg['messageId'];
+                                        $get_sms_status = 'Delivered|' . $msg['messageId'];
                                     } else {
                                         $get_sms_status = $msg['status']['description'];
                                     }
@@ -7018,21 +7083,21 @@ class SendCampaignSMS extends Model
 
                 case 'MessageBird':
                     $parameters = [
-                            'destination' => $phone,
-                            'source'      => $data['sender_id'],
-                            'callFlow'    => [
-                                    'title' => config('app.name').'_'.now().'_flow',
-                                    'steps' => [
-                                            [
-                                                    'action'  => 'say',
-                                                    'options' => [
-                                                            'payload'  => $message,
-                                                            'language' => $data['language'],
-                                                            'voice'    => $data['gender'],
-                                                    ],
-                                            ],
+                        'destination' => $phone,
+                        'source' => $data['sender_id'],
+                        'callFlow' => [
+                            'title' => config('app.name') . '_' . now() . '_flow',
+                            'steps' => [
+                                [
+                                    'action' => 'say',
+                                    'options' => [
+                                        'payload' => $message,
+                                        'language' => $data['language'],
+                                        'voice' => $data['gender'],
                                     ],
+                                ],
                             ],
+                        ],
                     ];
 
                     $ch = curl_init();
@@ -7042,7 +7107,7 @@ class SendCampaignSMS extends Model
                     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($parameters));
                     curl_setopt($ch, CURLOPT_POST, 1);
 
-                    $headers   = [];
+                    $headers = [];
                     $headers[] = "Authorization: AccessKey $sending_server->api_key";
                     $headers[] = "Content-Type: application/x-www-form-urlencoded";
                     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -7055,7 +7120,7 @@ class SendCampaignSMS extends Model
                         $response = json_decode($result, true);
 
                         if (is_array($response) && array_key_exists('data', $response)) {
-                            $get_sms_status = 'Delivered|'.$response['data'][0]['id'];
+                            $get_sms_status = 'Delivered|' . $response['data'][0]['id'];
                         } elseif (is_array($response) && array_key_exists('errors', $response)) {
                             $get_sms_status = $response['errors'][0]['message'];
                         } else {
@@ -7069,12 +7134,12 @@ class SendCampaignSMS extends Model
                 case 'SignalWire':
 
                     $parameters = [
-                            'From' => '+'.$data['sender_id'],
-                            'Url'  => Tool::createVoiceFile($message, 'Twilio'),
-                            'To'   => '+'.$phone,
+                        'From' => '+' . $data['sender_id'],
+                        'Url' => Tool::createVoiceFile($message, 'Twilio'),
+                        'To' => '+' . $phone,
                     ];
 
-                    $sending_url = $gateway_url."/api/laml/2010-04-01/Accounts/$sending_server->project_id/Calls.json";
+                    $sending_url = $gateway_url . "/api/laml/2010-04-01/Accounts/$sending_server->project_id/Calls.json";
 
                     $ch = curl_init();
 
@@ -7082,7 +7147,7 @@ class SendCampaignSMS extends Model
                     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                     curl_setopt($ch, CURLOPT_POST, 1);
                     curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($parameters));
-                    curl_setopt($ch, CURLOPT_USERPWD, "$sending_server->project_id".":"."$sending_server->api_token");
+                    curl_setopt($ch, CURLOPT_USERPWD, "$sending_server->project_id" . ":" . "$sending_server->api_token");
 
                     $get_response = curl_exec($ch);
                     if (curl_errno($ch)) {
@@ -7093,7 +7158,7 @@ class SendCampaignSMS extends Model
 
                         if (isset($result) && is_array($result) && array_key_exists('status', $result) && array_key_exists('error_code', $result)) {
                             if ($result['status'] == 'queued' && $result['error_code'] === null) {
-                                $get_sms_status = 'Delivered|'.$result['sid'];
+                                $get_sms_status = 'Delivered|' . $result['sid'];
                             } else {
                                 $get_sms_status = $result['error_message'];
                             }
@@ -7118,13 +7183,13 @@ class SendCampaignSMS extends Model
 
 
         $reportsData = [
-                'user_id'           => $data['user_id'],
-                'to'                => $phone,
-                'message'           => $message,
-                'sms_type'          => 'voice',
-                'status'            => $get_sms_status,
-                'cost'              => $data['cost'],
-                'sending_server_id' => $sending_server->id,
+            'user_id' => $data['user_id'],
+            'to' => $phone,
+            'message' => $message,
+            'sms_type' => 'voice',
+            'status' => $get_sms_status,
+            'cost' => $data['cost'],
+            'sending_server_id' => $sending_server->id,
         ];
 
         if (isset($data['sender_id'])) {
@@ -7159,14 +7224,13 @@ class SendCampaignSMS extends Model
      *
      * @return array|Application|Translator|string|null
      */
-    public function sendMMS($data)
-    {
-        $phone          = str_replace(['+', '(', ')', '-', " "], '', $data['phone']);
+    public function sendMMS($data) {
+        $phone = str_replace(['+', '(', ')', '-', " "], '', $data['phone']);
         $sending_server = $data['sending_server'];
-        $gateway_name   = $data['sending_server']->settings;
-        $message        = null;
+        $gateway_name = $data['sending_server']->settings;
+        $message = null;
         $get_sms_status = $data['status'];
-        $media_url      = $data['media_url'];
+        $media_url = $data['media_url'];
 
         if (isset($data['message'])) {
             $message = $data['message'];
@@ -7181,15 +7245,15 @@ class SendCampaignSMS extends Model
                         $client = new Client($sending_server->account_sid, $sending_server->auth_token);
 
                         $get_response = $client->messages->create($phone, [
-                                'from'     => $data['sender_id'],
-                                'body'     => $message,
-                                'mediaUrl' => $media_url,
+                            'from' => $data['sender_id'],
+                            'body' => $message,
+                            'mediaUrl' => $media_url,
                         ]);
 
                         if ($get_response->status == 'queued' || $get_response->status == 'accepted') {
-                            $get_sms_status = 'Delivered|'.$get_response->sid;
+                            $get_sms_status = 'Delivered|' . $get_response->sid;
                         } else {
-                            $get_sms_status = $get_response->status.'|'.$get_response->sid;
+                            $get_sms_status = $get_response->status . '|' . $get_response->sid;
                         }
 
                     } catch (ConfigurationException|TwilioException $e) {
@@ -7200,10 +7264,10 @@ class SendCampaignSMS extends Model
                 case 'TextLocal':
 
                     $parameters = [
-                            'apikey'  => $sending_server->api_key,
-                            'numbers' => $phone,
-                            'url'     => $media_url,
-                            'message' => $message,
+                        'apikey' => $sending_server->api_key,
+                        'numbers' => $phone,
+                        'url' => $media_url,
+                        'message' => $message,
                     ];
 
                     if (isset($data['sender_id'])) {
@@ -7216,7 +7280,7 @@ class SendCampaignSMS extends Model
                         curl_setopt($ch, CURLOPT_POSTFIELDS, $parameters);
                         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                         $response = curl_exec($ch);
-                        $err      = curl_error($ch);
+                        $err = curl_error($ch);
                         curl_close($ch);
 
                         if ($err) {
@@ -7245,13 +7309,13 @@ class SendCampaignSMS extends Model
 
                 case 'Plivo':
                     $parameters = json_encode([
-                            'src'        => $data['sender_id'],
-                            'dst'        => $phone,
-                            'text'       => $message,
-                            'type'       => 'mms',
-                            'media_urls' => [
-                                    $media_url,
-                            ],
+                        'src' => $data['sender_id'],
+                        'dst' => $phone,
+                        'text' => $message,
+                        'type' => 'mms',
+                        'media_urls' => [
+                            $media_url,
+                        ],
                     ]);
 
                     $ch = curl_init();
@@ -7260,9 +7324,9 @@ class SendCampaignSMS extends Model
                     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                     curl_setopt($ch, CURLOPT_POSTFIELDS, $parameters);
                     curl_setopt($ch, CURLOPT_POST, 1);
-                    curl_setopt($ch, CURLOPT_USERPWD, "$sending_server->auth_id".":"."$sending_server->auth_token");
+                    curl_setopt($ch, CURLOPT_USERPWD, "$sending_server->auth_id" . ":" . "$sending_server->auth_token");
 
-                    $headers   = [];
+                    $headers = [];
                     $headers[] = "Content-Type: application/json";
                     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
@@ -7275,7 +7339,7 @@ class SendCampaignSMS extends Model
                         if (json_last_error() == JSON_ERROR_NONE) {
                             if (isset($response) && is_array($response) && array_key_exists('message', $response)) {
                                 if (substr_count($response['message'], 'queued')) {
-                                    $get_sms_status = 'Delivered|'.$response['message_uuid'][0];
+                                    $get_sms_status = 'Delivered|' . $response['message_uuid'][0];
                                 } else {
                                     $get_sms_status = $response['message'];
                                 }
@@ -7294,13 +7358,13 @@ class SendCampaignSMS extends Model
 
                 case 'PlivoPowerpack':
                     $parameters = json_encode([
-                            'powerpack_uuid' => $data['sender_id'],
-                            'dst'            => $phone,
-                            'text'           => $message,
-                            'type'           => 'mms',
-                            'media_urls'     => [
-                                    $media_url,
-                            ],
+                        'powerpack_uuid' => $data['sender_id'],
+                        'dst' => $phone,
+                        'text' => $message,
+                        'type' => 'mms',
+                        'media_urls' => [
+                            $media_url,
+                        ],
                     ]);
 
                     $ch = curl_init();
@@ -7309,9 +7373,9 @@ class SendCampaignSMS extends Model
                     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                     curl_setopt($ch, CURLOPT_POSTFIELDS, $parameters);
                     curl_setopt($ch, CURLOPT_POST, 1);
-                    curl_setopt($ch, CURLOPT_USERPWD, "$sending_server->auth_id".":"."$sending_server->auth_token");
+                    curl_setopt($ch, CURLOPT_USERPWD, "$sending_server->auth_id" . ":" . "$sending_server->auth_token");
 
-                    $headers   = [];
+                    $headers = [];
                     $headers[] = "Content-Type: application/json";
                     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
@@ -7324,7 +7388,7 @@ class SendCampaignSMS extends Model
                         if (json_last_error() == JSON_ERROR_NONE) {
                             if (isset($response) && is_array($response) && array_key_exists('message', $response)) {
                                 if (substr_count($response['message'], 'queued')) {
-                                    $get_sms_status = 'Delivered|'.$response['message_uuid'][0];
+                                    $get_sms_status = 'Delivered|' . $response['message_uuid'][0];
                                 } else {
                                     $get_sms_status = $response['message'];
                                 }
@@ -7345,17 +7409,17 @@ class SendCampaignSMS extends Model
                 case 'SMSGlobal':
 
                     $parameters = [
-                            'user'        => $sending_server->username,
-                            'password'    => $sending_server->password,
-                            'from'        => $data['sender_id'],
-                            'number'      => $phone,
-                            'message'     => $message,
-                            'attachmentx' => $media_url,
-                            'typex'       => image_type_to_mime_type(exif_imagetype($media_url)),
-                            'namex'       => basename($media_url),
+                        'user' => $sending_server->username,
+                        'password' => $sending_server->password,
+                        'from' => $data['sender_id'],
+                        'number' => $phone,
+                        'message' => $message,
+                        'attachmentx' => $media_url,
+                        'typex' => image_type_to_mime_type(exif_imagetype($media_url)),
+                        'namex' => basename($media_url),
                     ];
 
-                    $sending_url = 'https://api.smsglobal.com/mms/sendmms.php?'.http_build_query($parameters);
+                    $sending_url = 'https://api.smsglobal.com/mms/sendmms.php?' . http_build_query($parameters);
 
                     try {
 
@@ -7380,10 +7444,10 @@ class SendCampaignSMS extends Model
 
                 case 'MessageBird':
                     $parameters = [
-                            'recipients' => $data['phone'],
-                            'originator' => $data['sender_id'],
-                            'body'       => $message,
-                            'mediaUrls'  => [$media_url],
+                        'recipients' => $data['phone'],
+                        'originator' => $data['sender_id'],
+                        'body' => $message,
+                        'mediaUrls' => [$media_url],
                     ];
 
                     $ch = curl_init();
@@ -7393,7 +7457,7 @@ class SendCampaignSMS extends Model
                     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($parameters));
                     curl_setopt($ch, CURLOPT_POST, 1);
 
-                    $headers   = [];
+                    $headers = [];
                     $headers[] = "Authorization: AccessKey $sending_server->api_key";
                     $headers[] = "Content-Type: application/x-www-form-urlencoded";
                     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -7405,7 +7469,7 @@ class SendCampaignSMS extends Model
                         $response = json_decode($result, true);
 
                         if (is_array($response) && array_key_exists('id', $response)) {
-                            $get_sms_status = 'Delivered|'.$response['id'];
+                            $get_sms_status = 'Delivered|' . $response['id'];
                         } elseif (is_array($response) && array_key_exists('errors', $response)) {
                             $get_sms_status = $response['errors'][0]['description'];
                         } else {
@@ -7420,13 +7484,13 @@ class SendCampaignSMS extends Model
                 case 'SignalWire':
 
                     $parameters = [
-                            'From'     => '+'.$data['sender_id'],
-                            'Body'     => $message,
-                            'MediaUrl' => $media_url,
-                            'To'       => '+'.$phone,
+                        'From' => '+' . $data['sender_id'],
+                        'Body' => $message,
+                        'MediaUrl' => $media_url,
+                        'To' => '+' . $phone,
                     ];
 
-                    $sending_url = $gateway_url."/api/laml/2010-04-01/Accounts/$sending_server->project_id/Messages.json";
+                    $sending_url = $gateway_url . "/api/laml/2010-04-01/Accounts/$sending_server->project_id/Messages.json";
 
                     $ch = curl_init();
 
@@ -7434,7 +7498,7 @@ class SendCampaignSMS extends Model
                     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                     curl_setopt($ch, CURLOPT_POST, 1);
                     curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($parameters));
-                    curl_setopt($ch, CURLOPT_USERPWD, "$sending_server->project_id".":"."$sending_server->api_token");
+                    curl_setopt($ch, CURLOPT_USERPWD, "$sending_server->project_id" . ":" . "$sending_server->api_token");
 
                     $get_response = curl_exec($ch);
                     if (curl_errno($ch)) {
@@ -7445,7 +7509,7 @@ class SendCampaignSMS extends Model
 
                         if (isset($result) && is_array($result) && array_key_exists('status', $result) && array_key_exists('error_code', $result)) {
                             if ($result['status'] == 'queued' && $result['error_code'] === null) {
-                                $get_sms_status = 'Delivered|'.$result['sid'];
+                                $get_sms_status = 'Delivered|' . $result['sid'];
                             } else {
                                 $get_sms_status = $result['error_message'];
                             }
@@ -7465,24 +7529,24 @@ class SendCampaignSMS extends Model
 
                 case 'Telnyx':
                     $parameters = [
-                            "to"         => '+'.$phone,
-                            "text"       => $message,
-                            "subject"    => 'Picture',
-                            "media_urls" => [$media_url],
+                        "to" => '+' . $phone,
+                        "text" => $message,
+                        "subject" => 'Picture',
+                        "media_urls" => [$media_url],
                     ];
 
                     if (is_numeric($data['sender_id'])) {
-                        $parameters['from'] = '+'.$data['sender_id'];
+                        $parameters['from'] = '+' . $data['sender_id'];
                     } else {
-                        $parameters['from']                 = $data['sender_id'];
+                        $parameters['from'] = $data['sender_id'];
                         $parameters['messaging_profile_id'] = $sending_server->c1;
                     }
 
                     try {
 
                         $headers = [
-                                'Content-Type:application/json',
-                                'Authorization: Bearer '.$sending_server->api_key,
+                            'Content-Type:application/json',
+                            'Authorization: Bearer ' . $sending_server->api_key,
                         ];
 
                         $ch = curl_init();
@@ -7503,7 +7567,7 @@ class SendCampaignSMS extends Model
                             } elseif (array_key_exists('errors', $get_response)) {
                                 $get_sms_status = $get_response['errors'][0]['detail'];
                             } else {
-                                $get_sms_status = (string) $response;
+                                $get_sms_status = (string)$response;
                             }
                         } else {
                             $get_sms_status = 'Unknown error';
@@ -7516,18 +7580,18 @@ class SendCampaignSMS extends Model
 
                 case 'TelnyxNumberPool':
                     $parameters = [
-                            "to"                   => '+'.$phone,
-                            "text"                 => $message,
-                            "messaging_profile_id" => $sending_server->c1,
-                            "subject"              => 'Picture',
-                            "media_urls"           => [$media_url],
+                        "to" => '+' . $phone,
+                        "text" => $message,
+                        "messaging_profile_id" => $sending_server->c1,
+                        "subject" => 'Picture',
+                        "media_urls" => [$media_url],
                     ];
 
                     try {
 
                         $headers = [
-                                'Content-Type:application/json',
-                                'Authorization: Bearer '.$sending_server->api_key,
+                            'Content-Type:application/json',
+                            'Authorization: Bearer ' . $sending_server->api_key,
                         ];
 
                         $ch = curl_init();
@@ -7548,7 +7612,7 @@ class SendCampaignSMS extends Model
                             } elseif (array_key_exists('errors', $get_response)) {
                                 $get_sms_status = $get_response['errors'][0]['detail'];
                             } else {
-                                $get_sms_status = (string) $response;
+                                $get_sms_status = (string)$response;
                             }
                         } else {
                             $get_sms_status = 'Unknown error';
@@ -7564,13 +7628,13 @@ class SendCampaignSMS extends Model
                     $sender_id = str_replace(['+', '(', ')', '-', ' '], '', $data['sender_id']);
 
                     $parameters = [
-                            'from'          => '+'.$sender_id,
-                            'to'            => ['+'.$phone],
-                            'text'          => $this->message,
-                            'applicationId' => $sending_server->application_id,
-                            'media'         => [
-                                    $this->media_url,
-                            ],
+                        'from' => '+' . $sender_id,
+                        'to' => ['+' . $phone],
+                        'text' => $this->message,
+                        'applicationId' => $sending_server->application_id,
+                        'media' => [
+                            $this->media_url,
+                        ],
                     ];
 
                     try {
@@ -7581,9 +7645,9 @@ class SendCampaignSMS extends Model
                         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($parameters));
                         curl_setopt($ch, CURLOPT_POST, 1);
-                        curl_setopt($ch, CURLOPT_USERPWD, $sending_server->api_secret.':'.$sending_server->api_token);
+                        curl_setopt($ch, CURLOPT_USERPWD, $sending_server->api_secret . ':' . $sending_server->api_token);
 
-                        $headers   = [];
+                        $headers = [];
                         $headers[] = 'Content-Type: application/json';
                         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
@@ -7597,11 +7661,11 @@ class SendCampaignSMS extends Model
 
                             if (isset($result) && is_array($result)) {
                                 if (array_key_exists('id', $result)) {
-                                    $get_sms_status = 'Delivered|'.$result['id'];
+                                    $get_sms_status = 'Delivered|' . $result['id'];
                                 } elseif (array_key_exists('error', $result)) {
                                     $get_sms_status = $result['error'];
                                 } elseif (array_key_exists('fieldErrors', $result)) {
-                                    $get_sms_status = $result['fieldErrors'][0]['fieldName'].' '.$result['fieldErrors'][0]['description'];
+                                    $get_sms_status = $result['fieldErrors'][0]['fieldName'] . ' ' . $result['fieldErrors'][0]['description'];
                                 } else {
                                     $get_sms_status = implode(" ", $result);
                                 }
@@ -7616,22 +7680,22 @@ class SendCampaignSMS extends Model
                     break;
 
                 case 'FlowRoute':
-                    $phone     = str_replace(['+', '(', ')', '-', " "], '', $phone);
+                    $phone = str_replace(['+', '(', ')', '-', " "], '', $phone);
                     $sender_id = str_replace(['+', '(', ')', '-', " "], '', $data['sender_id']);
 
                     $sms = [
-                            "from"       => $sender_id,
-                            "to"         => $phone,
-                            "body"       => $message,
-                            'is_mms'     => true,
-                            'media_urls' => [
-                                    $media_url,
-                            ],
+                        "from" => $sender_id,
+                        "to" => $phone,
+                        "body" => $message,
+                        'is_mms' => true,
+                        'media_urls' => [
+                            $media_url,
+                        ],
                     ];
 
                     try {
 
-                        $headers   = [];
+                        $headers = [];
                         $headers[] = 'Content-Type: application/vnd.api+json';
 
                         $ch = curl_init();
@@ -7641,7 +7705,7 @@ class SendCampaignSMS extends Model
                         curl_setopt($ch, CURLOPT_POST, 1);
                         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($sms, JSON_UNESCAPED_SLASHES));
                         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                        curl_setopt($ch, CURLOPT_USERPWD, $sending_server->access_key.':'.$sending_server->api_secret);
+                        curl_setopt($ch, CURLOPT_USERPWD, $sending_server->access_key . ':' . $sending_server->api_secret);
 
                         $response = curl_exec($ch);
                         curl_close($ch);
@@ -7668,15 +7732,15 @@ class SendCampaignSMS extends Model
 
                 case 'Skyetel':
                     $parameters = [
-                            'to'    => $phone,
-                            'text'  => $message,
-                            'media' => [
-                                    $media_url,
-                            ],
+                        'to' => $phone,
+                        'text' => $message,
+                        'media' => [
+                            $media_url,
+                        ],
                     ];
 
                     if (isset($data['sender_id'])) {
-                        $gateway_url .= "?from=".$data['sender_id'];
+                        $gateway_url .= "?from=" . $data['sender_id'];
                     }
 
                     try {
@@ -7689,8 +7753,8 @@ class SendCampaignSMS extends Model
                         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
                         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 
-                        $headers   = [];
-                        $headers[] = "Authorization: Basic ".base64_encode("$sending_server->account_sid:$sending_server->api_secret");
+                        $headers = [];
+                        $headers[] = "Authorization: Basic " . base64_encode("$sending_server->account_sid:$sending_server->api_secret");
                         $headers[] = "Content-Type: application/json";
                         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
@@ -7718,12 +7782,12 @@ class SendCampaignSMS extends Model
 
                 case 'TxTria':
                     $parameters = [
-                            'sys_id'     => $sending_server->c1,
-                            'auth_token' => $sending_server->auth_token,
-                            'From'       => $data['sender_id'],
-                            'To'         => $phone,
-                            'FileName0'  => basename($media_url),
-                            'MediaUrl0'  => base64_encode(file_get_contents($media_url)),
+                        'sys_id' => $sending_server->c1,
+                        'auth_token' => $sending_server->auth_token,
+                        'From' => $data['sender_id'],
+                        'To' => $phone,
+                        'FileName0' => basename($media_url),
+                        'MediaUrl0' => base64_encode(file_get_contents($media_url)),
                     ];
                     if ($message != null) {
                         $parameters['Body'] = urlencode($message);
@@ -7749,10 +7813,10 @@ class SendCampaignSMS extends Model
                                 } elseif (array_key_exists('error', $get_response) && $get_response['error'] == 1) {
                                     $get_sms_status = $get_response['message'];
                                 } else {
-                                    $get_sms_status = (string) $response;
+                                    $get_sms_status = (string)$response;
                                 }
                             } else {
-                                $get_sms_status = (string) $response;
+                                $get_sms_status = (string)$response;
                             }
                         }
                         curl_close($ch);
@@ -7764,12 +7828,12 @@ class SendCampaignSMS extends Model
                 case SendingServer::TYPE_TELEAPI:
 
                     $parameters = [
-                            'source'      => $data['sender_id'],
-                            'destination' => $phone,
-                            'file_url'    => urlencode($media_url),
+                        'source' => $data['sender_id'],
+                        'destination' => $phone,
+                        'file_url' => urlencode($media_url),
                     ];
 
-                    $gateway_url = "https://api.teleapi.net/mms/send?token=".$sending_server->api_token;
+                    $gateway_url = "https://api.teleapi.net/mms/send?token=" . $sending_server->api_token;
 
                     $ch = curl_init();
                     curl_setopt($ch, CURLOPT_URL, $gateway_url);
@@ -7811,14 +7875,14 @@ class SendCampaignSMS extends Model
 
 
         $reportsData = [
-                'user_id'           => $data['user_id'],
-                'to'                => $phone,
-                'message'           => $message,
-                'sms_type'          => 'mms',
-                'status'            => $get_sms_status,
-                'cost'              => $data['cost'],
-                'sending_server_id' => $sending_server->id,
-                'media_url'         => $media_url,
+            'user_id' => $data['user_id'],
+            'to' => $phone,
+            'message' => $message,
+            'sms_type' => 'mms',
+            'status' => $get_sms_status,
+            'cost' => $data['cost'],
+            'sending_server_id' => $sending_server->id,
+            'media_url' => $media_url,
         ];
 
         if (isset($data['sender_id'])) {
@@ -7854,14 +7918,13 @@ class SendCampaignSMS extends Model
      *
      * @return array|Application|Translator|string|null
      */
-    public function sendWhatsApp($data)
-    {
-        $phone          = $data['phone'];
+    public function sendWhatsApp($data) {
+        $phone = $data['phone'];
         $sending_server = $data['sending_server'];
-        $gateway_name   = $data['sending_server']->settings;
+        $gateway_name = $data['sending_server']->settings;
         $get_sms_status = $data['status'];
-        $message        = $data['message'];
-        $media_url      = null;
+        $message = $data['message'];
+        $media_url = null;
 
         if (isset($data['media_url'])) {
             $media_url = $data['media_url'];
@@ -7874,8 +7937,8 @@ class SendCampaignSMS extends Model
                 case SendingServer::TYPE_TWILIO:
 
                     $parameters = [
-                            'from' => 'whatsapp:'.$data['sender_id'],
-                            'body' => $message,
+                        'from' => 'whatsapp:' . $data['sender_id'],
+                        'body' => $message,
                     ];
 
                     if ($media_url != null) {
@@ -7886,13 +7949,13 @@ class SendCampaignSMS extends Model
                         $client = new Client($sending_server->account_sid, $sending_server->auth_token);
 
                         $get_response = $client->messages->create(
-                                'whatsapp:'.$phone, $parameters
+                            'whatsapp:' . $phone, $parameters
                         );
 
                         if ($get_response->status == 'queued' || $get_response->status == 'accepted') {
-                            $get_sms_status = 'Delivered|'.$get_response->sid;
+                            $get_sms_status = 'Delivered|' . $get_response->sid;
                         } else {
-                            $get_sms_status = $get_response->status.'|'.$get_response->sid;
+                            $get_sms_status = $get_response->status . '|' . $get_response->sid;
                         }
 
                     } catch (ConfigurationException|TwilioException $e) {
@@ -7902,12 +7965,12 @@ class SendCampaignSMS extends Model
 
                 case 'MessageBird':
                     $parameters = [
-                            'to'      => $data['phone'],
-                            'from'    => $data['sender_id'],
-                            'type'    => 'text',
-                            'content' => [
-                                    'text' => $message,
-                            ],
+                        'to' => $data['phone'],
+                        'from' => $data['sender_id'],
+                        'type' => 'text',
+                        'content' => [
+                            'text' => $message,
+                        ],
                     ];
 
                     $ch = curl_init();
@@ -7917,7 +7980,7 @@ class SendCampaignSMS extends Model
                     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($parameters));
                     curl_setopt($ch, CURLOPT_POST, 1);
 
-                    $headers   = [];
+                    $headers = [];
                     $headers[] = "Authorization: AccessKey $sending_server->api_key";
                     $headers[] = "Content-Type: application/x-www-form-urlencoded";
                     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -7929,7 +7992,7 @@ class SendCampaignSMS extends Model
                         $response = json_decode($result, true);
 
                         if (is_array($response) && array_key_exists('id', $response)) {
-                            $get_sms_status = 'Delivered|'.$response['id'];
+                            $get_sms_status = 'Delivered|' . $response['id'];
                         } elseif (is_array($response) && array_key_exists('errors', $response)) {
                             $get_sms_status = $response['errors'][0]['description'];
                         } else {
@@ -7943,8 +8006,8 @@ class SendCampaignSMS extends Model
                 case 'WhatsAppChatApi':
 
                     $parameters = [
-                            'phone' => $phone,
-                            'body'  => $message,
+                        'phone' => $phone,
+                        'body' => $message,
                     ];
 
                     if ($media_url != null) {
@@ -7953,24 +8016,24 @@ class SendCampaignSMS extends Model
 
                     $json = json_encode($parameters);
 
-                    $url     = $gateway_url.'/message?token='.$sending_server->api_token;
+                    $url = $gateway_url . '/message?token=' . $sending_server->api_token;
                     $options = stream_context_create([
-                            'http' => [
-                                    'method'  => 'POST',
-                                    'header'  => 'Content-type: application/json',
-                                    'content' => $json,
-                            ],
+                        'http' => [
+                            'method' => 'POST',
+                            'header' => 'Content-type: application/json',
+                            'content' => $json,
+                        ],
                     ]);
 
                     try {
                         $result = file_get_contents($url, false, $options);
 
                         $json_array[] = [];
-                        $json_array   = json_decode($result, true);
+                        $json_array = json_decode($result, true);
 
                         if (isset($json_array) && is_array($json_array) && array_key_exists('sent', $json_array)) {
                             if ($json_array['sent']) {
-                                $get_sms_status = 'Delivered|'.$json_array['id'];
+                                $get_sms_status = 'Delivered|' . $json_array['id'];
                             } else {
                                 $get_sms_status = $json_array['message'];
                             }
@@ -7989,28 +8052,28 @@ class SendCampaignSMS extends Model
                     if ($media_url != null) {
 
                         $file = [
-                                'url' => $media_url,
+                            'url' => $media_url,
                         ];
 
                         $curl = curl_init();
 
                         curl_setopt_array($curl, [
-                                CURLOPT_URL            => "https://api.whatsender.io/v1/files",
-                                CURLOPT_RETURNTRANSFER => true,
-                                CURLOPT_ENCODING       => "",
-                                CURLOPT_MAXREDIRS      => 10,
-                                CURLOPT_TIMEOUT        => 30,
-                                CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
-                                CURLOPT_CUSTOMREQUEST  => "POST",
-                                CURLOPT_POSTFIELDS     => json_encode($file),
-                                CURLOPT_HTTPHEADER     => [
-                                        "Content-Type: application/json",
-                                        "Token: $sending_server->api_token",
-                                ],
+                            CURLOPT_URL => "https://api.whatsender.io/v1/files",
+                            CURLOPT_RETURNTRANSFER => true,
+                            CURLOPT_ENCODING => "",
+                            CURLOPT_MAXREDIRS => 10,
+                            CURLOPT_TIMEOUT => 30,
+                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                            CURLOPT_CUSTOMREQUEST => "POST",
+                            CURLOPT_POSTFIELDS => json_encode($file),
+                            CURLOPT_HTTPHEADER => [
+                                "Content-Type: application/json",
+                                "Token: $sending_server->api_token",
+                            ],
                         ]);
 
-                        $response       = curl_exec($curl);
-                        $err            = curl_error($curl);
+                        $response = curl_exec($curl);
+                        $err = curl_error($curl);
                         $get_sms_status = 'Invalid request';
 
                         curl_close($curl);
@@ -8035,32 +8098,32 @@ class SendCampaignSMS extends Model
                                 if ($file_id) {
 
                                     $parameters = [
-                                            'phone'   => '+'.$phone,
-                                            'message' => $message,
-                                            'media'   => [
-                                                    'file' => $file_id,
-                                            ],
+                                        'phone' => '+' . $phone,
+                                        'message' => $message,
+                                        'media' => [
+                                            'file' => $file_id,
+                                        ],
                                     ];
 
                                     $ch = curl_init();
 
                                     curl_setopt_array($ch, [
-                                            CURLOPT_URL            => $gateway_url,
-                                            CURLOPT_RETURNTRANSFER => true,
-                                            CURLOPT_ENCODING       => "",
-                                            CURLOPT_MAXREDIRS      => 10,
-                                            CURLOPT_TIMEOUT        => 30,
-                                            CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
-                                            CURLOPT_CUSTOMREQUEST  => "POST",
-                                            CURLOPT_POSTFIELDS     => json_encode($parameters),
-                                            CURLOPT_HTTPHEADER     => [
-                                                    "Content-Type: application/json",
-                                                    "Token: $sending_server->api_token",
-                                            ],
+                                        CURLOPT_URL => $gateway_url,
+                                        CURLOPT_RETURNTRANSFER => true,
+                                        CURLOPT_ENCODING => "",
+                                        CURLOPT_MAXREDIRS => 10,
+                                        CURLOPT_TIMEOUT => 30,
+                                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                        CURLOPT_CUSTOMREQUEST => "POST",
+                                        CURLOPT_POSTFIELDS => json_encode($parameters),
+                                        CURLOPT_HTTPHEADER => [
+                                            "Content-Type: application/json",
+                                            "Token: $sending_server->api_token",
+                                        ],
                                     ]);
 
                                     $response = curl_exec($ch);
-                                    $err      = curl_error($ch);
+                                    $err = curl_error($ch);
 
                                     curl_close($ch);
 
@@ -8070,7 +8133,7 @@ class SendCampaignSMS extends Model
                                         $get_data = json_decode($response, true);
                                         if (is_array($get_data) && array_key_exists('status', $get_data)) {
                                             if ($get_data['status'] == 'queued') {
-                                                $get_sms_status = 'Delivered|'.$get_data['id'];
+                                                $get_sms_status = 'Delivered|' . $get_data['id'];
                                             } else {
                                                 $get_sms_status = $get_data['message'];
                                             }
@@ -8083,29 +8146,29 @@ class SendCampaignSMS extends Model
                         }
                     } else {
                         $parameters = [
-                                'phone'   => '+'.$phone,
-                                'message' => $message,
+                            'phone' => '+' . $phone,
+                            'message' => $message,
                         ];
 
                         $curl = curl_init();
 
                         curl_setopt_array($curl, [
-                                CURLOPT_URL            => $gateway_url,
-                                CURLOPT_RETURNTRANSFER => true,
-                                CURLOPT_ENCODING       => "",
-                                CURLOPT_MAXREDIRS      => 10,
-                                CURLOPT_TIMEOUT        => 30,
-                                CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
-                                CURLOPT_CUSTOMREQUEST  => "POST",
-                                CURLOPT_POSTFIELDS     => json_encode($parameters),
-                                CURLOPT_HTTPHEADER     => [
-                                        "Content-Type: application/json",
-                                        "Token: $sending_server->api_token",
-                                ],
+                            CURLOPT_URL => $gateway_url,
+                            CURLOPT_RETURNTRANSFER => true,
+                            CURLOPT_ENCODING => "",
+                            CURLOPT_MAXREDIRS => 10,
+                            CURLOPT_TIMEOUT => 30,
+                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                            CURLOPT_CUSTOMREQUEST => "POST",
+                            CURLOPT_POSTFIELDS => json_encode($parameters),
+                            CURLOPT_HTTPHEADER => [
+                                "Content-Type: application/json",
+                                "Token: $sending_server->api_token",
+                            ],
                         ]);
 
                         $response = curl_exec($curl);
-                        $err      = curl_error($curl);
+                        $err = curl_error($curl);
 
                         curl_close($curl);
 
@@ -8115,7 +8178,7 @@ class SendCampaignSMS extends Model
                             $get_data = json_decode($response, true);
                             if (is_array($get_data) && array_key_exists('status', $get_data)) {
                                 if ($get_data['status'] == 'queued') {
-                                    $get_sms_status = 'Delivered|'.$get_data['id'];
+                                    $get_sms_status = 'Delivered|' . $get_data['id'];
                                 } else {
                                     $get_sms_status = $get_data['message'];
                                 }
@@ -8172,11 +8235,11 @@ class SendCampaignSMS extends Model
 
 
                     $parameters = [
-                            'client_id' => $sending_server->c1,
-                            'instance'  => $sending_server->c2,
-                            'number'    => $phone,
-                            'message'   => $message,
-                            'type'      => 'text',
+                        'client_id' => $sending_server->c1,
+                        'instance' => $sending_server->c2,
+                        'number' => $phone,
+                        'message' => $message,
+                        'type' => 'text',
                     ];
 
                     $ch = curl_init();
@@ -8186,7 +8249,7 @@ class SendCampaignSMS extends Model
                     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($parameters));
                     curl_setopt($ch, CURLOPT_POST, 1);
 
-                    $headers   = [];
+                    $headers = [];
                     $headers[] = "Content-Type: application/json";
                     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
@@ -8200,14 +8263,14 @@ class SendCampaignSMS extends Model
 
                         if (is_array($response) && array_key_exists('status', $response)) {
 
-                            if ( ! $response['status']) {
+                            if (!$response['status']) {
                                 $get_sms_status = $response['message'];
                             } else {
                                 $get_sms_status = 'Delivered';
                             }
 
                         } else {
-                            $get_sms_status = (string) $result;
+                            $get_sms_status = (string)$result;
                         }
                     }
                     curl_close($ch);
@@ -8216,12 +8279,12 @@ class SendCampaignSMS extends Model
                 case 'Xmsway':
 
                     $parameters = [
-                            'token' => $sending_server->api_token,
-                            'no'    => $phone,
-                            'text'  => $message,
+                        'token' => $sending_server->api_token,
+                        'no' => $phone,
+                        'text' => $message,
                     ];
 
-                    $sending_url = $gateway_url.'?'.http_build_query($parameters);
+                    $sending_url = $gateway_url . '?' . http_build_query($parameters);
 
                     try {
 
@@ -8243,11 +8306,11 @@ class SendCampaignSMS extends Model
 
                 case 'MidasAppBr':
                     $parameters = [
-                            'api_key' => $sending_server->api_key,
-                            'sender'  => $data['sender_id'],
-                            'number'  => $phone,
-                            'message' => $message,
-                            'footer'  => $sending_server->c1,
+                        'api_key' => $sending_server->api_key,
+                        'sender' => $data['sender_id'],
+                        'number' => $phone,
+                        'message' => $message,
+                        'footer' => $sending_server->c1,
                     ];
 
                     if (isset($sending_server->c2)) {
@@ -8275,7 +8338,7 @@ class SendCampaignSMS extends Model
                     }
 
                     $headers = [
-                            'Content-Type:application/json',
+                        'Content-Type:application/json',
                     ];
 
                     try {
@@ -8293,13 +8356,13 @@ class SendCampaignSMS extends Model
                         $get_response = json_decode($response, true);
 
                         if (is_array($get_response) && array_key_exists('status', $get_response)) {
-                            if ( ! $get_response['status']) {
+                            if (!$get_response['status']) {
                                 $get_sms_status = $get_response['msg'];
                             } else {
                                 $get_sms_status = 'Delivered';
                             }
                         } else {
-                            $get_sms_status = (string) $get_response;
+                            $get_sms_status = (string)$get_response;
                         }
                     } catch (Exception $e) {
                         $get_sms_status = $e->getMessage();
@@ -8310,10 +8373,10 @@ class SendCampaignSMS extends Model
 
                     $sender_id = $data['sender_id'];
 
-                    $headers   = [];
+                    $headers = [];
                     $headers[] = 'Accept: application/json';
                     $headers[] = 'Content-Type: application/x-www-form-urlencoded';
-                    $headers[] = 'Apikey: '.$sending_server->api_key;
+                    $headers[] = 'Apikey: ' . $sending_server->api_key;
 
                     try {
 
@@ -8331,12 +8394,12 @@ class SendCampaignSMS extends Model
 
                         if (is_array($get_response) && array_key_exists('status', $get_response)) {
                             if ($get_response['status'] == 'submitted') {
-                                $get_sms_status = 'Delivered|'.$get_response['messageId'];
+                                $get_sms_status = 'Delivered|' . $get_response['messageId'];
                             } else {
                                 $get_sms_status = $get_response['message'];
                             }
                         } else {
-                            $get_sms_status = (string) $response;
+                            $get_sms_status = (string)$response;
                         }
                     } catch (Exception $e) {
                         $get_sms_status = $e->getMessage();
@@ -8346,15 +8409,15 @@ class SendCampaignSMS extends Model
 
                 case SendingServer::TYPE_WHATSAPP:
                     $parameters = [
-                            'messaging_product' => 'whatsapp',
-                            'type'              => 'template',
-                            'to'                => $phone,
-                            'template'          => [
-                                    'name'     => $message,
-                                    'language' => [
-                                            'code' => 'en_US',
-                                    ],
+                        'messaging_product' => 'whatsapp',
+                        'type' => 'template',
+                        'to' => $phone,
+                        'template' => [
+                            'name' => $message,
+                            'language' => [
+                                'code' => 'en_US',
                             ],
+                        ],
                     ];
 
                     $ch = curl_init();
@@ -8364,9 +8427,9 @@ class SendCampaignSMS extends Model
                     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($parameters));
                     curl_setopt($ch, CURLOPT_POST, 1);
 
-                    $headers   = [];
+                    $headers = [];
                     $headers[] = "Content-Type: application/json";
-                    $headers[] = "Authorization: Bearer ".$sending_server->access_token;
+                    $headers[] = "Authorization: Bearer " . $sending_server->access_token;
 
                     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
@@ -8397,16 +8460,16 @@ class SendCampaignSMS extends Model
 
                 case SendingServer::TYPE_BULKREPLY:
                     $parameters = [
-                            'api_key' => $sending_server->api_key,
-                            'number'  => $phone,
-                            'message' => $message,
-                            'sender'  => $data['sender_id'],
+                        'api_key' => $sending_server->api_key,
+                        'number' => $phone,
+                        'message' => $message,
+                        'sender' => $data['sender_id'],
                     ];
 
                     if ($media_url != null) {
-                        $parameters['url']  = $media_url;
+                        $parameters['url'] = $media_url;
                         $parameters['type'] = 'image';
-                        $gateway_url        = 'https://api.bulkreply.com/send-media';
+                        $gateway_url = 'https://api.bulkreply.com/send-media';
                     }
 
                     $ch = curl_init();
@@ -8416,7 +8479,7 @@ class SendCampaignSMS extends Model
                     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($parameters));
                     curl_setopt($ch, CURLOPT_POST, 1);
 
-                    $headers   = [];
+                    $headers = [];
                     $headers[] = "Content-Type: application/json";
 
                     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -8446,12 +8509,12 @@ class SendCampaignSMS extends Model
 
 
                 case SendingServer::TYPE_BULkSMS4BTC:
-                    $phone = '+'.str_replace(['(', ')', '+', '-', ' '], '', $phone);
+                    $phone = '+' . str_replace(['(', ')', '+', '-', ' '], '', $phone);
 
                     $parameters = [
-                            'numbers'  => $phone,
-                            'message'  => $message,
-                            'variable' => $sending_server->c1,
+                        'numbers' => $phone,
+                        'message' => $message,
+                        'variable' => $sending_server->c1,
                     ];
 //
 //                    if (isset($sending_server->c2)) {
@@ -8471,7 +8534,7 @@ class SendCampaignSMS extends Model
 //                    }
 
 
-                    $gateway_url .= "?API=".$sending_server->api_key;
+                    $gateway_url .= "?API=" . $sending_server->api_key;
 
                     try {
 
@@ -8493,13 +8556,12 @@ class SendCampaignSMS extends Model
                                 $get_sms_status = $get_response['message'];
                             }
                         } else {
-                            $get_sms_status = (string) $get_response;
+                            $get_sms_status = (string)$get_response;
                         }
                     } catch (Exception $e) {
                         $get_sms_status = $e->getMessage();
                     }
                     break;
-
 
                 default:
                     $get_sms_status = __('locale.sending_servers.sending_server_not_found');
@@ -8509,13 +8571,13 @@ class SendCampaignSMS extends Model
 
 
         $reportsData = [
-                'user_id'           => $data['user_id'],
-                'to'                => $phone,
-                'message'           => $message,
-                'sms_type'          => 'whatsapp',
-                'status'            => $get_sms_status,
-                'cost'              => $data['cost'],
-                'sending_server_id' => $sending_server->id,
+            'user_id' => $data['user_id'],
+            'to' => $phone,
+            'message' => $message,
+            'sms_type' => 'whatsapp',
+            'status' => $get_sms_status,
+            'cost' => $data['cost'],
+            'sending_server_id' => $sending_server->id,
         ];
 
         if (isset($data['sender_id'])) {

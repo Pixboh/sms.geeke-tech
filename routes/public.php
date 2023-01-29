@@ -60,6 +60,10 @@ Route::any('dlr/d7networks', 'Customer\DLRController@dlrD7networks')->name('dlr.
 
 Route::any('inbound/teleapi', 'Customer\DLRController@inboundTeleAPI')->name('inbound.teleapi');
 
+/*custom pape orangesms*/
+Route::any('dlr/orangesms', 'Customer\DLRController@dlrorangesms')->name('dlr.orangesms');
+
+
 /*
 |--------------------------------------------------------------------------
 | installer file

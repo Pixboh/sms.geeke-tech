@@ -2918,6 +2918,25 @@ class EloquentSendingServerRepository extends EloquentBaseRepository implements 
 //                        'quota_base'      => 1,
 //                        'quota_unit'      => 'minute',
 //                ],
+            "orangesms" => [
+                'name' => 'Orange SMS Pro',
+                'settings' => 'orangesms',
+                'application_id' => 'APP ID',
+                'api_link' => 'https://api.orangesmspro.sn:8443/api/',
+                'api_key' => 'api_key',
+                'api_token' => 'api_key',
+                'schedule' => true,
+                'type' => 'http',
+                'two_way' => false,
+                'plain' => true,
+                'mms' => false,
+                'voice' => false,
+                'whatsapp' => false,
+                'sms_per_request' => 1,
+                'quota_value' => 60,
+                'quota_base' => 1,
+                'quota_unit' => 'minute',
+            ],
 
         ];
     }

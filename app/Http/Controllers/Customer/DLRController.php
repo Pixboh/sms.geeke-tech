@@ -1557,5 +1557,25 @@ class DLRController extends Controller
         return $this::inboundDLR($to, $message, SendingServer::TYPE_TELEAPI, $cost, $from);
     }
 
+    /**
+     * Route mobile DLR
+     *
+     * @param  Request  $request
+     */
+    public function dlrorangesms(Request $request)
+    {
+        $message_id = $request->sMessageId;
+        $status     = $request->sStatus;
+        $sender_id  = $request->sSender;
+        $phone      = $request->sMobileNo;
+
+        if ($status == 'DELIVRD' || $status == 'ACCEPTED') {
+            $status = 'Delivered';
+        }
+
+        $this::updateDLR($message_id, $status, $sender_id, $phone);
+    }
+
+
 
 }
