@@ -23,3 +23,4 @@ yarn.lock
 # storage/tmp/
 # public/mms/
 # !/public/voice/
+.env
