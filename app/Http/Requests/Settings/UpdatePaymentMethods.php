@@ -164,6 +164,7 @@ class UpdatePaymentMethods extends FormRequest
                 $rules['payment_confirmation'] = 'required';
                 break;
 
+
         }
 
         return $rules;

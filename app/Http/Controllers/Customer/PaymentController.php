@@ -842,7 +842,7 @@ POSTXML;
                                             'payment_method' => $paymentMethod->id,
                                             'amount'         => $price,
                                             'type'           => Invoices::TYPE_SUBSCRIPTION,
-                                            'description'    => 'Payment for sms unit',
+                                            'description'    => __('locale.labels.payment_for_top_up'),
                                             'transaction_id' => $response->id,
                                             'status'         => Invoices::STATUS_PAID,
                                     ]);
@@ -923,7 +923,7 @@ POSTXML;
                                         'payment_method' => $paymentMethod->id,
                                         'amount'         => $price,
                                         'type'           => Invoices::TYPE_SUBSCRIPTION,
-                                        'description'    => 'Payment for sms unit',
+                                        'description'    => __('locale.labels.payment_for_top_up'),
                                         'transaction_id' => $response->id,
                                         'status'         => Invoices::STATUS_PAID,
                                 ]);
@@ -985,7 +985,7 @@ POSTXML;
                                 'payment_method' => $paymentMethod->id,
                                 'amount'         => $price,
                                 'type'           => Invoices::TYPE_SUBSCRIPTION,
-                                'description'    => 'Payment for sms unit',
+                                'description'    => __('locale.labels.payment_for_top_up'),
                                 'transaction_id' => $user->id.'_'.$request->sms_unit,
                                 'status'         => Invoices::STATUS_PAID,
                         ]);
@@ -1057,7 +1057,7 @@ POSTXML;
                                             'payment_method' => $paymentMethod->id,
                                             'amount'         => $price,
                                             'type'           => Invoices::TYPE_SUBSCRIPTION,
-                                            'description'    => 'Payment for sms unit',
+                                            'description'    => __('locale.labels.payment_for_top_up'),
                                             'transaction_id' => $request->tx_reference,
                                             'status'         => Invoices::STATUS_PAID,
                                     ]);
@@ -1140,7 +1140,7 @@ POSTXML;
                                             'payment_method' => $paymentMethod->id,
                                             'amount'         => $user->customer->subscription->plan->getOption('per_unit_price') * $request->sms_unit,
                                             'type'           => Invoices::TYPE_SUBSCRIPTION,
-                                            'description'    => 'Payment for sms unit',
+                                            'description'    => __('locale.labels.payment_for_top_up'),
                                             'transaction_id' => $response->reference(),
                                             'status'         => Invoices::STATUS_PAID,
                                     ]);
@@ -1213,7 +1213,7 @@ POSTXML;
                                     'payment_method' => $paymentMethod->id,
                                     'amount'         => $user->customer->subscription->plan->getOption('per_unit_price') * $request->sms_unit,
                                     'type'           => Invoices::TYPE_SUBSCRIPTION,
-                                    'description'    => 'Payment for sms unit',
+                                    'description'    => __('locale.labels.payment_for_top_up'),
                                     'transaction_id' => $request->payment_id,
                                     'status'         => Invoices::STATUS_PAID,
                             ]);
@@ -1293,7 +1293,7 @@ POSTXML;
                                 'payment_method' => $paymentMethod->id,
                                 'amount'         => $user->customer->subscription->plan->getOption('per_unit_price') * $request->sms_unit,
                                 'type'           => Invoices::TYPE_SUBSCRIPTION,
-                                'description'    => 'Payment for sms unit',
+                                'description'    => __('locale.labels.payment_for_top_up'),
                                 'transaction_id' => $txnid,
                                 'status'         => Invoices::STATUS_PAID,
                         ]);
@@ -1393,7 +1393,7 @@ POSTXML;
                                             'payment_method' => $paymentMethod->id,
                                             'amount'         => $user->customer->subscription->plan->getOption('per_unit_price') * $request->sms_unit,
                                             'type'           => Invoices::TYPE_SUBSCRIPTION,
-                                            'description'    => 'Payment for sms unit',
+                                            'description'    => __('locale.labels.payment_for_top_up'),
                                             'transaction_id' => $request->TransID,
                                             'status'         => Invoices::STATUS_PAID,
                                     ]);
@@ -1452,7 +1452,7 @@ POSTXML;
                                     'payment_method' => $paymentMethod->id,
                                     'amount'         => $user->customer->subscription->plan->getOption('per_unit_price') * $request->sms_unit,
                                     'type'           => Invoices::TYPE_SUBSCRIPTION,
-                                    'description'    => 'Payment for sms unit',
+                                    'description'    => __('locale.labels.payment_for_top_up'),
                                     'transaction_id' => $request->txnid,
                                     'status'         => Invoices::STATUS_PAID,
                             ]);
@@ -1566,7 +1566,7 @@ POSTXML;
                                         'payment_method' => $paymentMethod->id,
                                         'amount'         => $price,
                                         'type'           => Invoices::TYPE_SUBSCRIPTION,
-                                        'description'    => 'Payment for sms unit',
+                                        'description'    => __('locale.labels.payment_for_top_up'),
                                         'transaction_id' => $transaction_id,
                                         'status'         => Invoices::STATUS_PAID,
                                 ]);
@@ -1846,7 +1846,7 @@ POSTXML;
                             'payment_method' => $paymentMethod->id,
                             'amount'         => $user->customer->subscription->plan->getOption('per_unit_price') * $request->sms_unit,
                             'type'           => Invoices::TYPE_SUBSCRIPTION,
-                            'description'    => 'Payment for sms unit',
+                            'description'    => __('locale.labels.payment_for_top_up'),
                             'transaction_id' => $result->transaction->id,
                             'status'         => Invoices::STATUS_PAID,
                     ]);
@@ -2011,7 +2011,7 @@ POSTXML;
                             'payment_method' => $paymentMethod->id,
                             'amount'         => $user->customer->subscription->plan->getOption('per_unit_price') * $tranx->data->metadata->sms_unit,
                             'type'           => Invoices::TYPE_SUBSCRIPTION,
-                            'description'    => 'Payment for sms unit',
+                            'description'    => __('locale.labels.payment_for_top_up'),
                             'transaction_id' => $reference,
                             'status'         => Invoices::STATUS_PAID,
                     ]);
@@ -2397,7 +2397,7 @@ POSTXML;
                 // Create order information
                 $order = new AnetAPI\OrderType();
                 $order->setInvoiceNumber(str_random(10));
-                $order->setDescription('Payment for sms unit');
+                $order->setDescription(__('locale.labels.payment_for_top_up'));
 
 
                 // Set the customer's Bill To address
@@ -2444,7 +2444,7 @@ POSTXML;
                             'payment_method' => $paymentMethod->id,
                             'amount'         => $user->customer->subscription->plan->getOption('per_unit_price') * $request->sms_unit,
                             'type'           => Invoices::TYPE_SUBSCRIPTION,
-                            'description'    => 'Payment for sms unit',
+                            'description'    => __('locale.labels.payment_for_top_up'),
                             'transaction_id' => $result->getRefId(),
                             'status'         => Invoices::STATUS_PAID,
                     ]);
@@ -2633,7 +2633,7 @@ POSTXML;
                                 'payment_method' => $paymentMethod->id,
                                 'amount'         => $price,
                                 'type'           => Invoices::TYPE_SUBSCRIPTION,
-                                'description'    => 'Payment for sms unit',
+                                'description'    => __('locale.labels.payment_for_top_up'),
                                 'transaction_id' => $order_id,
                                 'status'         => Invoices::STATUS_PAID,
                         ]);
@@ -2787,7 +2787,7 @@ POSTXML;
                             'payment_method' => $paymentMethod->id,
                             'amount'         => $user->customer->subscription->plan->getOption('per_unit_price') * $request->sms_unit,
                             'type'           => Invoices::TYPE_SUBSCRIPTION,
-                            'description'    => 'Payment for sms unit',
+                            'description'    => __('locale.labels.payment_for_top_up'),
                             'transaction_id' => $request->bank_tran_id,
                             'status'         => Invoices::STATUS_PAID,
                     ]);
@@ -2929,7 +2929,7 @@ POSTXML;
                             'payment_method' => $paymentMethod->id,
                             'amount'         => $user->customer->subscription->plan->getOption('per_unit_price') * $request->sms_unit,
                             'type'           => Invoices::TYPE_SUBSCRIPTION,
-                            'description'    => 'Payment for sms unit',
+                            'description'    => __('locale.labels.payment_for_top_up'),
                             'transaction_id' => $request->pg_txnid,
                             'status'         => Invoices::STATUS_PAID,
                     ]);
@@ -3026,7 +3026,7 @@ POSTXML;
                                         'payment_method' => $paymentMethod->id,
                                         'amount'         => $user->customer->subscription->plan->getOption('per_unit_price') * $request->sms_unit,
                                         'type'           => Invoices::TYPE_SUBSCRIPTION,
-                                        'description'    => 'Payment for sms unit',
+                                        'description'    => __('locale.labels.payment_for_top_up'),
                                         'transaction_id' => $request->transaction_id,
                                         'status'         => Invoices::STATUS_PAID,
                                 ]);
@@ -8572,7 +8572,7 @@ POSTXML;
                         'payment_method' => $paymentMethod->id,
                         'amount'         => $price,
                         'type'           => Invoices::TYPE_SUBSCRIPTION,
-                        'description'    => 'Payment for sms unit',
+                        'description'    => __('locale.labels.payment_for_top_up'),
                         'transaction_id' => 'top_up|'.$sms_unit,
                         'status'         => Invoices::STATUS_PENDING,
                 ]);
@@ -8867,7 +8867,7 @@ POSTXML;
                                 'payment_method' => $paymentMethod->id,
                                 'amount'         => $user->customer->subscription->plan->getOption('per_unit_price') * $request->sms_unit,
                                 'type'           => Invoices::TYPE_SUBSCRIPTION,
-                                'description'    => 'Payment for sms unit',
+                                'description'    => __('locale.labels.payment_for_top_up'),
                                 'transaction_id' => $result->data['transaction'],
                                 'status'         => Invoices::STATUS_PAID,
                         ]);

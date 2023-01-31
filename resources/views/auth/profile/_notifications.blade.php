@@ -10,8 +10,10 @@
             {{ __('locale.labels.actions') }}
         </button>
         <div class="dropdown-menu" aria-labelledby="bulk_actions">
-            <a class="dropdown-item bulk-read" href="#"><i data-feather="stop-circle"></i> __('locale.labels.mark_as_read')</a>
-            <a class="dropdown-item bulk-delete" href="#"><i data-feather="trash"></i> {{ __('locale.datatables.bulk_delete') }}</a>
+            <a class="dropdown-item bulk-read" href="#"><i
+                        data-feather="stop-circle"></i> {{ __('locale.labels.mark_as_read') }}</a>
+            <a class="dropdown-item bulk-delete" href="#"><i
+                        data-feather="trash"></i> {{ __('locale.datatables.bulk_delete') }}</a>
         </div>
     </div>
 </div>

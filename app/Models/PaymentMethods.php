@@ -39,6 +39,8 @@ class PaymentMethods extends Model
     const TYPE_AZAMPAY         = 'azampay';
     const TYPE_VODACOMMPESA    = 'vodacommpesa';
     const TYPE_PAYHERELK       = 'payherelk';
+    // custom code pape
+    const TYPE_PAYTECHSN       = 'paytech';
 
 
     /**
