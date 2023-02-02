@@ -5,9 +5,11 @@
 @section('vendor-style')
     <!-- vendor css files -->
     <link rel="stylesheet" href="{{ asset(mix('vendors/css/forms/select/select2.min.css')) }}">
+    {{--    <link rel="stylesheet" href="{{ asset('/Users/papedjibyboh/Sites/sms.geeke-tech/resources/vendors/css/forms/phone.css') }}">--}}
 @endsection
 
 @section('page-style')
+    <link rel="stylesheet" href="{{ asset(mix('vendors/css/phone-preview/phone.css')) }}">
 
     <style>
         .customized_select2 .select2-selection--single, .input_sender_id {
@@ -15,6 +17,8 @@
             border-radius: 0 4px 4px 0;
             min-height: 2.75rem !important;
         }
+
+
     </style>
 
 @endsection
@@ -29,14 +33,16 @@
                     <div class="card-content">
                         <div class="card-body">
 
-                            <form class="form form-vertical" action="{{ route('customer.sms.quick_send') }}" method="post">
+                            <form class="form form-vertical" action="{{ route('customer.sms.quick_send') }}"
+                                  method="post">
                                 @csrf
                                 <div class="row">
 
 
                                     <div class="col-12">
                                         <div class="mb-1">
-                                            <label for="sending_server" class="form-label required">{{ __('locale.labels.sending_server') }}</label>
+                                            <label for="sending_server"
+                                                   class="form-label required">{{ __('locale.labels.sending_server') }}</label>
                                             <select class="select2 form-select" name="sending_server">
                                                 @foreach($sending_server as $server)
                                                     <option value="{{$server->id}}"> {{ $server->name }}</option>
@@ -51,12 +57,15 @@
 
                                     <div class="col-12">
                                         <div class="mb-1">
-                                            <label for="recipient" class="form-label required">{{ __('locale.labels.recipient') }}</label>
+                                            <label for="recipient"
+                                                   class="form-label required">{{ __('locale.labels.recipient') }}</label>
                                             <div class="input-group">
                                                 <div style="width: 8rem">
-                                                    <select class="form-select select2" id="country_code" name="country_code">
+                                                    <select class="form-select select2" id="country_code"
+                                                            name="country_code">
                                                         @foreach($coverage as $code)
-                                                            <option value="{{ $code->country_id }}"> +{{ $code->country->country_code }} </option>
+                                                            <option value="{{ $code->country_id }}">
+                                                                +{{ $code->country->country_code }} </option>
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -89,17 +98,22 @@
                                         @can('view_sender_id')
                                             <div class="col-md-6 col-12 customized_select2">
                                                 <div class="mb-1">
-                                                    <label for="sender_id" class="form-label">{{ __('locale.labels.sender_id') }}</label>
+                                                    <label for="sender_id"
+                                                           class="form-label">{{ __('locale.labels.sender_id') }}</label>
                                                     <div class="input-group">
                                                         <div class="input-group-text">
                                                             <div class="form-check">
-                                                                <input type="radio" class="form-check-input sender_id" name="originator" checked value="sender_id" id="sender_id_check"/>
-                                                                <label class="form-check-label" for="sender_id_check"></label>
+                                                                <input type="radio" class="form-check-input sender_id"
+                                                                       name="originator" checked value="sender_id"
+                                                                       id="sender_id_check"/>
+                                                                <label class="form-check-label"
+                                                                       for="sender_id_check"></label>
                                                             </div>
                                                         </div>
 
                                                         <div style="width: 17rem">
-                                                            <select class="form-select select2" id="sender_id" name="sender_id">
+                                                            <select class="form-select select2" id="sender_id"
+                                                                    name="sender_id">
                                                                 @foreach($sender_ids as $sender_id)
                                                                     <option value="{{$sender_id->sender_id}}"> {{ $sender_id->sender_id }} </option>
                                                                 @endforeach
@@ -114,12 +128,16 @@
                                             <div class="col-md-6 col-12 customized_select2">
 
                                                 <div class="mb-1">
-                                                    <label for="sender_id" class="form-label">{{ __('locale.labels.sender_id') }}</label>
+                                                    <label for="sender_id"
+                                                           class="form-label">{{ __('locale.labels.sender_id') }}</label>
                                                     <div class="input-group">
                                                         <div class="input-group-text">
                                                             <div class="form-check">
-                                                                <input type="radio" class="form-check-input sender_id" name="originator" checked value="sender_id" id="sender_id_check"/>
-                                                                <label class="form-check-label" for="sender_id_check"></label>
+                                                                <input type="radio" class="form-check-input sender_id"
+                                                                       name="originator" checked value="sender_id"
+                                                                       id="sender_id_check"/>
+                                                                <label class="form-check-label"
+                                                                       for="sender_id_check"></label>
                                                             </div>
                                                         </div>
 
@@ -135,7 +153,8 @@
                                         @else
                                             <div class="col-12">
                                                 <div class="mb-1">
-                                                    <label for="sender_id" class="form-label">{{__('locale.labels.sender_id')}}</label>
+                                                    <label for="sender_id"
+                                                           class="form-label">{{__('locale.labels.sender_id')}}</label>
                                                     <input type="text" id="sender_id"
                                                            class="form-control @error('sender_id') is-invalid @enderror"
                                                            name="sender_id">
@@ -151,16 +170,21 @@
                                     @can('view_numbers')
                                         <div class="col-md-6 col-12 customized_select2">
                                             <div class="mb-1">
-                                                <label for="phone_number" class="form-label">{{ __('locale.menu.Phone Numbers') }}</label>
+                                                <label for="phone_number"
+                                                       class="form-label">{{ __('locale.menu.Phone Numbers') }}</label>
                                                 <div class="input-group">
                                                     <div class="input-group-text">
                                                         <div class="form-check">
-                                                            <input type="radio" class="form-check-input phone_number" value="phone_number" name="originator" id="phone_number_check"/>
-                                                            <label class="form-check-label" for="phone_number_check"></label>
+                                                            <input type="radio" class="form-check-input phone_number"
+                                                                   value="phone_number" name="originator"
+                                                                   id="phone_number_check"/>
+                                                            <label class="form-check-label"
+                                                                   for="phone_number_check"></label>
                                                         </div>
                                                     </div>
                                                     <div style="width: 17rem">
-                                                        <select class="form-select select2" disabled id="phone_number" name="phone_number">
+                                                        <select class="form-select select2" disabled id="phone_number"
+                                                                name="phone_number">
                                                             @foreach($phone_numbers as $number)
                                                                 <option value="{{ $number->number }}"> {{ $number->number }} </option>
                                                             @endforeach
@@ -186,11 +210,15 @@
 
                                     <div class="col-12">
                                         <div class="mb-1">
-                                            <label for="message" class="required form-label">{{__('locale.labels.message')}}</label>
-                                            <textarea class="form-control" name="message" rows="5" id="message"></textarea>
+                                            <label for="message"
+                                                   class="required form-label">{{__('locale.labels.message')}}</label>
+                                            <textarea class="form-control" name="message" rows="5"
+                                                      id="message"></textarea>
                                             <div class="d-flex justify-content-between">
-                                                <small class="text-primary text-uppercase text-start" id="remaining">160 {{ __('locale.labels.characters_remaining') }}</small>
-                                                <small class="text-primary text-uppercase text-end" id="messages">1 {{ __('locale.labels.message') }} (s)</small>
+                                                <small class="text-primary text-uppercase text-start"
+                                                       id="remaining">160 {{ __('locale.labels.characters_remaining') }}</small>
+                                                <small class="text-primary text-uppercase text-end"
+                                                       id="messages">1 {{ __('locale.labels.message') }} (s)</small>
                                             </div>
                                             @error('message')
                                             <p><small class="text-danger">{{ $message }}</small></p>
@@ -203,7 +231,8 @@
                                 <div class="row">
                                     <div class="col-12">
                                         <input type="hidden" value="plain" name="sms_type" id="sms_type">
-                                        <button type="submit" class="btn btn-primary mr-1 mb-1"><i data-feather="send"></i> {{ __('locale.buttons.send') }}
+                                        <button type="submit" class="btn btn-primary mr-1 mb-1"><i
+                                                    data-feather="send"></i> {{ __('locale.buttons.send') }}
                                         </button>
                                     </div>
                                 </div>
@@ -211,6 +240,35 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="col-md-3 col-12" style=''>
+                <div data-v-6e390e89="" class="message-preview-container" style="position: sticky; top: 0px;">
+                    <div data-v-6e390e89="" class="messagePreviewContainer">
+                        <div class="messagePreviewBG">
+                            <div class="border">
+                                <form class="chat">
+                                    <div class="head py-md-2 py-1 border-bottom">
+                                        <div name="messageFrom" class="text-center"><span
+                                                    class="fa fa-chevron-left float-left ml-0 ml-md-1 mt-1 text-info"></span>
+                                            <p  class="text-center" id="sender_id_text">
+                                            @foreach($sender_ids as $sender_id)
+                                                {{ $sender_id->sender_id }}
+                                                @break
+                                            @endforeach
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="messages"><!----> <!---->
+                                        <div class="message">
+                                            <div class="myMessage">
+                                                <div name="messageText"><small id="text_message"> </small></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div> <!----></div>
             </div>
         </div>
     </section>
@@ -224,14 +282,18 @@
 @endsection
 
 @section('page-script')
-    <script src="{{ asset(mix('js/scripts/sms-counter.js')) }}"></script>
+    {{--    <script src="{{ asset(mix('js/scripts/sms-counter.js?v=12392823')) }}"></script>--}}
+    <script src="{{ asset('js/scripts/sms-counter.js')}}"></script>
     <script>
+
         $(document).ready(function () {
+
 
             $(".sender_id").on("click", function () {
                 $("#sender_id").prop("disabled", !this.checked);
                 $("#phone_number").prop("disabled", this.checked);
             });
+
 
             $(".phone_number").on("click", function () {
                 $("#phone_number").prop("disabled", !this.checked);
@@ -254,6 +316,7 @@
 
             let $remaining = $('#remaining'),
                 $get_msg = $("#message"),
+                $text_message = $('#text_message'),
                 $messages = $remaining.next(),
                 firstInvalid = $('form').find('.is-invalid').eq(0);
 
@@ -272,6 +335,7 @@
                 if ($get_msg[0].value !== null) {
 
                     let data = SmsCounter.count($get_msg[0].value, true);
+                    console.log(data);
 
                     if (data.encoding === 'UTF16') {
                         $('#sms_type').val('unicode').trigger('change');
@@ -285,6 +349,7 @@
 
                     $remaining.text(data.remaining + " {!! __('locale.labels.characters_remaining') !!}");
                     $messages.text(data.messages + " {!! __('locale.labels.message') !!}" + '(s)');
+                    $text_message.text($get_msg[0].value);
 
                 }
 
@@ -347,6 +412,10 @@
             });
 
             $get_msg.on('change keyup paste', get_character);
+            $("#sender_id").on('change', function () {
+                $text_message = $('#sender_id_text');
+                $text_message.text(this.value);
+            });
         });
     </script>
 @endsection
