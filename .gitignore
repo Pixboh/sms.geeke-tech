@@ -16,8 +16,8 @@ yarn-error.log
 .DS_Store
  public/js/
 yarn.lock
- public/mix-manifest.json
- public/css/
+public/mix-manifest.json
+public/css/
 # _ide_helper.php
 # !/storage/
 # storage/tmp/
