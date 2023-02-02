@@ -413,8 +413,7 @@
 
             $get_msg.on('change keyup paste', get_character);
             $("#sender_id").on('change', function () {
-                $text_message = $('#sender_id_text');
-                $text_message.text(this.value);
+                $text_message = $('#sender_id_text').text(this.value);
             });
         });
     </script>
