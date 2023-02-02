@@ -14,10 +14,10 @@ yarn-error.log
 .idea/vcs.xml
 # public/fonts/vendor/video.js/
 .DS_Store
-# public/js/
+ public/js/
 yarn.lock
-# public/mix-manifest.json
-# public/css/
+ public/mix-manifest.json
+ public/css/
 # _ide_helper.php
 # !/storage/
 # storage/tmp/
