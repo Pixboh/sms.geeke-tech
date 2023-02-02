@@ -463,10 +463,12 @@
                                         <div name="messageFrom" class="text-center"><span
                                                     class="fa fa-chevron-left float-left ml-0 ml-md-1 mt-1 text-info"></span>
                                             <p  class="text-center" id="sender_id_text">
-                                                @foreach($sender_ids as $sender_id)
-                                                    {{ $sender_id->sender_id }}
-                                                    @break
-                                                @endforeach
+                                                @if(!empty($sender_ids))
+                                                    @foreach($sender_ids as $sender_id)
+                                                        {{ $sender_id->sender_id }}
+                                                        @break
+                                                    @endforeach
+                                                @endif
                                             </p>
                                         </div>
                                     </div>
