@@ -216,7 +216,7 @@
                             <li class="nav-item balance-top-up">
                                 <div class="show-balance">
                                     <span class="show-balance-text">{{ __('locale.labels.balance') }}</span>
-                                    <span class="show-balance-unit">{{ Auth::user()->sms_unit == '-1' ? __('locale.labels.unlimited') : Auth::user()->sms_unit  }}</span>
+                                    <span class="show-balance-unit">{{ Auth::user()->sms_unit == '-1' ? __('locale.labels.unlimited') : Auth::user()->sms_unit . ' '.  __('locale.labels.sms_unit_remaining') }}</span>
                                 </div>
                                 <a class="nav-link top-up-url d-sm-block" href="{{ route('user.account.top_up') }}">
                                     <button type="button" class="btn btn-sm btn-outline-success">

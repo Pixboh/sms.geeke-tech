@@ -184,27 +184,27 @@ class PaymentMethodsSeeder extends Seeder
                         ]),
                         'status'  => false,
                 ],
-//                [
-//                        'name'    => 'OrangeMoney',
-//                        'type'    => 'orangemoney',
-//                        'options' => json_encode([
-//                                'payment_url'  => 'https://api.orange.com/orange-money-webpay/dev/v1/webpayment',
-//                                'merchant_key' => 'Merchant Key',
-//                                'auth_header'  => 'Authorization Header',
-//                        ]),
-//                        'status'  => false,
-//                ],
-//                [
-//                        'name'    => 'CinetPay',
-//                        'type'    => 'cinetpay',
-//                        'options' => json_encode([
-//                                'payment_url' => 'https://api-checkout.cinetpay.com/v2/payment',
-//                                'api_key'     => 'API KEY',
-//                                'site_id'     => 'Site ID',
-//                                'secret_key'  => 'Secret Key',
-//                        ]),
-//                        'status'  => false,
-//                ],
+                [
+                        'name'    => 'OrangeMoney',
+                        'type'    => 'orangemoney',
+                        'options' => json_encode([
+                                'payment_url'  => 'https://api.orange.com/orange-money-webpay/dev/v1/webpayment',
+                                'merchant_key' => 'Merchant Key',
+                                'auth_header'  => 'Authorization Header',
+                        ]),
+                        'status'  => false,
+                ],
+                [
+                        'name'    => 'CinetPay',
+                        'type'    => 'cinetpay',
+                        'options' => json_encode([
+                                'payment_url' => 'https://api-checkout.cinetpay.com/v2/payment',
+                                'api_key'     => 'API KEY',
+                                'site_id'     => 'Site ID',
+                                'secret_key'  => 'Secret Key',
+                        ]),
+                        'status'  => false,
+                ],
 
 //                [
 //                        'name'    => 'AzamPay',
@@ -256,7 +256,9 @@ class PaymentMethodsSeeder extends Seeder
                         ]),
                         'status'  => true,
                 ],
+
         ];
+
 
         foreach ($payment_gateways as $gateway) {
             PaymentMethods::create($gateway);
