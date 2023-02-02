@@ -349,7 +349,7 @@
 
                     $remaining.text(data.remaining + " {!! __('locale.labels.characters_remaining') !!}");
                     $messages.text(data.messages + " {!! __('locale.labels.message') !!}" + '(s)');
-                    $text_message.text($get_msg[0].value);
+                    $('#text_message').text($get_msg[0].value);
 
                 }
 

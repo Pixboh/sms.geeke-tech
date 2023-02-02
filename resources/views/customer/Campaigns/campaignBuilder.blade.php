@@ -12,6 +12,7 @@
 @section('page-style')
 
     <link rel="stylesheet" href="{{ asset(mix('css/base/plugins/forms/pickers/form-flat-pickr.css')) }}">
+    <link rel="stylesheet" href="{{ asset(mix('vendors/css/phone-preview/phone.css')) }}">
 
     <style>
         .customized_select2 .select2-selection--multiple {
@@ -452,6 +453,35 @@
                     </div>
                 </div>
             </div>
+            <div class="col-md-3 col-12" style=''>
+                <div data-v-6e390e89="" class="message-preview-container" style="position: sticky; top: 0px;">
+                    <div data-v-6e390e89="" class="messagePreviewContainer">
+                        <div class="messagePreviewBG">
+                            <div class="border">
+                                <form class="chat">
+                                    <div class="head py-md-2 py-1 border-bottom">
+                                        <div name="messageFrom" class="text-center"><span
+                                                    class="fa fa-chevron-left float-left ml-0 ml-md-1 mt-1 text-info"></span>
+                                            <p  class="text-center" id="sender_id_text">
+                                                @foreach($sender_ids as $sender_id)
+                                                    {{ $sender_id->sender_id }}
+                                                    @break
+                                                @endforeach
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="messages"><!----> <!---->
+                                        <div class="message">
+                                            <div class="myMessage">
+                                                <div name="messageText"><small id="text_message"> </small></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div> <!----></div>
+            </div>
         </div>
     </section>
     <!-- // Basic Vertical form layout section end -->
@@ -637,6 +667,7 @@
 
                     $remaining.text(data.remaining + " {!! __('locale.labels.characters_remaining') !!}");
                     $messages.text(data.messages + " {!! __('locale.labels.message') !!}" + '(s)');
+                    $('#text_message').text($get_msg[0].value);
 
                 }
 
@@ -712,7 +743,9 @@
             });
 
             $get_msg.keyup(get_character);
-
+            $("#sender_id").on('change', function () {
+                $('#sender_id_text').text(this.value);
+            });
         });
     </script>
 @endsection
