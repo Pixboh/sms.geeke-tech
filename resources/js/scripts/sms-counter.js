@@ -1,8 +1,9 @@
-(function() {
+(function () {
     let $, SmsCounter;
 
-    window.SmsCounter = SmsCounter = (function() {
-        function SmsCounter() {}
+    window.SmsCounter = SmsCounter = (function () {
+        function SmsCounter() {
+        }
 
         SmsCounter.gsm7bitChars = "@£$¥èéùìòÇ\\nØø\\rÅåΔ_ΦΓΛΩΠΨΣΘΞÆæßÉ !\\\"#¤%&'()*+,-./0123456789:;<=>?¡ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÑÜ§¿abcdefghijklmnopqrstuvwxyzäöñüà";
 
@@ -32,8 +33,8 @@
             UTF16: 67
         };
 
-        SmsCounter.count = function(text) {
-            let encoding, length, messages, per_message, remaining;
+        SmsCounter.count = function (text) {
+            let encoding, length, messages, per_message, remaining, text_message;
             encoding = this.detectEncoding(text);
             length = text.length;
             if (encoding === this.GSM_7BIT_EX) {
@@ -41,8 +42,8 @@
             }
 
 
-            for(let charPos = 0; charPos < text.length; charPos++){
-                switch(text[charPos]){
+            for (let charPos = 0; charPos < text.length; charPos++) {
+                switch (text[charPos]) {
                     case "[":
                     case "]":
                     case "\\":
@@ -61,19 +62,21 @@
             }
             messages = Math.ceil(length / per_message);
             remaining = (per_message * messages) - length;
-            if(remaining === 0 && messages === 0){
+            if (remaining === 0 && messages === 0) {
                 remaining = per_message;
             }
+            text_message = text;
             return {
                 encoding: encoding,
                 length: length,
                 per_message: per_message,
                 remaining: remaining,
-                messages: messages
+                messages: messages,
+                text_message: text_message
             };
         };
 
-        SmsCounter.detectEncoding = function(text) {
+        SmsCounter.detectEncoding = function (text) {
             switch (false) {
                 case text.match(this.gsm7bitRegExp) == null:
                     return this.GSM_7BIT;
@@ -84,9 +87,9 @@
             }
         };
 
-        SmsCounter.countGsm7bitEx = function(text) {
+        SmsCounter.countGsm7bitEx = function (text) {
             let char2, chars;
-            chars = (function() {
+            chars = (function () {
                 let _i, _len, _results;
                 _results = [];
                 for (_i = 0, _len = text.length; _i < _len; _i++) {
@@ -106,11 +109,11 @@
 
     if (typeof jQuery !== "undefined" && jQuery !== null) {
         $ = jQuery;
-        $.fn.countSms = function(target) {
+        $.fn.countSms = function (target) {
             let count_sms, input;
             input = this;
             target = $(target);
-            count_sms = function() {
+            count_sms = function () {
                 let count, k, v, _results;
                 count = SmsCounter.count(input.val());
                 _results = [];

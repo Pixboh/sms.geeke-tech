@@ -1412,6 +1412,15 @@ on ',
         'per_unit_price' => 'Vous pouvez définir le prix de votre unité personnalisée. Puisque quiconque souhaite ajouter plus d\'unités à son plan d\'achat, vous devez définir le prix de chaque unité. Si vous définissez le prix à <code> 0,3 USD </code> par unité, il vous en coûtera <code> 60 USD </code> pour <code> 200 unités SMS </code>. Vous pouvez définir différents prix pour différents plans. Insérez ici le prix unitaire unitaire.',
         /*version 3.1*/
         'plan_price' => 'Ne payez que ce que vous utilisez. Ne vous laissez pas bloquer par les contrats, la planification des capacités et la modélisation des prix. Choisissez le meilleur plan pour répondre à vos besoins.',
+        'paydunya' => "Les clés d'API sont vos références numériques auprès des systèmes de PayDunya. Nous les utilisons afin d'identifier votre compte et les applications que vous allez créer. Ces clés sont nécessaires pour toute intégration des APIs de paiements PayDunya. Voici chronologiquement la marche à suivre :
+
+Vous devez d'abord avoir un compte PayDunya Business activé. Créez-en un si besoin y est.
+
+Connectez-vous à votre compte et cliquez sur oneAPI au niveau du menu à gauche.
+
+Cliquez sur le bouton Configurer une nouvelle application et remplissez le formulaire.
+
+Choisissez MODE TEST, JE VEUX FAIRE DES TESTS DE PAIEMENT. puis ACTIVER LE MODE DE PRODUCTION"
     ],
 
     /*
@@ -1433,7 +1442,7 @@ on ',
         'disabled' => 'Votre compte a été désactivé.',
         'recover_your_password' => 'Récupérez votre mot de passe',
         'recover_password_instructions' => 'Veuillez saisir votre adresse e-mail et nous vous enverrons des instructions pour réinitialiser votre mot de passe.',
-        'back_to_login' => 'Retour à la page de connexion',
+        'back_to_login' => 'Vous avez dejà un compte ? Connectez-vous',
         'recover_password' => 'Récupérer votre mot de passe',
         'password_reset_successfully' => 'Le mot de passe a été réinitialisé avec succès',
         'user_not_exist' => 'Nous ne pouvons pas trouver un utilisateur avec cette adresse e-mail.',
@@ -1462,7 +1471,7 @@ on ',
         /*Version 3.1*/
         'enter_credentials' => 'Enter credentials',
         'personal' => 'Personal',
-        'account_information' => 'Account Information',
+        'account_information' => 'Information du compte',
         'insert_required_fields' => 'Insert required fields',
 
         'socialite' => [

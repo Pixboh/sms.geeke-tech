@@ -53,6 +53,9 @@
                                        'callback_url_subscriptions' => route('customer.callback.razorpay.subscriptions'),
                                         ])!!}</p>
                                     @break
+                                @case('paydunya')
+                                    <p>{!!  __('locale.description.paydunya') !!}</p>
+                                    @break
 
                             @endswitch
 
@@ -979,6 +982,109 @@
                                                     @enderror
                                                 </div>
                                             </div>
+                                        @elseif($gateway->type == PaymentMethods::TYPE_PAYDUNYA)
+
+                                            <div class="col-12">
+                                                <div class="mb-1">
+                                                    <label for="environment" class="form-label required">{{ __('locale.labels.environment') }}</label>
+                                                    <select class="form-select" name="environment" id="environment">
+                                                        <option value="sandbox" @if($gateway->getOption('environment') == 'sandbox' ) selected @endif>{{ __('locale.labels.sandbox') }}</option>
+                                                        <option value="production" @if($gateway->getOption('environment') == 'production' ) selected @endif>{{ __('locale.labels.production')}} </option>
+                                                    </select>
+                                                    @error('environment')
+                                                    <div class="text-danger">
+                                                        {{ $message }}
+                                                    </div>
+                                                    @enderror
+                                                </div>
+                                            </div>
+
+                                            <div class="col-12">
+                                                <div class="mb-1">
+                                                    <label for="merchant_id" class="form-label required">{{ __('locale.labels.merchant_id') }}</label>
+                                                    <input type="text" id="merchant_id" name="merchant_id" class="form-control" value="{{ $gateway->getOption('merchant_id') }}" required>
+                                                    @error('merchant_id')
+                                                    <div class="text-danger">
+                                                        {{ $message }}
+                                                    </div>
+                                                    @enderror
+                                                </div>
+                                            </div>
+
+                                            <div class="col-12">
+                                                <div class="mb-1">
+                                                    <label for="merchant_key" class="form-label required">{{ __('locale.labels.merchant_key') }}</label>
+                                                    <input type="text" id="secret" name="merchant_key" class="form-control" value="{{ $gateway->getOption('merchant_key') }}" required>
+                                                    @error('merchant_key')
+                                                    <div class="text-danger">
+                                                        {{ $message }}
+                                                    </div>
+                                                    @enderror
+                                                </div>
+                                            </div>
+
+                                            <div class="col-12">
+                                                <div class="mb-1">
+                                                    <label for="public_key" class="form-label required">{{ __('locale.labels.public_key') }}</label>
+                                                    <input type="text" id="public_key" name="public_key" class="form-control" value="{{ $gateway->getOption('public_key') }}" required>
+                                                    @error('public_key')
+                                                    <div class="text-danger">
+                                                        {{ $message }}
+                                                    </div>
+                                                    @enderror
+                                                </div>
+                                            </div>
+
+
+
+
+                                            <div class="col-12">
+                                                <div class="mb-1">
+                                                    <label for="private_key" class="form-label required">{{ __('locale.labels.private_key') }}</label>
+                                                    <input type="text" id="private_key" name="private_key" class="form-control" value="{{ $gateway->getOption('private_key') }}" required>
+                                                    @error('private_key')
+                                                    <div class="text-danger">
+                                                        {{ $message }}
+                                                    </div>
+                                                    @enderror
+                                                </div>
+                                            </div>
+
+                                            <div class="col-12">
+                                                <div class="mb-1">
+                                                    <label for="client_secret" class="form-label required">{{ __('locale.labels.client_secret') }}</label>
+                                                    <input type="text" id="client_secret" name="client_secret" class="form-control" value="{{ $gateway->getOption('client_secret') }}" required>
+                                                    @error('client_secret')
+                                                    <div class="text-danger">
+                                                        {{ $message }}
+                                                    </div>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="mb-1">
+                                                    <label for="return_url" class="form-label required">{{ __('locale.labels.return_url') }}</label>
+                                                    <input type="text" id="return_url" name="return_url" class="form-control" value="{{ $gateway->getOption('return_url') }}" required>
+                                                    @error('return_url')
+                                                    <div class="text-danger">
+                                                        {{ $message }}
+                                                    </div>
+                                                    @enderror
+                                                </div>
+                                            </div>
+
+
+                                            <div class="col-12">
+                                                <div class="mb-1">
+                                                    <label for="ipn_url" class="form-label required">{{ __('locale.labels.ipn_url') }}</label>
+                                                    <input type="text" id="ipn_url" name="ipn_url" class="form-control" value="{{ $gateway->getOption('ipn_url') }}" required>
+                                                    @error('ipn_url')
+                                                    <div class="text-danger">
+                                                        {{ $message }}
+                                                    </div>
+                                                    @enderror
+                                                </div>
+                                            </div>
 
                                         @elseif($gateway->type == PaymentMethods::TYPE_CASH)
 
@@ -1011,6 +1117,7 @@
                                                 <p class="text-danger text-bold-600">{{ __('locale.payment_gateways.not_found') }}</p>
                                             </div>
                                         @endif
+
 
                                         <div class="col-12">
                                             <input type="hidden" value="{{$gateway->type}}" name="type">
