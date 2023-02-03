@@ -12,8 +12,7 @@ class UpdatePaymentMethods extends FormRequest
      *
      * @return bool
      */
-    public function authorize(): bool
-    {
+    public function authorize(): bool {
         return $this->user()->can('update payment_gateways');
     }
 
@@ -22,66 +21,65 @@ class UpdatePaymentMethods extends FormRequest
      *
      * @return array
      */
-    public function rules(): array
-    {
+    public function rules(): array {
 
         $type = $this->input('type');
 
         $rules = [
-                'name' => 'required',
+            'name' => 'required',
         ];
 
         switch ($type) {
             case PaymentMethods::TYPE_PAYPAL:
             case PaymentMethods::TYPE_SMANAGER:
-                $rules['client_id']   = 'required';
-                $rules['secret']      = 'required';
+                $rules['client_id'] = 'required';
+                $rules['secret'] = 'required';
                 $rules['environment'] = 'required';
                 break;
 
             case PaymentMethods::TYPE_BRAINTREE:
                 $rules['merchant_id'] = 'required';
-                $rules['public_key']  = 'required';
+                $rules['public_key'] = 'required';
                 $rules['private_key'] = 'required';
                 $rules['environment'] = 'required';
                 break;
 
             case PaymentMethods::TYPE_STRIPE:
                 $rules['publishable_key'] = 'required';
-                $rules['secret_key']      = 'required';
-                $rules['environment']     = 'required';
+                $rules['secret_key'] = 'required';
+                $rules['environment'] = 'required';
                 break;
 
             case PaymentMethods::TYPE_AUTHORIZE_NET:
-                $rules['login_id']        = 'required';
+                $rules['login_id'] = 'required';
                 $rules['transaction_key'] = 'required';
-                $rules['environment']     = 'required';
+                $rules['environment'] = 'required';
                 break;
 
             case PaymentMethods::TYPE_2CHECKOUT:
                 $rules['merchant_code'] = 'required';
-                $rules['private_key']   = 'required';
-                $rules['environment']   = 'required';
+                $rules['private_key'] = 'required';
+                $rules['environment'] = 'required';
                 break;
 
             case PaymentMethods::TYPE_PAYSTACK:
-                $rules['public_key']     = 'required';
-                $rules['secret_key']     = 'required';
+                $rules['public_key'] = 'required';
+                $rules['secret_key'] = 'required';
                 $rules['merchant_email'] = 'required|email';
                 break;
 
             case PaymentMethods::TYPE_PAYU:
-                $rules['client_id']     = 'required';
+                $rules['client_id'] = 'required';
                 $rules['client_secret'] = 'required';
                 break;
 
             case PaymentMethods::TYPE_SLYDEPAY:
-                $rules['merchant_email']  = 'required|email';
+                $rules['merchant_email'] = 'required|email';
                 $rules['merchant_secret'] = 'required';
                 break;
 
             case PaymentMethods::TYPE_PAYNOW:
-                $rules['integration_id']  = 'required';
+                $rules['integration_id'] = 'required';
                 $rules['integration_key'] = 'required';
                 break;
 
@@ -90,7 +88,7 @@ class UpdatePaymentMethods extends FormRequest
                 break;
 
             case PaymentMethods::TYPE_INSTAMOJO:
-                $rules['api_key']    = 'required';
+                $rules['api_key'] = 'required';
                 $rules['auth_token'] = 'required';
                 break;
 
@@ -99,72 +97,81 @@ class UpdatePaymentMethods extends FormRequest
                 break;
 
             case PaymentMethods::TYPE_PAYUMONEY:
-                $rules['merchant_key']  = 'required';
+                $rules['merchant_key'] = 'required';
                 $rules['merchant_salt'] = 'required';
-                $rules['environment']   = 'required';
+                $rules['environment'] = 'required';
                 break;
 
             case PaymentMethods::TYPE_RAZORPAY:
-                $rules['key_id']      = 'required';
-                $rules['key_secret']  = 'required';
+                $rules['key_id'] = 'required';
+                $rules['key_secret'] = 'required';
                 $rules['environment'] = 'required';
                 break;
 
             case PaymentMethods::TYPE_SSLCOMMERZ:
-                $rules['store_id']     = 'required';
+                $rules['store_id'] = 'required';
                 $rules['store_passwd'] = 'required';
-                $rules['environment']  = 'required';
+                $rules['environment'] = 'required';
                 break;
 
             case PaymentMethods::TYPE_AAMARPAY:
-                $rules['store_id']      = 'required';
+                $rules['store_id'] = 'required';
                 $rules['signature_key'] = 'required';
-                $rules['environment']   = 'required';
+                $rules['environment'] = 'required';
                 break;
 
             case PaymentMethods::TYPE_DIRECTPAYONLINE:
                 $rules['company_token'] = 'required';
-                $rules['account_type']  = 'required';
-                $rules['environment']   = 'required';
+                $rules['account_type'] = 'required';
+                $rules['environment'] = 'required';
                 break;
 
             case PaymentMethods::TYPE_ORANGEMONEY:
                 $rules['merchant_key'] = 'required';
-                $rules['auth_header']  = 'required';
-                $rules['payment_url']  = 'required';
+                $rules['auth_header'] = 'required';
+                $rules['payment_url'] = 'required';
                 break;
 
             case PaymentMethods::TYPE_CINETPAY:
-                $rules['api_key']     = 'required';
-                $rules['site_id']     = 'required';
-                $rules['secret_key']  = 'required';
+                $rules['api_key'] = 'required';
+                $rules['site_id'] = 'required';
+                $rules['secret_key'] = 'required';
                 $rules['payment_url'] = 'required';
                 break;
 
 
             case PaymentMethods::TYPE_AZAMPAY:
-                $rules['app_name']       = 'required';
+                $rules['app_name'] = 'required';
                 $rules['account_number'] = 'required';
-                $rules['client_id']      = 'required';
-                $rules['client_secret']  = 'required';
-                $rules['provider']       = 'required';
-                $rules['environment']    = 'required';
+                $rules['client_id'] = 'required';
+                $rules['client_secret'] = 'required';
+                $rules['provider'] = 'required';
+                $rules['environment'] = 'required';
                 break;
 
 
             case PaymentMethods::TYPE_VODACOMMPESA:
-                $rules['apiKey']              = 'required';
-                $rules['publicKey']           = 'required';
+                $rules['apiKey'] = 'required';
+                $rules['publicKey'] = 'required';
                 $rules['serviceProviderCode'] = 'required';
-                $rules['environment']         = 'required';
+                $rules['environment'] = 'required';
                 break;
 
             case PaymentMethods::TYPE_CASH:
-                $rules['payment_details']      = 'required';
+                $rules['payment_details'] = 'required';
                 $rules['payment_confirmation'] = 'required';
                 break;
 
-
+            case PaymentMethods::TYPE_PAYDUNYA:
+                $rules['merchant_id'] = 'required';
+                $rules['merchant_key'] = 'required';
+                $rules['client_secret'] = 'required';
+                $rules['public_key'] = 'required';
+                $rules['private_key'] = 'required';
+                $rules['environment'] = 'required';
+                $rules['return_url'] = 'required';
+                $rules['ipn_url'] = 'required';
+                break;
         }
 
         return $rules;

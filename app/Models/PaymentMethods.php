@@ -40,7 +40,7 @@ class PaymentMethods extends Model
     const TYPE_VODACOMMPESA    = 'vodacommpesa';
     const TYPE_PAYHERELK       = 'payherelk';
     // custom code pape
-    const TYPE_PAYTECHSN       = 'paytech';
+    const TYPE_PAYDUNYA      = 'paydunya';
 
 
     /**
