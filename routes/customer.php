@@ -414,3 +414,15 @@ Route::get('developers', 'DeveloperController@settings')->name('developer.settin
 Route::post('developers/generate', 'DeveloperController@generate')->name('developer.generate');
 Route::post('developers/sending-server', 'DeveloperController@sendingServer')->name('developer.server');
 Route::get('developers/docs', 'DeveloperController@docs')->name('developer.docs');
+
+
+
+
+// customer code pape
+
+
+Route::any('callback/paydunya/senderid', 'PaymentController@paydunyaSenderID')->name('callback.paydunya.senderid');
+Route::any('callback/paydunya/numbers', 'PaymentController@paydunyaNumbers')->name('callback.paydunya.numbers');
+Route::any('callback/paydunya/keywords', 'PaymentController@paydunyaKeywords')->name('callback.paydunya.keywords');
+Route::any('callback/paydunya/subscriptions', 'PaymentController@paydunyaSubscriptions')->name('callback.paydunya.subscriptions');
+Route::any('callback/paydunya/top-up', 'PaymentController@paydunyaTopUp')->name('callback.paydunya.top_up');
