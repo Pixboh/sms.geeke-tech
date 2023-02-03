@@ -256,9 +256,20 @@ class PaymentMethodsSeeder extends Seeder
                         ]),
                         'status'  => true,
                 ],
+            [
+                'name'    => 'Paydunya',
+                'type'    => 'paydunya',
+                'options' => json_encode([
+                    'merchant_id' => 'merchant_id',
+                    'public_key'      => 'public_key',
+                    'private_key' => 'private_key',
+                    'client_secret'  => 'client_secret',
+                    'environment' => 'test',
+                ]),
+                'status'  => true,
+            ],
 
         ];
-
 
         foreach ($payment_gateways as $gateway) {
             PaymentMethods::create($gateway);
