@@ -43,7 +43,7 @@ Author URL: https://codecanyon.net/user/codeglen
     $('.layout-name').on('click', function () {
         var $this = $(this);
         var currentLayout = $this.data('layout');
-        html.removeClass('dark-layout bordered-layout semi-dark-layout').addClass(currentLayout);
+        html.removeClass('dark-layout bordered-layout semi-dark-layout geex-theme-layout').addClass(currentLayout);
         if (currentLayout === '') {
             mainMenu.removeClass('menu-dark').addClass('menu-light');
             navbar.removeClass('navbar-dark').addClass('navbar-light');
@@ -53,7 +53,12 @@ Author URL: https://codecanyon.net/user/codeglen
         } else if (currentLayout === 'semi-dark-layout') {
             mainMenu.removeClass('menu-light').addClass('menu-dark');
             navbar.removeClass('navbar-dark').addClass('navbar-light');
-        } else {
+            // custom pape
+        } else if (currentLayout === 'geex-theme-layout') {
+        mainMenu.removeClass('menu-light').addClass('menu-dark');
+        navbar.removeClass('navbar-dark').addClass('navbar-light');
+    }
+    else {
             mainMenu.removeClass('menu-dark').addClass('menu-light');
             navbar.removeClass('navbar-dark').addClass('navbar-light');
         }

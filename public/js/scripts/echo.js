@@ -1,1 +1,1574 @@
-var Echo=function(){"use strict";function e(e,n){if(!(e instanceof n))throw new TypeError("Cannot call a class as a function")}function n(e,n){for(var t=0;t<n.length;t++){var i=n[t];i.enumerable=i.enumerable||!1,i.configurable=!0,"value"in i&&(i.writable=!0),Object.defineProperty(e,i.key,i)}}function t(e,t,i){return t&&n(e.prototype,t),i&&n(e,i),e}function i(){return i=Object.assign||function(e){for(var n=1;n<arguments.length;n++){var t=arguments[n];for(var i in t)Object.prototype.hasOwnProperty.call(t,i)&&(e[i]=t[i])}return e},i.apply(this,arguments)}function s(e,n){if("function"!=typeof n&&null!==n)throw new TypeError("Super expression must either be null or a function");e.prototype=Object.create(n&&n.prototype,{constructor:{value:e,writable:!0,configurable:!0}}),n&&o(e,n)}function r(e){return r=Object.setPrototypeOf?Object.getPrototypeOf:function(e){return e.__proto__||Object.getPrototypeOf(e)},r(e)}function o(e,n){return o=Object.setPrototypeOf||function(e,n){return e.__proto__=n,e},o(e,n)}function u(e,n){return!n||"object"!=typeof n&&"function"!=typeof n?function(e){if(void 0===e)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return e}(e):n}function c(e){var n=function(){if("undefined"==typeof Reflect||!Reflect.construct)return!1;if(Reflect.construct.sham)return!1;if("function"==typeof Proxy)return!0;try{return Date.prototype.toString.call(Reflect.construct(Date,[],(function(){}))),!0}catch(e){return!1}}();return function(){var t,i=r(e);if(n){var s=r(this).constructor;t=Reflect.construct(i,arguments,s)}else t=i.apply(this,arguments);return u(this,t)}}var a=function(){function n(t){e(this,n),this._defaultOptions={auth:{headers:{}},authEndpoint:"/broadcasting/auth",broadcaster:"pusher",csrfToken:null,host:null,key:null,namespace:"App.Events"},this.setOptions(t),this.connect()}return t(n,[{key:"setOptions",value:function(e){return this.options=i(this._defaultOptions,e),this.csrfToken()&&(this.options.auth.headers["X-CSRF-TOKEN"]=this.csrfToken()),e}},{key:"csrfToken",value:function(){var e;return"undefined"!=typeof window&&window.Laravel&&window.Laravel.csrfToken?window.Laravel.csrfToken:this.options.csrfToken?this.options.csrfToken:"undefined"!=typeof document&&"function"==typeof document.querySelector&&(e=document.querySelector('meta[name="csrf-token"]'))?e.getAttribute("content"):null}}]),n}(),h=function(){function n(){e(this,n)}return t(n,[{key:"listenForWhisper",value:function(e,n){return this.listen(".client-"+e,n)}},{key:"notification",value:function(e){return this.listen(".Illuminate\\Notifications\\Events\\BroadcastNotificationCreated",e)}},{key:"stopListeningForWhisper",value:function(e,n){return this.stopListening(".client-"+e,n)}}]),n}(),l=function(){function n(t){e(this,n),this.setNamespace(t)}return t(n,[{key:"format",value:function(e){return"."===e.charAt(0)||"\\"===e.charAt(0)?e.substr(1):(this.namespace&&(e=this.namespace+"."+e),e.replace(/\./g,"\\"))}},{key:"setNamespace",value:function(e){this.namespace=e}}]),n}(),f=function(n){s(r,n);var i=c(r);function r(n,t,s){var o;return e(this,r),(o=i.call(this)).name=t,o.pusher=n,o.options=s,o.eventFormatter=new l(o.options.namespace),o.subscribe(),o}return t(r,[{key:"subscribe",value:function(){this.subscription=this.pusher.subscribe(this.name)}},{key:"unsubscribe",value:function(){this.pusher.unsubscribe(this.name)}},{key:"listen",value:function(e,n){return this.on(this.eventFormatter.format(e),n),this}},{key:"listenToAll",value:function(e){var n=this;return this.subscription.bind_global((function(t,i){if(!t.startsWith("pusher:")){var s=n.options.namespace.replace(/\./g,"\\"),r=t.startsWith(s)?t.substring(s.length+1):"."+t;e(r,i)}})),this}},{key:"stopListening",value:function(e,n){return n?this.subscription.unbind(this.eventFormatter.format(e),n):this.subscription.unbind(this.eventFormatter.format(e)),this}},{key:"stopListeningToAll",value:function(e){return e?this.subscription.unbind_global(e):this.subscription.unbind_global(),this}},{key:"subscribed",value:function(e){return this.on("pusher:subscription_succeeded",(function(){e()})),this}},{key:"error",value:function(e){return this.on("pusher:subscription_error",(function(n){e(n)})),this}},{key:"on",value:function(e,n){return this.subscription.bind(e,n),this}}]),r}(h),p=function(n){s(r,n);var i=c(r);function r(){return e(this,r),i.apply(this,arguments)}return t(r,[{key:"whisper",value:function(e,n){return this.pusher.channels.channels[this.name].trigger("client-".concat(e),n),this}}]),r}(f),v=function(n){s(r,n);var i=c(r);function r(){return e(this,r),i.apply(this,arguments)}return t(r,[{key:"whisper",value:function(e,n){return this.pusher.channels.channels[this.name].trigger("client-".concat(e),n),this}}]),r}(f),y=function(n){s(r,n);var i=c(r);function r(){return e(this,r),i.apply(this,arguments)}return t(r,[{key:"here",value:function(e){return this.on("pusher:subscription_succeeded",(function(n){e(Object.keys(n.members).map((function(e){return n.members[e]})))})),this}},{key:"joining",value:function(e){return this.on("pusher:member_added",(function(n){e(n.info)})),this}},{key:"leaving",value:function(e){return this.on("pusher:member_removed",(function(n){e(n.info)})),this}},{key:"whisper",value:function(e,n){return this.pusher.channels.channels[this.name].trigger("client-".concat(e),n),this}}]),r}(f),k=function(n){s(r,n);var i=c(r);function r(n,t,s){var o;return e(this,r),(o=i.call(this)).events={},o.listeners={},o.name=t,o.socket=n,o.options=s,o.eventFormatter=new l(o.options.namespace),o.subscribe(),o}return t(r,[{key:"subscribe",value:function(){this.socket.emit("subscribe",{channel:this.name,auth:this.options.auth||{}})}},{key:"unsubscribe",value:function(){this.unbind(),this.socket.emit("unsubscribe",{channel:this.name,auth:this.options.auth||{}})}},{key:"listen",value:function(e,n){return this.on(this.eventFormatter.format(e),n),this}},{key:"stopListening",value:function(e,n){return this.unbindEvent(this.eventFormatter.format(e),n),this}},{key:"subscribed",value:function(e){return this.on("connect",(function(n){e(n)})),this}},{key:"error",value:function(e){return this}},{key:"on",value:function(e,n){var t=this;return this.listeners[e]=this.listeners[e]||[],this.events[e]||(this.events[e]=function(n,i){t.name===n&&t.listeners[e]&&t.listeners[e].forEach((function(e){return e(i)}))},this.socket.on(e,this.events[e])),this.listeners[e].push(n),this}},{key:"unbind",value:function(){var e=this;Object.keys(this.events).forEach((function(n){e.unbindEvent(n)}))}},{key:"unbindEvent",value:function(e,n){this.listeners[e]=this.listeners[e]||[],n&&(this.listeners[e]=this.listeners[e].filter((function(e){return e!==n}))),n&&0!==this.listeners[e].length||(this.events[e]&&(this.socket.removeListener(e,this.events[e]),delete this.events[e]),delete this.listeners[e])}}]),r}(h),b=function(n){s(r,n);var i=c(r);function r(){return e(this,r),i.apply(this,arguments)}return t(r,[{key:"whisper",value:function(e,n){return this.socket.emit("client event",{channel:this.name,event:"client-".concat(e),data:n}),this}}]),r}(k),d=function(n){s(r,n);var i=c(r);function r(){return e(this,r),i.apply(this,arguments)}return t(r,[{key:"here",value:function(e){return this.on("presence:subscribed",(function(n){e(n.map((function(e){return e.user_info})))})),this}},{key:"joining",value:function(e){return this.on("presence:joining",(function(n){return e(n.user_info)})),this}},{key:"leaving",value:function(e){return this.on("presence:leaving",(function(n){return e(n.user_info)})),this}}]),r}(b),m=function(n){s(r,n);var i=c(r);function r(){return e(this,r),i.apply(this,arguments)}return t(r,[{key:"subscribe",value:function(){}},{key:"unsubscribe",value:function(){}},{key:"listen",value:function(e,n){return this}},{key:"stopListening",value:function(e,n){return this}},{key:"subscribed",value:function(e){return this}},{key:"error",value:function(e){return this}},{key:"on",value:function(e,n){return this}}]),r}(h),g=function(n){s(r,n);var i=c(r);function r(){return e(this,r),i.apply(this,arguments)}return t(r,[{key:"whisper",value:function(e,n){return this}}]),r}(m),w=function(n){s(r,n);var i=c(r);function r(){return e(this,r),i.apply(this,arguments)}return t(r,[{key:"here",value:function(e){return this}},{key:"joining",value:function(e){return this}},{key:"leaving",value:function(e){return this}},{key:"whisper",value:function(e,n){return this}}]),r}(m),j=function(n){s(r,n);var i=c(r);function r(){var n;return e(this,r),(n=i.apply(this,arguments)).channels={},n}return t(r,[{key:"connect",value:function(){void 0!==this.options.client?this.pusher=this.options.client:this.pusher=new Pusher(this.options.key,this.options)}},{key:"listen",value:function(e,n,t){return this.channel(e).listen(n,t)}},{key:"channel",value:function(e){return this.channels[e]||(this.channels[e]=new f(this.pusher,e,this.options)),this.channels[e]}},{key:"privateChannel",value:function(e){return this.channels["private-"+e]||(this.channels["private-"+e]=new p(this.pusher,"private-"+e,this.options)),this.channels["private-"+e]}},{key:"encryptedPrivateChannel",value:function(e){return this.channels["private-encrypted-"+e]||(this.channels["private-encrypted-"+e]=new v(this.pusher,"private-encrypted-"+e,this.options)),this.channels["private-encrypted-"+e]}},{key:"presenceChannel",value:function(e){return this.channels["presence-"+e]||(this.channels["presence-"+e]=new y(this.pusher,"presence-"+e,this.options)),this.channels["presence-"+e]}},{key:"leave",value:function(e){var n=this;[e,"private-"+e,"presence-"+e].forEach((function(e,t){n.leaveChannel(e)}))}},{key:"leaveChannel",value:function(e){this.channels[e]&&(this.channels[e].unsubscribe(),delete this.channels[e])}},{key:"socketId",value:function(){return this.pusher.connection.socket_id}},{key:"disconnect",value:function(){this.pusher.disconnect()}}]),r}(a),I=function(n){s(r,n);var i=c(r);function r(){var n;return e(this,r),(n=i.apply(this,arguments)).channels={},n}return t(r,[{key:"connect",value:function(){var e=this,n=this.getSocketIO();return this.socket=n(this.options.host,this.options),this.socket.on("reconnect",(function(){Object.values(e.channels).forEach((function(e){e.subscribe()}))})),this.socket}},{key:"getSocketIO",value:function(){if(void 0!==this.options.client)return this.options.client;if("undefined"!=typeof io)return io;throw new Error("Socket.io client not found. Should be globally available or passed via options.client")}},{key:"listen",value:function(e,n,t){return this.channel(e).listen(n,t)}},{key:"channel",value:function(e){return this.channels[e]||(this.channels[e]=new k(this.socket,e,this.options)),this.channels[e]}},{key:"privateChannel",value:function(e){return this.channels["private-"+e]||(this.channels["private-"+e]=new b(this.socket,"private-"+e,this.options)),this.channels["private-"+e]}},{key:"presenceChannel",value:function(e){return this.channels["presence-"+e]||(this.channels["presence-"+e]=new d(this.socket,"presence-"+e,this.options)),this.channels["presence-"+e]}},{key:"leave",value:function(e){var n=this;[e,"private-"+e,"presence-"+e].forEach((function(e){n.leaveChannel(e)}))}},{key:"leaveChannel",value:function(e){this.channels[e]&&(this.channels[e].unsubscribe(),delete this.channels[e])}},{key:"socketId",value:function(){return this.socket.id}},{key:"disconnect",value:function(){this.socket.disconnect()}}]),r}(a),O=function(n){s(r,n);var i=c(r);function r(){var n;return e(this,r),(n=i.apply(this,arguments)).channels={},n}return t(r,[{key:"connect",value:function(){}},{key:"listen",value:function(e,n,t){return new m}},{key:"channel",value:function(e){return new m}},{key:"privateChannel",value:function(e){return new g}},{key:"presenceChannel",value:function(e){return new w}},{key:"leave",value:function(e){}},{key:"leaveChannel",value:function(e){}},{key:"socketId",value:function(){return"fake-socket-id"}},{key:"disconnect",value:function(){}}]),r}(a);return function(){function n(t){e(this,n),this.options=t,this.connect(),this.options.withoutInterceptors||this.registerInterceptors()}return t(n,[{key:"channel",value:function(e){return this.connector.channel(e)}},{key:"connect",value:function(){"pusher"==this.options.broadcaster?this.connector=new j(this.options):"socket.io"==this.options.broadcaster?this.connector=new I(this.options):"null"==this.options.broadcaster?this.connector=new O(this.options):"function"==typeof this.options.broadcaster&&(this.connector=new this.options.broadcaster(this.options))}},{key:"disconnect",value:function(){this.connector.disconnect()}},{key:"join",value:function(e){return this.connector.presenceChannel(e)}},{key:"leave",value:function(e){this.connector.leave(e)}},{key:"leaveChannel",value:function(e){this.connector.leaveChannel(e)}},{key:"listen",value:function(e,n,t){return this.connector.listen(e,n,t)}},{key:"private",value:function(e){return this.connector.privateChannel(e)}},{key:"encryptedPrivate",value:function(e){return this.connector.encryptedPrivateChannel(e)}},{key:"socketId",value:function(){return this.connector.socketId()}},{key:"registerInterceptors",value:function(){"function"==typeof Vue&&Vue.http&&this.registerVueRequestInterceptor(),"function"==typeof axios&&this.registerAxiosRequestInterceptor(),"function"==typeof jQuery&&this.registerjQueryAjaxSetup()}},{key:"registerVueRequestInterceptor",value:function(){var e=this;Vue.http.interceptors.push((function(n,t){e.socketId()&&n.headers.set("X-Socket-ID",e.socketId()),t()}))}},{key:"registerAxiosRequestInterceptor",value:function(){var e=this;axios.interceptors.request.use((function(n){return e.socketId()&&(n.headers["X-Socket-Id"]=e.socketId()),n}))}},{key:"registerjQueryAjaxSetup",value:function(){var e=this;void 0!==jQuery.ajax&&jQuery.ajaxPrefilter((function(n,t,i){e.socketId()&&i.setRequestHeader("X-Socket-Id",e.socketId())}))}}]),n}()}();
+var Echo = (function () {
+    'use strict';
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    function _defineProperties(target, props) {
+        for (var i = 0; i < props.length; i++) {
+            var descriptor = props[i];
+            descriptor.enumerable = descriptor.enumerable || false;
+            descriptor.configurable = true;
+            if ("value" in descriptor) descriptor.writable = true;
+            Object.defineProperty(target, descriptor.key, descriptor);
+        }
+    }
+
+    function _createClass(Constructor, protoProps, staticProps) {
+        if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+        if (staticProps) _defineProperties(Constructor, staticProps);
+        return Constructor;
+    }
+
+    function _extends() {
+        _extends = Object.assign || function (target) {
+            for (var i = 1; i < arguments.length; i++) {
+                var source = arguments[i];
+
+                for (var key in source) {
+                    if (Object.prototype.hasOwnProperty.call(source, key)) {
+                        target[key] = source[key];
+                    }
+                }
+            }
+
+            return target;
+        };
+
+        return _extends.apply(this, arguments);
+    }
+
+    function _inherits(subClass, superClass) {
+        if (typeof superClass !== "function" && superClass !== null) {
+            throw new TypeError("Super expression must either be null or a function");
+        }
+
+        subClass.prototype = Object.create(superClass && superClass.prototype, {
+            constructor: {
+                value: subClass,
+                writable: true,
+                configurable: true
+            }
+        });
+        if (superClass) _setPrototypeOf(subClass, superClass);
+    }
+
+    function _getPrototypeOf(o) {
+        _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
+            return o.__proto__ || Object.getPrototypeOf(o);
+        };
+        return _getPrototypeOf(o);
+    }
+
+    function _setPrototypeOf(o, p) {
+        _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
+            o.__proto__ = p;
+            return o;
+        };
+
+        return _setPrototypeOf(o, p);
+    }
+
+    function _isNativeReflectConstruct() {
+        if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+        if (Reflect.construct.sham) return false;
+        if (typeof Proxy === "function") return true;
+
+        try {
+            Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    function _assertThisInitialized(self) {
+        if (self === void 0) {
+            throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+        }
+
+        return self;
+    }
+
+    function _possibleConstructorReturn(self, call) {
+        if (call && (typeof call === "object" || typeof call === "function")) {
+            return call;
+        }
+
+        return _assertThisInitialized(self);
+    }
+
+    function _createSuper(Derived) {
+        var hasNativeReflectConstruct = _isNativeReflectConstruct();
+
+        return function () {
+            var Super = _getPrototypeOf(Derived),
+                result;
+
+            if (hasNativeReflectConstruct) {
+                var NewTarget = _getPrototypeOf(this).constructor;
+
+                result = Reflect.construct(Super, arguments, NewTarget);
+            } else {
+                result = Super.apply(this, arguments);
+            }
+
+            return _possibleConstructorReturn(this, result);
+        };
+    }
+
+    var Connector = /*#__PURE__*/function () {
+        /**
+         * Create a new class instance.
+         */
+        function Connector(options) {
+            _classCallCheck(this, Connector);
+
+            /**
+             * Default connector options.
+             */
+            this._defaultOptions = {
+                auth: {
+                    headers: {}
+                },
+                authEndpoint: '/broadcasting/auth',
+                broadcaster: 'pusher',
+                csrfToken: null,
+                host: null,
+                key: null,
+                namespace: 'App.Events'
+            };
+            this.setOptions(options);
+            this.connect();
+        }
+        /**
+         * Merge the custom options with the defaults.
+         */
+
+
+        _createClass(Connector, [{
+            key: "setOptions",
+            value: function setOptions(options) {
+                this.options = _extends(this._defaultOptions, options);
+
+                if (this.csrfToken()) {
+                    this.options.auth.headers['X-CSRF-TOKEN'] = this.csrfToken();
+                }
+
+                return options;
+            }
+            /**
+             * Extract the CSRF token from the page.
+             */
+
+        }, {
+            key: "csrfToken",
+            value: function csrfToken() {
+                var selector;
+
+                if (typeof window !== 'undefined' && window['Laravel'] && window['Laravel'].csrfToken) {
+                    return window['Laravel'].csrfToken;
+                } else if (this.options.csrfToken) {
+                    return this.options.csrfToken;
+                } else if (typeof document !== 'undefined' && typeof document.querySelector === 'function' && (selector = document.querySelector('meta[name="csrf-token"]'))) {
+                    return selector.getAttribute('content');
+                }
+
+                return null;
+            }
+        }]);
+
+        return Connector;
+    }();
+
+    /**
+     * This class represents a basic channel.
+     */
+    var Channel = /*#__PURE__*/function () {
+        function Channel() {
+            _classCallCheck(this, Channel);
+        }
+
+        _createClass(Channel, [{
+            key: "listenForWhisper",
+
+            /**
+             * Listen for a whisper event on the channel instance.
+             */
+            value: function listenForWhisper(event, callback) {
+                return this.listen('.client-' + event, callback);
+            }
+            /**
+             * Listen for an event on the channel instance.
+             */
+
+        }, {
+            key: "notification",
+            value: function notification(callback) {
+                return this.listen('.Illuminate\\Notifications\\Events\\BroadcastNotificationCreated', callback);
+            }
+            /**
+             * Stop listening for a whisper event on the channel instance.
+             */
+
+        }, {
+            key: "stopListeningForWhisper",
+            value: function stopListeningForWhisper(event, callback) {
+                return this.stopListening('.client-' + event, callback);
+            }
+        }]);
+
+        return Channel;
+    }();
+
+    /**
+     * Event name formatter
+     */
+    var EventFormatter = /*#__PURE__*/function () {
+        /**
+         * Create a new class instance.
+         */
+        function EventFormatter(namespace) {
+            _classCallCheck(this, EventFormatter);
+
+            this.setNamespace(namespace);
+        }
+        /**
+         * Format the given event name.
+         */
+
+
+        _createClass(EventFormatter, [{
+            key: "format",
+            value: function format(event) {
+                if (event.charAt(0) === '.' || event.charAt(0) === '\\') {
+                    return event.substr(1);
+                } else if (this.namespace) {
+                    event = this.namespace + '.' + event;
+                }
+
+                return event.replace(/\./g, '\\');
+            }
+            /**
+             * Set the event namespace.
+             */
+
+        }, {
+            key: "setNamespace",
+            value: function setNamespace(value) {
+                this.namespace = value;
+            }
+        }]);
+
+        return EventFormatter;
+    }();
+
+    /**
+     * This class represents a Pusher channel.
+     */
+
+    var PusherChannel = /*#__PURE__*/function (_Channel) {
+        _inherits(PusherChannel, _Channel);
+
+        var _super = _createSuper(PusherChannel);
+
+        /**
+         * Create a new class instance.
+         */
+        function PusherChannel(pusher, name, options) {
+            var _this;
+
+            _classCallCheck(this, PusherChannel);
+
+            _this = _super.call(this);
+            _this.name = name;
+            _this.pusher = pusher;
+            _this.options = options;
+            _this.eventFormatter = new EventFormatter(_this.options.namespace);
+
+            _this.subscribe();
+
+            return _this;
+        }
+        /**
+         * Subscribe to a Pusher channel.
+         */
+
+
+        _createClass(PusherChannel, [{
+            key: "subscribe",
+            value: function subscribe() {
+                this.subscription = this.pusher.subscribe(this.name);
+            }
+            /**
+             * Unsubscribe from a Pusher channel.
+             */
+
+        }, {
+            key: "unsubscribe",
+            value: function unsubscribe() {
+                this.pusher.unsubscribe(this.name);
+            }
+            /**
+             * Listen for an event on the channel instance.
+             */
+
+        }, {
+            key: "listen",
+            value: function listen(event, callback) {
+                this.on(this.eventFormatter.format(event), callback);
+                return this;
+            }
+            /**
+             * Listen for all events on the channel instance.
+             */
+
+        }, {
+            key: "listenToAll",
+            value: function listenToAll(callback) {
+                var _this2 = this;
+
+                this.subscription.bind_global(function (event, data) {
+                    if (event.startsWith('pusher:')) {
+                        return;
+                    }
+
+                    var namespace = _this2.options.namespace.replace(/\./g, '\\');
+
+                    var formattedEvent = event.startsWith(namespace) ? event.substring(namespace.length + 1) : '.' + event;
+                    callback(formattedEvent, data);
+                });
+                return this;
+            }
+            /**
+             * Stop listening for an event on the channel instance.
+             */
+
+        }, {
+            key: "stopListening",
+            value: function stopListening(event, callback) {
+                if (callback) {
+                    this.subscription.unbind(this.eventFormatter.format(event), callback);
+                } else {
+                    this.subscription.unbind(this.eventFormatter.format(event));
+                }
+
+                return this;
+            }
+            /**
+             * Stop listening for all events on the channel instance.
+             */
+
+        }, {
+            key: "stopListeningToAll",
+            value: function stopListeningToAll(callback) {
+                if (callback) {
+                    this.subscription.unbind_global(callback);
+                } else {
+                    this.subscription.unbind_global();
+                }
+
+                return this;
+            }
+            /**
+             * Register a callback to be called anytime a subscription succeeds.
+             */
+
+        }, {
+            key: "subscribed",
+            value: function subscribed(callback) {
+                this.on('pusher:subscription_succeeded', function () {
+                    callback();
+                });
+                return this;
+            }
+            /**
+             * Register a callback to be called anytime a subscription error occurs.
+             */
+
+        }, {
+            key: "error",
+            value: function error(callback) {
+                this.on('pusher:subscription_error', function (status) {
+                    callback(status);
+                });
+                return this;
+            }
+            /**
+             * Bind a channel to an event.
+             */
+
+        }, {
+            key: "on",
+            value: function on(event, callback) {
+                this.subscription.bind(event, callback);
+                return this;
+            }
+        }]);
+
+        return PusherChannel;
+    }(Channel);
+
+    /**
+     * This class represents a Pusher private channel.
+     */
+
+    var PusherPrivateChannel = /*#__PURE__*/function (_PusherChannel) {
+        _inherits(PusherPrivateChannel, _PusherChannel);
+
+        var _super = _createSuper(PusherPrivateChannel);
+
+        function PusherPrivateChannel() {
+            _classCallCheck(this, PusherPrivateChannel);
+
+            return _super.apply(this, arguments);
+        }
+
+        _createClass(PusherPrivateChannel, [{
+            key: "whisper",
+
+            /**
+             * Trigger client event on the channel.
+             */
+            value: function whisper(eventName, data) {
+                this.pusher.channels.channels[this.name].trigger("client-".concat(eventName), data);
+                return this;
+            }
+        }]);
+
+        return PusherPrivateChannel;
+    }(PusherChannel);
+
+    /**
+     * This class represents a Pusher private channel.
+     */
+
+    var PusherEncryptedPrivateChannel = /*#__PURE__*/function (_PusherChannel) {
+        _inherits(PusherEncryptedPrivateChannel, _PusherChannel);
+
+        var _super = _createSuper(PusherEncryptedPrivateChannel);
+
+        function PusherEncryptedPrivateChannel() {
+            _classCallCheck(this, PusherEncryptedPrivateChannel);
+
+            return _super.apply(this, arguments);
+        }
+
+        _createClass(PusherEncryptedPrivateChannel, [{
+            key: "whisper",
+
+            /**
+             * Trigger client event on the channel.
+             */
+            value: function whisper(eventName, data) {
+                this.pusher.channels.channels[this.name].trigger("client-".concat(eventName), data);
+                return this;
+            }
+        }]);
+
+        return PusherEncryptedPrivateChannel;
+    }(PusherChannel);
+
+    /**
+     * This class represents a Pusher presence channel.
+     */
+
+    var PusherPresenceChannel = /*#__PURE__*/function (_PusherChannel) {
+        _inherits(PusherPresenceChannel, _PusherChannel);
+
+        var _super = _createSuper(PusherPresenceChannel);
+
+        function PusherPresenceChannel() {
+            _classCallCheck(this, PusherPresenceChannel);
+
+            return _super.apply(this, arguments);
+        }
+
+        _createClass(PusherPresenceChannel, [{
+            key: "here",
+
+            /**
+             * Register a callback to be called anytime the member list changes.
+             */
+            value: function here(callback) {
+                this.on('pusher:subscription_succeeded', function (data) {
+                    callback(Object.keys(data.members).map(function (k) {
+                        return data.members[k];
+                    }));
+                });
+                return this;
+            }
+            /**
+             * Listen for someone joining the channel.
+             */
+
+        }, {
+            key: "joining",
+            value: function joining(callback) {
+                this.on('pusher:member_added', function (member) {
+                    callback(member.info);
+                });
+                return this;
+            }
+            /**
+             * Listen for someone leaving the channel.
+             */
+
+        }, {
+            key: "leaving",
+            value: function leaving(callback) {
+                this.on('pusher:member_removed', function (member) {
+                    callback(member.info);
+                });
+                return this;
+            }
+            /**
+             * Trigger client event on the channel.
+             */
+
+        }, {
+            key: "whisper",
+            value: function whisper(eventName, data) {
+                this.pusher.channels.channels[this.name].trigger("client-".concat(eventName), data);
+                return this;
+            }
+        }]);
+
+        return PusherPresenceChannel;
+    }(PusherChannel);
+
+    /**
+     * This class represents a Socket.io channel.
+     */
+
+    var SocketIoChannel = /*#__PURE__*/function (_Channel) {
+        _inherits(SocketIoChannel, _Channel);
+
+        var _super = _createSuper(SocketIoChannel);
+
+        /**
+         * Create a new class instance.
+         */
+        function SocketIoChannel(socket, name, options) {
+            var _this;
+
+            _classCallCheck(this, SocketIoChannel);
+
+            _this = _super.call(this);
+            /**
+             * The event callbacks applied to the socket.
+             */
+
+            _this.events = {};
+            /**
+             * User supplied callbacks for events on this channel.
+             */
+
+            _this.listeners = {};
+            _this.name = name;
+            _this.socket = socket;
+            _this.options = options;
+            _this.eventFormatter = new EventFormatter(_this.options.namespace);
+
+            _this.subscribe();
+
+            return _this;
+        }
+        /**
+         * Subscribe to a Socket.io channel.
+         */
+
+
+        _createClass(SocketIoChannel, [{
+            key: "subscribe",
+            value: function subscribe() {
+                this.socket.emit('subscribe', {
+                    channel: this.name,
+                    auth: this.options.auth || {}
+                });
+            }
+            /**
+             * Unsubscribe from channel and ubind event callbacks.
+             */
+
+        }, {
+            key: "unsubscribe",
+            value: function unsubscribe() {
+                this.unbind();
+                this.socket.emit('unsubscribe', {
+                    channel: this.name,
+                    auth: this.options.auth || {}
+                });
+            }
+            /**
+             * Listen for an event on the channel instance.
+             */
+
+        }, {
+            key: "listen",
+            value: function listen(event, callback) {
+                this.on(this.eventFormatter.format(event), callback);
+                return this;
+            }
+            /**
+             * Stop listening for an event on the channel instance.
+             */
+
+        }, {
+            key: "stopListening",
+            value: function stopListening(event, callback) {
+                this.unbindEvent(this.eventFormatter.format(event), callback);
+                return this;
+            }
+            /**
+             * Register a callback to be called anytime a subscription succeeds.
+             */
+
+        }, {
+            key: "subscribed",
+            value: function subscribed(callback) {
+                this.on('connect', function (socket) {
+                    callback(socket);
+                });
+                return this;
+            }
+            /**
+             * Register a callback to be called anytime an error occurs.
+             */
+
+        }, {
+            key: "error",
+            value: function error(callback) {
+                return this;
+            }
+            /**
+             * Bind the channel's socket to an event and store the callback.
+             */
+
+        }, {
+            key: "on",
+            value: function on(event, callback) {
+                var _this2 = this;
+
+                this.listeners[event] = this.listeners[event] || [];
+
+                if (!this.events[event]) {
+                    this.events[event] = function (channel, data) {
+                        if (_this2.name === channel && _this2.listeners[event]) {
+                            _this2.listeners[event].forEach(function (cb) {
+                                return cb(data);
+                            });
+                        }
+                    };
+
+                    this.socket.on(event, this.events[event]);
+                }
+
+                this.listeners[event].push(callback);
+                return this;
+            }
+            /**
+             * Unbind the channel's socket from all stored event callbacks.
+             */
+
+        }, {
+            key: "unbind",
+            value: function unbind() {
+                var _this3 = this;
+
+                Object.keys(this.events).forEach(function (event) {
+                    _this3.unbindEvent(event);
+                });
+            }
+            /**
+             * Unbind the listeners for the given event.
+             */
+
+        }, {
+            key: "unbindEvent",
+            value: function unbindEvent(event, callback) {
+                this.listeners[event] = this.listeners[event] || [];
+
+                if (callback) {
+                    this.listeners[event] = this.listeners[event].filter(function (cb) {
+                        return cb !== callback;
+                    });
+                }
+
+                if (!callback || this.listeners[event].length === 0) {
+                    if (this.events[event]) {
+                        this.socket.removeListener(event, this.events[event]);
+                        delete this.events[event];
+                    }
+
+                    delete this.listeners[event];
+                }
+            }
+        }]);
+
+        return SocketIoChannel;
+    }(Channel);
+
+    /**
+     * This class represents a Socket.io private channel.
+     */
+
+    var SocketIoPrivateChannel = /*#__PURE__*/function (_SocketIoChannel) {
+        _inherits(SocketIoPrivateChannel, _SocketIoChannel);
+
+        var _super = _createSuper(SocketIoPrivateChannel);
+
+        function SocketIoPrivateChannel() {
+            _classCallCheck(this, SocketIoPrivateChannel);
+
+            return _super.apply(this, arguments);
+        }
+
+        _createClass(SocketIoPrivateChannel, [{
+            key: "whisper",
+
+            /**
+             * Trigger client event on the channel.
+             */
+            value: function whisper(eventName, data) {
+                this.socket.emit('client event', {
+                    channel: this.name,
+                    event: "client-".concat(eventName),
+                    data: data
+                });
+                return this;
+            }
+        }]);
+
+        return SocketIoPrivateChannel;
+    }(SocketIoChannel);
+
+    /**
+     * This class represents a Socket.io presence channel.
+     */
+
+    var SocketIoPresenceChannel = /*#__PURE__*/function (_SocketIoPrivateChann) {
+        _inherits(SocketIoPresenceChannel, _SocketIoPrivateChann);
+
+        var _super = _createSuper(SocketIoPresenceChannel);
+
+        function SocketIoPresenceChannel() {
+            _classCallCheck(this, SocketIoPresenceChannel);
+
+            return _super.apply(this, arguments);
+        }
+
+        _createClass(SocketIoPresenceChannel, [{
+            key: "here",
+
+            /**
+             * Register a callback to be called anytime the member list changes.
+             */
+            value: function here(callback) {
+                this.on('presence:subscribed', function (members) {
+                    callback(members.map(function (m) {
+                        return m.user_info;
+                    }));
+                });
+                return this;
+            }
+            /**
+             * Listen for someone joining the channel.
+             */
+
+        }, {
+            key: "joining",
+            value: function joining(callback) {
+                this.on('presence:joining', function (member) {
+                    return callback(member.user_info);
+                });
+                return this;
+            }
+            /**
+             * Listen for someone leaving the channel.
+             */
+
+        }, {
+            key: "leaving",
+            value: function leaving(callback) {
+                this.on('presence:leaving', function (member) {
+                    return callback(member.user_info);
+                });
+                return this;
+            }
+        }]);
+
+        return SocketIoPresenceChannel;
+    }(SocketIoPrivateChannel);
+
+    /**
+     * This class represents a null channel.
+     */
+
+    var NullChannel = /*#__PURE__*/function (_Channel) {
+        _inherits(NullChannel, _Channel);
+
+        var _super = _createSuper(NullChannel);
+
+        function NullChannel() {
+            _classCallCheck(this, NullChannel);
+
+            return _super.apply(this, arguments);
+        }
+
+        _createClass(NullChannel, [{
+            key: "subscribe",
+
+            /**
+             * Subscribe to a channel.
+             */
+            value: function subscribe() {} //
+
+            /**
+             * Unsubscribe from a channel.
+             */
+
+        }, {
+            key: "unsubscribe",
+            value: function unsubscribe() {} //
+
+            /**
+             * Listen for an event on the channel instance.
+             */
+
+        }, {
+            key: "listen",
+            value: function listen(event, callback) {
+                return this;
+            }
+            /**
+             * Stop listening for an event on the channel instance.
+             */
+
+        }, {
+            key: "stopListening",
+            value: function stopListening(event, callback) {
+                return this;
+            }
+            /**
+             * Register a callback to be called anytime a subscription succeeds.
+             */
+
+        }, {
+            key: "subscribed",
+            value: function subscribed(callback) {
+                return this;
+            }
+            /**
+             * Register a callback to be called anytime an error occurs.
+             */
+
+        }, {
+            key: "error",
+            value: function error(callback) {
+                return this;
+            }
+            /**
+             * Bind a channel to an event.
+             */
+
+        }, {
+            key: "on",
+            value: function on(event, callback) {
+                return this;
+            }
+        }]);
+
+        return NullChannel;
+    }(Channel);
+
+    /**
+     * This class represents a null private channel.
+     */
+
+    var NullPrivateChannel = /*#__PURE__*/function (_NullChannel) {
+        _inherits(NullPrivateChannel, _NullChannel);
+
+        var _super = _createSuper(NullPrivateChannel);
+
+        function NullPrivateChannel() {
+            _classCallCheck(this, NullPrivateChannel);
+
+            return _super.apply(this, arguments);
+        }
+
+        _createClass(NullPrivateChannel, [{
+            key: "whisper",
+
+            /**
+             * Trigger client event on the channel.
+             */
+            value: function whisper(eventName, data) {
+                return this;
+            }
+        }]);
+
+        return NullPrivateChannel;
+    }(NullChannel);
+
+    /**
+     * This class represents a null presence channel.
+     */
+
+    var NullPresenceChannel = /*#__PURE__*/function (_NullChannel) {
+        _inherits(NullPresenceChannel, _NullChannel);
+
+        var _super = _createSuper(NullPresenceChannel);
+
+        function NullPresenceChannel() {
+            _classCallCheck(this, NullPresenceChannel);
+
+            return _super.apply(this, arguments);
+        }
+
+        _createClass(NullPresenceChannel, [{
+            key: "here",
+
+            /**
+             * Register a callback to be called anytime the member list changes.
+             */
+            value: function here(callback) {
+                return this;
+            }
+            /**
+             * Listen for someone joining the channel.
+             */
+
+        }, {
+            key: "joining",
+            value: function joining(callback) {
+                return this;
+            }
+            /**
+             * Listen for someone leaving the channel.
+             */
+
+        }, {
+            key: "leaving",
+            value: function leaving(callback) {
+                return this;
+            }
+            /**
+             * Trigger client event on the channel.
+             */
+
+        }, {
+            key: "whisper",
+            value: function whisper(eventName, data) {
+                return this;
+            }
+        }]);
+
+        return NullPresenceChannel;
+    }(NullChannel);
+
+    /**
+     * This class creates a connector to Pusher.
+     */
+
+    var PusherConnector = /*#__PURE__*/function (_Connector) {
+        _inherits(PusherConnector, _Connector);
+
+        var _super = _createSuper(PusherConnector);
+
+        function PusherConnector() {
+            var _this;
+
+            _classCallCheck(this, PusherConnector);
+
+            _this = _super.apply(this, arguments);
+            /**
+             * All of the subscribed channel names.
+             */
+
+            _this.channels = {};
+            return _this;
+        }
+        /**
+         * Create a fresh Pusher connection.
+         */
+
+
+        _createClass(PusherConnector, [{
+            key: "connect",
+            value: function connect() {
+                if (typeof this.options.client !== 'undefined') {
+                    this.pusher = this.options.client;
+                } else {
+                    this.pusher = new Pusher(this.options.key, this.options);
+                }
+            }
+            /**
+             * Listen for an event on a channel instance.
+             */
+
+        }, {
+            key: "listen",
+            value: function listen(name, event, callback) {
+                return this.channel(name).listen(event, callback);
+            }
+            /**
+             * Get a channel instance by name.
+             */
+
+        }, {
+            key: "channel",
+            value: function channel(name) {
+                if (!this.channels[name]) {
+                    this.channels[name] = new PusherChannel(this.pusher, name, this.options);
+                }
+
+                return this.channels[name];
+            }
+            /**
+             * Get a private channel instance by name.
+             */
+
+        }, {
+            key: "privateChannel",
+            value: function privateChannel(name) {
+                if (!this.channels['private-' + name]) {
+                    this.channels['private-' + name] = new PusherPrivateChannel(this.pusher, 'private-' + name, this.options);
+                }
+
+                return this.channels['private-' + name];
+            }
+            /**
+             * Get a private encrypted channel instance by name.
+             */
+
+        }, {
+            key: "encryptedPrivateChannel",
+            value: function encryptedPrivateChannel(name) {
+                if (!this.channels['private-encrypted-' + name]) {
+                    this.channels['private-encrypted-' + name] = new PusherEncryptedPrivateChannel(this.pusher, 'private-encrypted-' + name, this.options);
+                }
+
+                return this.channels['private-encrypted-' + name];
+            }
+            /**
+             * Get a presence channel instance by name.
+             */
+
+        }, {
+            key: "presenceChannel",
+            value: function presenceChannel(name) {
+                if (!this.channels['presence-' + name]) {
+                    this.channels['presence-' + name] = new PusherPresenceChannel(this.pusher, 'presence-' + name, this.options);
+                }
+
+                return this.channels['presence-' + name];
+            }
+            /**
+             * Leave the given channel, as well as its private and presence variants.
+             */
+
+        }, {
+            key: "leave",
+            value: function leave(name) {
+                var _this2 = this;
+
+                var channels = [name, 'private-' + name, 'presence-' + name];
+                channels.forEach(function (name, index) {
+                    _this2.leaveChannel(name);
+                });
+            }
+            /**
+             * Leave the given channel.
+             */
+
+        }, {
+            key: "leaveChannel",
+            value: function leaveChannel(name) {
+                if (this.channels[name]) {
+                    this.channels[name].unsubscribe();
+                    delete this.channels[name];
+                }
+            }
+            /**
+             * Get the socket ID for the connection.
+             */
+
+        }, {
+            key: "socketId",
+            value: function socketId() {
+                return this.pusher.connection.socket_id;
+            }
+            /**
+             * Disconnect Pusher connection.
+             */
+
+        }, {
+            key: "disconnect",
+            value: function disconnect() {
+                this.pusher.disconnect();
+            }
+        }]);
+
+        return PusherConnector;
+    }(Connector);
+
+    /**
+     * This class creates a connnector to a Socket.io server.
+     */
+
+    var SocketIoConnector = /*#__PURE__*/function (_Connector) {
+        _inherits(SocketIoConnector, _Connector);
+
+        var _super = _createSuper(SocketIoConnector);
+
+        function SocketIoConnector() {
+            var _this;
+
+            _classCallCheck(this, SocketIoConnector);
+
+            _this = _super.apply(this, arguments);
+            /**
+             * All of the subscribed channel names.
+             */
+
+            _this.channels = {};
+            return _this;
+        }
+        /**
+         * Create a fresh Socket.io connection.
+         */
+
+
+        _createClass(SocketIoConnector, [{
+            key: "connect",
+            value: function connect() {
+                var _this2 = this;
+
+                var io = this.getSocketIO();
+                this.socket = io(this.options.host, this.options);
+                this.socket.on('reconnect', function () {
+                    Object.values(_this2.channels).forEach(function (channel) {
+                        channel.subscribe();
+                    });
+                });
+                return this.socket;
+            }
+            /**
+             * Get socket.io module from global scope or options.
+             */
+
+        }, {
+            key: "getSocketIO",
+            value: function getSocketIO() {
+                if (typeof this.options.client !== 'undefined') {
+                    return this.options.client;
+                }
+
+                if (typeof io !== 'undefined') {
+                    return io;
+                }
+
+                throw new Error('Socket.io client not found. Should be globally available or passed via options.client');
+            }
+            /**
+             * Listen for an event on a channel instance.
+             */
+
+        }, {
+            key: "listen",
+            value: function listen(name, event, callback) {
+                return this.channel(name).listen(event, callback);
+            }
+            /**
+             * Get a channel instance by name.
+             */
+
+        }, {
+            key: "channel",
+            value: function channel(name) {
+                if (!this.channels[name]) {
+                    this.channels[name] = new SocketIoChannel(this.socket, name, this.options);
+                }
+
+                return this.channels[name];
+            }
+            /**
+             * Get a private channel instance by name.
+             */
+
+        }, {
+            key: "privateChannel",
+            value: function privateChannel(name) {
+                if (!this.channels['private-' + name]) {
+                    this.channels['private-' + name] = new SocketIoPrivateChannel(this.socket, 'private-' + name, this.options);
+                }
+
+                return this.channels['private-' + name];
+            }
+            /**
+             * Get a presence channel instance by name.
+             */
+
+        }, {
+            key: "presenceChannel",
+            value: function presenceChannel(name) {
+                if (!this.channels['presence-' + name]) {
+                    this.channels['presence-' + name] = new SocketIoPresenceChannel(this.socket, 'presence-' + name, this.options);
+                }
+
+                return this.channels['presence-' + name];
+            }
+            /**
+             * Leave the given channel, as well as its private and presence variants.
+             */
+
+        }, {
+            key: "leave",
+            value: function leave(name) {
+                var _this3 = this;
+
+                var channels = [name, 'private-' + name, 'presence-' + name];
+                channels.forEach(function (name) {
+                    _this3.leaveChannel(name);
+                });
+            }
+            /**
+             * Leave the given channel.
+             */
+
+        }, {
+            key: "leaveChannel",
+            value: function leaveChannel(name) {
+                if (this.channels[name]) {
+                    this.channels[name].unsubscribe();
+                    delete this.channels[name];
+                }
+            }
+            /**
+             * Get the socket ID for the connection.
+             */
+
+        }, {
+            key: "socketId",
+            value: function socketId() {
+                return this.socket.id;
+            }
+            /**
+             * Disconnect Socketio connection.
+             */
+
+        }, {
+            key: "disconnect",
+            value: function disconnect() {
+                this.socket.disconnect();
+            }
+        }]);
+
+        return SocketIoConnector;
+    }(Connector);
+
+    /**
+     * This class creates a null connector.
+     */
+
+    var NullConnector = /*#__PURE__*/function (_Connector) {
+        _inherits(NullConnector, _Connector);
+
+        var _super = _createSuper(NullConnector);
+
+        function NullConnector() {
+            var _this;
+
+            _classCallCheck(this, NullConnector);
+
+            _this = _super.apply(this, arguments);
+            /**
+             * All of the subscribed channel names.
+             */
+
+            _this.channels = {};
+            return _this;
+        }
+        /**
+         * Create a fresh connection.
+         */
+
+
+        _createClass(NullConnector, [{
+            key: "connect",
+            value: function connect() {} //
+
+            /**
+             * Listen for an event on a channel instance.
+             */
+
+        }, {
+            key: "listen",
+            value: function listen(name, event, callback) {
+                return new NullChannel();
+            }
+            /**
+             * Get a channel instance by name.
+             */
+
+        }, {
+            key: "channel",
+            value: function channel(name) {
+                return new NullChannel();
+            }
+            /**
+             * Get a private channel instance by name.
+             */
+
+        }, {
+            key: "privateChannel",
+            value: function privateChannel(name) {
+                return new NullPrivateChannel();
+            }
+            /**
+             * Get a presence channel instance by name.
+             */
+
+        }, {
+            key: "presenceChannel",
+            value: function presenceChannel(name) {
+                return new NullPresenceChannel();
+            }
+            /**
+             * Leave the given channel, as well as its private and presence variants.
+             */
+
+        }, {
+            key: "leave",
+            value: function leave(name) {} //
+
+            /**
+             * Leave the given channel.
+             */
+
+        }, {
+            key: "leaveChannel",
+            value: function leaveChannel(name) {} //
+
+            /**
+             * Get the socket ID for the connection.
+             */
+
+        }, {
+            key: "socketId",
+            value: function socketId() {
+                return 'fake-socket-id';
+            }
+            /**
+             * Disconnect the connection.
+             */
+
+        }, {
+            key: "disconnect",
+            value: function disconnect() {//
+            }
+        }]);
+
+        return NullConnector;
+    }(Connector);
+
+    /**
+     * This class is the primary API for interacting with broadcasting.
+     */
+
+    var Echo = /*#__PURE__*/function () {
+        /**
+         * Create a new class instance.
+         */
+        function Echo(options) {
+            _classCallCheck(this, Echo);
+
+            this.options = options;
+            this.connect();
+
+            if (!this.options.withoutInterceptors) {
+                this.registerInterceptors();
+            }
+        }
+        /**
+         * Get a channel instance by name.
+         */
+
+
+        _createClass(Echo, [{
+            key: "channel",
+            value: function channel(_channel) {
+                return this.connector.channel(_channel);
+            }
+            /**
+             * Create a new connection.
+             */
+
+        }, {
+            key: "connect",
+            value: function connect() {
+                if (this.options.broadcaster == 'pusher') {
+                    this.connector = new PusherConnector(this.options);
+                } else if (this.options.broadcaster == 'socket.io') {
+                    this.connector = new SocketIoConnector(this.options);
+                } else if (this.options.broadcaster == 'null') {
+                    this.connector = new NullConnector(this.options);
+                } else if (typeof this.options.broadcaster == 'function') {
+                    this.connector = new this.options.broadcaster(this.options);
+                }
+            }
+            /**
+             * Disconnect from the Echo server.
+             */
+
+        }, {
+            key: "disconnect",
+            value: function disconnect() {
+                this.connector.disconnect();
+            }
+            /**
+             * Get a presence channel instance by name.
+             */
+
+        }, {
+            key: "join",
+            value: function join(channel) {
+                return this.connector.presenceChannel(channel);
+            }
+            /**
+             * Leave the given channel, as well as its private and presence variants.
+             */
+
+        }, {
+            key: "leave",
+            value: function leave(channel) {
+                this.connector.leave(channel);
+            }
+            /**
+             * Leave the given channel.
+             */
+
+        }, {
+            key: "leaveChannel",
+            value: function leaveChannel(channel) {
+                this.connector.leaveChannel(channel);
+            }
+            /**
+             * Listen for an event on a channel instance.
+             */
+
+        }, {
+            key: "listen",
+            value: function listen(channel, event, callback) {
+                return this.connector.listen(channel, event, callback);
+            }
+            /**
+             * Get a private channel instance by name.
+             */
+
+        }, {
+            key: "private",
+            value: function _private(channel) {
+                return this.connector.privateChannel(channel);
+            }
+            /**
+             * Get a private encrypted channel instance by name.
+             */
+
+        }, {
+            key: "encryptedPrivate",
+            value: function encryptedPrivate(channel) {
+                return this.connector.encryptedPrivateChannel(channel);
+            }
+            /**
+             * Get the Socket ID for the connection.
+             */
+
+        }, {
+            key: "socketId",
+            value: function socketId() {
+                return this.connector.socketId();
+            }
+            /**
+             * Register 3rd party request interceptiors. These are used to automatically
+             * send a connections socket id to a Laravel app with a X-Socket-Id header.
+             */
+
+        }, {
+            key: "registerInterceptors",
+            value: function registerInterceptors() {
+                if (typeof Vue === 'function' && Vue.http) {
+                    this.registerVueRequestInterceptor();
+                }
+
+                if (typeof axios === 'function') {
+                    this.registerAxiosRequestInterceptor();
+                }
+
+                if (typeof jQuery === 'function') {
+                    this.registerjQueryAjaxSetup();
+                }
+            }
+            /**
+             * Register a Vue HTTP interceptor to add the X-Socket-ID header.
+             */
+
+        }, {
+            key: "registerVueRequestInterceptor",
+            value: function registerVueRequestInterceptor() {
+                var _this = this;
+
+                Vue.http.interceptors.push(function (request, next) {
+                    if (_this.socketId()) {
+                        request.headers.set('X-Socket-ID', _this.socketId());
+                    }
+
+                    next();
+                });
+            }
+            /**
+             * Register an Axios HTTP interceptor to add the X-Socket-ID header.
+             */
+
+        }, {
+            key: "registerAxiosRequestInterceptor",
+            value: function registerAxiosRequestInterceptor() {
+                var _this2 = this;
+
+                axios.interceptors.request.use(function (config) {
+                    if (_this2.socketId()) {
+                        config.headers['X-Socket-Id'] = _this2.socketId();
+                    }
+
+                    return config;
+                });
+            }
+            /**
+             * Register jQuery AjaxPrefilter to add the X-Socket-ID header.
+             */
+
+        }, {
+            key: "registerjQueryAjaxSetup",
+            value: function registerjQueryAjaxSetup() {
+                var _this3 = this;
+
+                if (typeof jQuery.ajax != 'undefined') {
+                    jQuery.ajaxPrefilter(function (options, originalOptions, xhr) {
+                        if (_this3.socketId()) {
+                            xhr.setRequestHeader('X-Socket-Id', _this3.socketId());
+                        }
+                    });
+                }
+            }
+        }]);
+
+        return Echo;
+    }();
+
+    return Echo;
+
+}());

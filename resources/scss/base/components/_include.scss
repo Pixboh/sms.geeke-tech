@@ -9,5 +9,6 @@
 
 // Overrides user variable
 @import 'scss/variables/_variables-components'; // Component custom variable override (for user purpose)
+@import "variables-geex";
 @import 'variables'; // Component variable
 @import 'variables-dark'; // Dark variable

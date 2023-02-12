@@ -1,1 +1,131 @@
-(function(){let t,e;window.SmsCounter=e=function(){function t(){}return t.gsm7bitChars="@£$¥èéùìòÇ\\nØø\\rÅåΔ_ΦΓΛΩΠΨΣΘΞÆæßÉ !\\\"#¤%&'()*+,-./0123456789:;<=>?¡ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÑÜ§¿abcdefghijklmnopqrstuvwxyzäöñüà",t.gsm7bitExChar="\\^{}\\\\\\[~\\]|€",t.gsm7bitRegExp=RegExp("^["+t.gsm7bitChars+"]*$"),t.gsm7bitExRegExp=RegExp("^["+t.gsm7bitChars+t.gsm7bitExChar+"]*$"),t.gsm7bitExOnlyRegExp=RegExp("^[\\"+t.gsm7bitExChar+"]*$"),t.GSM_7BIT="GSM_7BIT",t.GSM_7BIT_EX="GSM_7BIT_EX",t.UTF16="UTF16",t.messageLength={GSM_7BIT:160,GSM_7BIT_EX:160,UTF16:70},t.multiMessageLength={GSM_7BIT:153,GSM_7BIT_EX:153,UTF16:67},t.count=function(t){let e,n,s,i,g;e=this.detectEncoding(t),n=t.length,e===this.GSM_7BIT_EX&&(n+=this.countGsm7bitEx(t));for(let e=0;e<t.length;e++)switch(t[e]){case"[":case"]":case"\\":case"^":case"{":case"}":case"|":n+=1}return i=this.messageLength[e],n>i&&(i=this.multiMessageLength[e]),s=Math.ceil(n/i),g=i*s-n,0===g&&0===s&&(g=i),{encoding:e,length:n,per_message:i,remaining:g,messages:s}},t.detectEncoding=function(t){switch(!1){case null==t.match(this.gsm7bitRegExp):return this.GSM_7BIT;case null==t.match(this.gsm7bitExRegExp):return this.GSM_7BIT_EX;default:return this.UTF16}},t.countGsm7bitEx=function(t){let e,n;return n=function(){let n,s,i;for(i=[],n=0,s=t.length;n<s;n++)e=t[n],null!=e.match(this.gsm7bitExOnlyRegExp)&&i.push(e);return i}.call(this),n.length},t}(),"undefined"!=typeof jQuery&&null!==jQuery&&(t=jQuery,t.fn.countSms=function(n){let s,i;return i=this,n=t(n),s=function(){let t,s,g,h;for(s in t=e.count(i.val()),h=[],t)g=t[s],h.push(n.find("."+s).text(g));return h},this.on("keyup",s),s()})}).call(this);
+(function () {
+    let $, SmsCounter;
+
+    window.SmsCounter = SmsCounter = (function () {
+        function SmsCounter() {
+        }
+
+        SmsCounter.gsm7bitChars = "@£$¥èéùìòÇ\\nØø\\rÅåΔ_ΦΓΛΩΠΨΣΘΞÆæßÉ !\\\"#¤%&'()*+,-./0123456789:;<=>?¡ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÑÜ§¿abcdefghijklmnopqrstuvwxyzäöñüà";
+
+        SmsCounter.gsm7bitExChar = "\\^{}\\\\\\[~\\]|€";
+
+        SmsCounter.gsm7bitRegExp = RegExp("^[" + SmsCounter.gsm7bitChars + "]*$");
+
+        SmsCounter.gsm7bitExRegExp = RegExp("^[" + SmsCounter.gsm7bitChars + SmsCounter.gsm7bitExChar + "]*$");
+
+        SmsCounter.gsm7bitExOnlyRegExp = RegExp("^[\\" + SmsCounter.gsm7bitExChar + "]*$");
+
+        SmsCounter.GSM_7BIT = 'GSM_7BIT';
+
+        SmsCounter.GSM_7BIT_EX = 'GSM_7BIT_EX';
+
+        SmsCounter.UTF16 = 'UTF16';
+
+        SmsCounter.messageLength = {
+            GSM_7BIT: 160,
+            GSM_7BIT_EX: 160,
+            UTF16: 70
+        };
+
+        SmsCounter.multiMessageLength = {
+            GSM_7BIT: 153,
+            GSM_7BIT_EX: 153,
+            UTF16: 67
+        };
+
+        SmsCounter.count = function (text) {
+            let encoding, length, messages, per_message, remaining, text_message;
+            encoding = this.detectEncoding(text);
+            length = text.length;
+            if (encoding === this.GSM_7BIT_EX) {
+                length += this.countGsm7bitEx(text);
+            }
+
+
+            for (let charPos = 0; charPos < text.length; charPos++) {
+                switch (text[charPos]) {
+                    case "[":
+                    case "]":
+                    case "\\":
+                    case "^":
+                    case "{":
+                    case "}":
+                    case "|":
+                        length += 1;
+                        break;
+                }
+            }
+
+            per_message = this.messageLength[encoding];
+            if (length > per_message) {
+                per_message = this.multiMessageLength[encoding];
+            }
+            messages = Math.ceil(length / per_message);
+            remaining = (per_message * messages) - length;
+            if (remaining === 0 && messages === 0) {
+                remaining = per_message;
+            }
+            text_message = text;
+            return {
+                encoding: encoding,
+                length: length,
+                per_message: per_message,
+                remaining: remaining,
+                messages: messages,
+                text_message: text_message
+            };
+        };
+
+        SmsCounter.detectEncoding = function (text) {
+            switch (false) {
+                case text.match(this.gsm7bitRegExp) == null:
+                    return this.GSM_7BIT;
+                case text.match(this.gsm7bitExRegExp) == null:
+                    return this.GSM_7BIT_EX;
+                default:
+                    return this.UTF16;
+            }
+        };
+
+        SmsCounter.countGsm7bitEx = function (text) {
+            let char2, chars;
+            chars = (function () {
+                let _i, _len, _results;
+                _results = [];
+                for (_i = 0, _len = text.length; _i < _len; _i++) {
+                    char2 = text[_i];
+                    if (char2.match(this.gsm7bitExOnlyRegExp) != null) {
+                        _results.push(char2);
+                    }
+                }
+                return _results;
+            }).call(this);
+            return chars.length;
+        };
+
+        return SmsCounter;
+
+    })();
+
+    if (typeof jQuery !== "undefined" && jQuery !== null) {
+        $ = jQuery;
+        $.fn.countSms = function (target) {
+            let count_sms, input;
+            input = this;
+            target = $(target);
+            count_sms = function () {
+                let count, k, v, _results;
+                count = SmsCounter.count(input.val());
+                _results = [];
+                for (k in count) {
+                    v = count[k];
+                    _results.push(target.find("." + k).text(v));
+                }
+                return _results;
+            };
+            this.on('keyup', count_sms);
+            return count_sms();
+        };
+    }
+
+}).call(this);

@@ -57,7 +57,7 @@ class Helper
         // All options available in the template
         $allOptions = [
                 'mainLayoutType'         => ['vertical', 'horizontal'],
-                'theme'                  => ['light' => 'light', 'dark' => 'dark-layout', 'bordered' => 'bordered-layout', 'semi-dark' => 'semi-dark-layout'],
+                'theme'                  => ['light' => 'light', 'dark' => 'dark-layout', 'bordered' => 'bordered-layout', 'semi-dark' => 'semi-dark-layout' , 'geex-theme' => 'geex-theme-layout'],
                 'sidebarCollapsed'       => [true, false],
                 'showMenu'               => [true, false],
                 'layoutWidth'            => ['full', 'boxed'],
@@ -197,8 +197,10 @@ class Helper
     public static function app_config(string $value = ''): mixed
     {
         $conf = AppConfig::where('setting', $value)->first();
-
-        return $conf->value;
+        if ($conf){
+            return $conf->value;
+        }
+        return null;
     }
 
     /**

@@ -180,7 +180,7 @@ class UserSeeder extends Seeder
                 'first_name'        => 'Super',
                 'last_name'         => 'Admin',
                 'image'             => null,
-                'email'             => 'akasham67@gmail.com',
+                'email'             => 'test@test.com',
                 'password'          => bcrypt($defaultPassword),
                 'status'            => true,
                 'is_admin'          => true,

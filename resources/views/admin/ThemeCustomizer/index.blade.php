@@ -170,6 +170,7 @@
                                             <option value="bordered" {{ config('custom.horizontal.theme') == 'bordered' ? 'selected': null }}>Bordered</option>
                                             <option value="dark" {{ config('custom.horizontal.theme') == 'dark' ? 'selected': null }}>Dark</option>
                                             <option value="semi-dark" {{ config('custom.horizontal.theme') == 'semi-dark' ? 'selected': null }}>Semi Dark</option>
+                                            <option value="geex-theme" {{ config('custom.horizontal.theme') == 'geex-theme' ? 'selected': null }}>Geex Custom</option>
                                         </select>
                                     </div>
                                     @error('theme')

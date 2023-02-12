@@ -13,6 +13,7 @@
 <link rel="stylesheet" href="{{ asset(mix('css/base/themes/dark-layout.css')) }}"/>
 <link rel="stylesheet" href="{{ asset(mix('css/base/themes/bordered-layout.css')) }}"/>
 <link rel="stylesheet" href="{{ asset(mix('css/base/themes/semi-dark-layout.css')) }}"/>
+<link rel="stylesheet" href="{{ asset(mix('css/base/themes/geex-theme-layout.css')) }}"/>
 <link rel="stylesheet" href="{{ asset(mix('vendors/css/extensions/toastr.min.css')) }}">
 <link rel="stylesheet" href="{{ asset(mix('css/base/plugins/extensions/ext-component-toastr.css')) }}">
 

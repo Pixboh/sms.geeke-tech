@@ -947,7 +947,10 @@ window.colors = {
       currentLayout = 'bordered-layout';
     } else if ($html.hasClass('semi-dark-layout')) {
       currentLayout = 'semi-dark-layout';
-    } else {
+    } else if ($html.hasClass('geex-theme-layout')) {
+      currentLayout = 'geex-theme-layout';
+    }
+    else {
       currentLayout = 'light-layout';
     }
     return currentLayout;
@@ -1006,7 +1009,7 @@ window.colors = {
       // Witch to local storage layout if we have else current layout
       switchToLayout = currentLocalStorageLayout ? currentLocalStorageLayout : currentLayout;
 
-    $html.removeClass('semi-dark-layout dark-layout bordered-layout');
+    $html.removeClass('semi-dark-layout dark-layout bordered-layout geex-theme-layout');
 
     if (switchToLayout === 'dark-layout') {
       $html.addClass('dark-layout');
@@ -1023,7 +1026,13 @@ window.colors = {
       mainMenu.removeClass('menu-dark').addClass('menu-light');
       navbar.removeClass('navbar-dark').addClass('navbar-light');
       navLinkStyle.find('.ficon').replaceWith(feather.icons['moon'].toSvg({ class: 'ficon' }));
-    } else {
+    } else if (switchToLayout === 'geex-theme-layout') {
+    $html.addClass('geex-theme-layout');
+    mainMenu.removeClass('menu-dark').addClass('menu-light');
+    navbar.removeClass('navbar-dark').addClass('navbar-light');
+    navLinkStyle.find('.ficon').replaceWith(feather.icons['moon'].toSvg({ class: 'ficon' }));
+  }
+    else {
       $html.addClass('light-layout');
       mainMenu.removeClass('menu-dark').addClass('menu-light');
       navbar.removeClass('navbar-dark').addClass('navbar-light');

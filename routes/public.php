@@ -62,6 +62,7 @@ Route::any('inbound/teleapi', 'Customer\DLRController@inboundTeleAPI')->name('in
 
 /*custom pape paydunya*/
 Route::any('callback/ipn/paydunya', 'Customer\PaymentController@paydunyaIPN')->name('ipn.paydunya');
+Route::any('dlr/orangesms', 'Customer\DLRController@dlrorangesms')->name('dlr.orangesms');
 
 
 /*
