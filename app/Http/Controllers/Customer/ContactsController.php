@@ -976,6 +976,7 @@ class ContactsController extends CustomerBaseController
 
                 $csv_data = array_slice($data, 0, 2);
 
+
                 return view('customer.Contacts.import_fields', compact('csv_data', 'contact', 'csv_data_file', 'breadcrumbs'));
             }
         } elseif (isset($request->recipients) && $request->recipients != null) {
