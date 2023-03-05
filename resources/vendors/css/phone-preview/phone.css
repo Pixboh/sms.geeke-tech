@@ -120,37 +120,37 @@ form.chat .myMessage:after {
 /
 /
 
-:root {
-    --blue: #2C7BE5;
-    --indigo: #727cf5;
-    --purple: #6b5eae;
-    --pink: #ff679b;
-    --red: #E63757;
-    --orange: #fd7e14;
-    --yellow: #F6C343;
-    --green: #00D97E;
-    --teal: #02a8b5;
-    --cyan: #39afd1;
-    --white: #FFFFFF;
-    --gray: #95AAC9;
-    --gray-dark: #3B506C;
-    --primary: #2C7BE5;
-    --secondary: #6E84A3;
-    --success: #00D97E;
-    --info: #39afd1;
-    --warning: #F6C343;
-    --danger: #E63757;
-    --light: #EDF2F9;
-    --dark: #12263F;
-    --white: #FFFFFF;
-    --breakpoint-xs: 0;
-    --breakpoint-sm: 576px;
-    --breakpoint-md: 768px;
-    --breakpoint-lg: 992px;
-    --breakpoint-xl: 1200px;
-    --font-family-sans-serif: "Cerebri Sans", sans-serif;
-    --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-}
+/*:root {*/
+/*    --blue: #2C7BE5;*/
+/*    --indigo: #727cf5;*/
+/*    --purple: #6b5eae;*/
+/*    --pink: #ff679b;*/
+/*    --red: #E63757;*/
+/*    --orange: #fd7e14;*/
+/*    --yellow: #F6C343;*/
+/*    --green: #00D97E;*/
+/*    --teal: #02a8b5;*/
+/*    --cyan: #39afd1;*/
+/*    --white: #FFFFFF;*/
+/*    --gray: #95AAC9;*/
+/*    --gray-dark: #3B506C;*/
+/*    --primary: #2C7BE5;*/
+/*    --secondary: #6E84A3;*/
+/*    --success: #00D97E;*/
+/*    --info: #39afd1;*/
+/*    --warning: #F6C343;*/
+/*    --danger: #E63757;*/
+/*    --light: #EDF2F9;*/
+/*    --dark: #12263F;*/
+/*    --white: #FFFFFF;*/
+/*    --breakpoint-xs: 0;*/
+/*    --breakpoint-sm: 576px;*/
+/*    --breakpoint-md: 768px;*/
+/*    --breakpoint-lg: 992px;*/
+/*    --breakpoint-xl: 1200px;*/
+/*    --font-family-sans-serif: "Cerebri Sans", sans-serif;*/
+/*    --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;*/
+/*}*/
 
 *,
 *::before,

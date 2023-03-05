@@ -272,7 +272,7 @@ return [
         'information' => 'Informations',
         'change' => 'Changer',
         'remove' => 'Supprimer',
-        'sender_id' => 'ID de l\'expéditeur',
+        'sender_id' => 'Signature',
         'company' => 'Entreprise',
         'website' => 'Site Web',
         'state' => 'État',
@@ -303,7 +303,8 @@ return [
         'admins' => 'Administrateurs',
         'read' => 'Lire',
         'settings' => 'Paramètres',
-        'originator' => 'Le numéro de l\'expéditeur',
+        'originator' => 'Expediteur',
+        'originator_description' => 'L\'expéditeur doit être un numéro de téléphone ou une signature valide et approuvé dans l\'onglet Configuration.',
         'shared_number' => 'Numéro partagé',
         'unsubscribe' => 'Se désabonner',
         'subscribe' => 'S\'abonner',
@@ -460,7 +461,7 @@ return [
         /*version 3.1*/
         'read_all_notifications' => 'Afficher toutes les notification',
         'you_have_new_user' => 'Vous avez un nouve utilisateur',
-        'you_have_new_subscription' => 'You avez un nouvel abonnement',
+        'you_have_new_subscription' => 'Vous avez un nouvel abonnement',
         'new_sender_id_notification' => 'ID D\'expediteur : nouvel enregistrement',
         'manage_profile' => 'Gerer le profil',
         'success' => 'Reussi',
@@ -475,10 +476,9 @@ return [
         'remove_blacklist' => 'You can revert this from Blacklist',
         'iso_code' => 'Code ISO',
         'country_code' => 'Country Code',
-        'sending_server' => 'Sending Server',
+        'sending_server' => 'Serveur d\'envoi',
         'remaining_in_number' => 'Remaining In number',
         '--' => '--',
-
         /*Version 3.3*/
         'thanks' => 'Merci',
         'login_as' => 'Vous etes connectés en tant que  <strong class="text-info">:name</strong>, vous pouvez vous deconnectez en <a href=":route">:admin</a>.',
@@ -507,6 +507,12 @@ return [
         'second' => 'seconde',
         'time_ago' => ':time ago',
         'subscription' => 'Abonnement',
+        'purchased_by' => 'acheté par',
+        'payment_success_title' => 'Paiement reussi',
+        'payment_success_message' => 'Votre paiement a été reussi, merci pour votre achat. Vous serez redirigé vers votre compte dans quelques secondes.',
+        'payment_failed_title' => 'Le paiement a echoué',
+        'payment_failed_message' => 'Votre paiement a echoué, merci de réessayer. Vous serez redirigé vers votre compte dans quelques secondes.',
+
 
     ],
 
@@ -582,7 +588,7 @@ return [
         "Plan" => "Plan",
         "Plans" => "Liste des plans",
         "Currencies" => "Devises",
-        "Sending" => "Envoi",
+        "Sending" => "Configuration",
         "Sending Servers" => "Serveurs d'envoi",
         "Keywords" => "Mots clés",
         "Templates" => "Modèles",
@@ -612,15 +618,15 @@ return [
         "Logout" => "Déconnexion",
         "View Charts" => "Afficher les graphiques",
         "Contacts" => "Contacts",
-        "SMS" => "SMS",
+        "SMS" => "Envoi SMS",
         "Voice" => "Voix",
         "MMS" => "MMS",
         "WhatsApp" => "WhatsApp",
-        "SMS Template" => "SMS Template",
+        "SMS Template" => "Templates SMS",
         "Chat Box" => "Boîte de discussion",
         "Knowledge Bases" => "Bases de connaissances",
         "Overview" => "Aperçu",
-        "Campaign Builder" => "Créer une campagne",
+        "Campaign Builder" => "Campagne",
         "Send Quick" => "Envoie rapide",
         "Send Using File" => "Envoyer à l'aide d'un fichier",
         "Developers" => "Mode développeurs",
@@ -1506,6 +1512,16 @@ Choisissez MODE TEST, JE VEUX FAIRE DES TESTS DE PAIEMENT. puis ACTIVER LE MODE 
             'unacceptable' => ':provider n\'est pas un type de connexion acceptable.',
         ],
     ],
+    'sms_notifications' => [
+        'new_subscription' => 'Vous avez souscrit au plan :plan. Vous disposez maintenant de :units unités SMS. Rendez-vous sur :url',
+        'subscription_cancelled' => 'Votre abonnement a été annulé. Vous ne pouvez plus envoyer de SMS à vos contacts.',
+        'subscription_renewed' => 'Your subscription has been renewed. You can now send SMS to your contacts.',
+        'subscription_changed' => 'Your subscription has been changed to :plan plan. You can now send SMS to your contacts.',
+        'subscription_expired' => 'Your subscription has been expired. You can not send SMS to your contacts.',
+        'subscription_will_expire' => 'Your subscription will expire in :days days. You can not send SMS to your contacts.',
+        'subscription_will_expire_soon' => 'Your subscription will expire soon. You can not send SMS to your contacts.',
+        'subscription_will_expire_today' => 'Your subscription will expire today. You can not send SMS to your contacts.',
+    ]
 
 
 ];

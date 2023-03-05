@@ -1,0 +1,46 @@
+@php
+    $configData = Helper::applClasses();
+@endphp
+@extends('layouts/fullLayoutMaster')
+
+@section('title', __('locale.labels.payment_success_title'))
+@section('code', '200')
+
+@section('page-style')
+    {{-- Page Css files --}}
+    <link rel="stylesheet" href="{{ asset(mix('css/base/pages/page-misc.css')) }}">
+@endsection
+@section('content')
+    <!-- Error page-->
+    <div class="misc-wrapper">
+
+        <a class="brand-logo" href="{{route('login')}}">
+            <img src="{{asset(config('app.logo'))}}" alt="{{config('app.name')}}"/>
+        </a>
+
+        <div class="misc-inner p-2 p-sm-3">
+            <div class="w-100 text-center">
+                <h2 class="mb-1">{{__('locale.labels.payment_success_title')}}</h2>
+                <p class="mb-2">{{ __('locale.labels.payment_success_message') }}</p>
+                <a class="btn btn-primary mb-2 btn-sm-block"
+                   href="{{ route('login') }}">{{__('locale.labels.back_to_home')}}</a>
+                @if($configData['theme'] === 'dark')
+                    <img class="img-fluid" src="{{asset('images/pages/error-dark.svg')}}" alt="Error page"/>
+                @else
+                    <img class="img-fluid" src="{{asset('images/pages/error.svg')}}" alt="Error page"/>
+                @endif
+            </div>
+        </div>
+    </div>
+    <!-- / Error page-->
+@endsection
+@section('page-script')
+    <script type="text/javascript">
+        var timeInterval = 5000;
+        setTimeout(callBack_func, timeInterval);
+
+        function callBack_func() {
+            window.location.href = "/login"
+        }
+    </script>
+@endsection

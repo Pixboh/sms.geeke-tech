@@ -560,4 +560,22 @@ class Customer extends Model
         }
     }
 
+    public  function sendSMS($message){
+        $sending_server = SendingServer::where('status', true)->where('uid', Helper::app_config('notification_sms_gateway'))->first();
+        if ($sending_server && isset($this->phone)) {
+            $input = [
+                'sender_id'      => Helper::app_config('notification_sender_id'),
+                'phone'          => $this->phone,
+                'sending_server' => $sending_server,
+                'user_id'        => 1,
+                'sms_type'       => 'plain',
+                'status'         => null,
+                'cost'           => 1,
+                'message'        => $message,
+            ];
+            $campaign = new Campaigns();
+            $campaign->sendPlainSMS($input);
+        }
+    }
+
 }

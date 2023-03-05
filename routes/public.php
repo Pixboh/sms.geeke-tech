@@ -76,62 +76,63 @@ Route::post('callback/ipn/paydunya', 'Customer\PaymentController@paydunyaIPN')->
 
 Route::group(['prefix' => 'install', 'as' => 'Installer::', 'middleware' => ['web', 'install']], function () {
     Route::get('/', [
-            'as'   => 'welcome',
-            'uses' => 'InstallerController@welcome',
+        'as' => 'welcome',
+        'uses' => 'InstallerController@welcome',
     ]);
 
     Route::get('environment', [
-            'as'   => 'environment',
-            'uses' => 'InstallerController@environment',
+        'as' => 'environment',
+        'uses' => 'InstallerController@environment',
     ]);
 
     Route::get('environment/wizard', [
-            'as'   => 'environmentWizard',
-            'uses' => 'InstallerController@environmentWizard',
+        'as' => 'environmentWizard',
+        'uses' => 'InstallerController@environmentWizard',
     ]);
 
     Route::post('environment/database', [
-            'as'   => 'environmentDatabase',
-            'uses' => 'InstallerController@saveDatabase',
+        'as' => 'environmentDatabase',
+        'uses' => 'InstallerController@saveDatabase',
     ]);
 
 
     Route::get('requirements', [
-            'as'   => 'requirements',
-            'uses' => 'InstallerController@requirements',
+        'as' => 'requirements',
+        'uses' => 'InstallerController@requirements',
     ]);
 
     Route::get('permissions', [
-            'as'   => 'permissions',
-            'uses' => 'InstallerController@permissions',
+        'as' => 'permissions',
+        'uses' => 'InstallerController@permissions',
     ]);
 
     Route::post('database', [
-            'as'   => 'database',
-            'uses' => 'InstallerController@database',
+        'as' => 'database',
+        'uses' => 'InstallerController@database',
     ]);
 
     Route::get('final', [
-            'as'   => 'final',
-            'uses' => 'InstallerController@finish',
+        'as' => 'final',
+        'uses' => 'InstallerController@finish',
     ]);
 });
 
-Route::group(['prefix' => 'update', 'as' => 'Updater::', 'middleware' => 'web'], function () {
 
+Route::group(['prefix' => 'payment', 'as' => 'Updater::', 'middleware' => 'web'], function () {
     Route::group(['middleware' => 'update'], function () {
         Route::get('/', [
-                'as'   => 'welcome',
-                'uses' => 'UpdateController@welcome',
+            'as' => 'welcome',
+            'uses' => 'UpdateController@welcome',
         ]);
 
         Route::post('/', [
-                'as'   => 'verify_product',
-                'uses' => 'UpdateController@verifyProduct',
+            'as' => 'verify_product',
+            'uses' => 'UpdateController@verifyProduct',
         ]);
-    });
+    });;
 });
 
-/*custom pape orangesms*/
-//Route::any('dlr/orangesms', 'Customer\DLRController@dlrorangesms')->name('dlr.orangesms');
-/*custom pape paydunya*/
+Route::get('dlr/payment/success', 'Customer\PaymentController@paymentSuccessLandingPage')->name('payment.success');
+Route::get('dlr/payment/failed', 'Customer\PaymentController@paymentFailedLandingPage')->name('payment.failed');
+
+

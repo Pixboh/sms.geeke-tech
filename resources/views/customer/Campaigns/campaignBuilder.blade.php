@@ -7,12 +7,12 @@
     <!-- vendor css files -->
     <link rel="stylesheet" href="{{ asset(mix('vendors/css/forms/select/select2.min.css')) }}">
     <link rel="stylesheet" href="{{ asset(mix('vendors/css/pickers/flatpickr/flatpickr.min.css')) }}">
+    <link rel="stylesheet" href="{{ asset(mix('vendors/css/phone-preview/phone.css')) }}">
 @endsection
 
 @section('page-style')
 
     <link rel="stylesheet" href="{{ asset(mix('css/base/plugins/forms/pickers/form-flat-pickr.css')) }}">
-    <link rel="stylesheet" href="{{ asset(mix('vendors/css/phone-preview/phone.css')) }}">
 
     <style>
         .customized_select2 .select2-selection--multiple {
@@ -79,6 +79,7 @@
                                     @if(auth()->user()->customer->getOption('sender_id_verification') == 'yes')
                                         <div class="col-12">
                                             <p class="text-uppercase">{{ __('locale.labels.originator') }}</p>
+<p class="form-label">{{ __('locale.labels.originator_description') }}</p>
                                         </div>
 
                                         @can('view_sender_id')

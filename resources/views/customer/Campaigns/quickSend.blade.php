@@ -5,11 +5,10 @@
 @section('vendor-style')
     <!-- vendor css files -->
     <link rel="stylesheet" href="{{ asset(mix('vendors/css/forms/select/select2.min.css')) }}">
-    {{--    <link rel="stylesheet" href="{{ asset('/Users/papedjibyboh/Sites/sms.geeke-tech/resources/vendors/css/forms/phone.css') }}">--}}
+    <link rel="stylesheet" href="{{ asset(mix('vendors/css/phone-preview/phone.css')) }}">
 @endsection
 
 @section('page-style')
-    <link rel="stylesheet" href="{{ asset(mix('vendors/css/phone-preview/phone.css')) }}">
 
     <style>
         .customized_select2 .select2-selection--single, .input_sender_id {
@@ -93,6 +92,7 @@
                                     @if(auth()->user()->customer->getOption('sender_id_verification') == 'yes')
                                         <div class="col-12">
                                             <p class="text-uppercase">{{ __('locale.labels.originator') }}</p>
+                                            <p class="form-label">{{ __('locale.labels.originator_description') }}</p>
                                         </div>
 
                                         @can('view_sender_id')
@@ -250,13 +250,13 @@
                                     <div class="head py-md-2 py-1 border-bottom">
                                         <div name="messageFrom" class="text-center"><span
                                                     class="fa fa-chevron-left float-left ml-0 ml-md-1 mt-1 text-info"></span>
-                                            <p  class="text-center" id="sender_id_text">
-                                            @if(!empty($sender_ids))
-                                             @foreach($sender_ids as $sender_id)
-                                                {{ $sender_id->sender_id }}
-                                                @break
-                                             @endforeach
-                                            @endif
+                                            <p class="text-center" id="sender_id_text">
+                                                @if(!empty($sender_ids))
+                                                    @foreach($sender_ids as $sender_id)
+                                                        {{ $sender_id->sender_id }}
+                                                        @break
+                                                    @endforeach
+                                                @endif
                                             </p>
                                         </div>
                                     </div>
@@ -337,7 +337,6 @@
                 if ($get_msg[0].value !== null) {
 
                     let data = SmsCounter.count($get_msg[0].value, true);
-                    console.log(data);
 
                     if (data.encoding === 'UTF16') {
                         $('#sms_type').val('unicode').trigger('change');

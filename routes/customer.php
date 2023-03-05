@@ -418,10 +418,7 @@ Route::get('developers/docs', 'DeveloperController@docs')->name('developer.docs'
 
 
 
-// customer code pape
-
-
-Route::any('callback/paydunya/senderid', 'PaymentController@paydunyaSenderID')->name('callback.paydunya.senderid');
+//Route::any('callback/paydunya/senderid', 'PaymentController@paydunyaSenderID')->name('callback.paydunya.senderid');
 //Route::any('callback/paydunya/numbers', 'PaymentController@paydunyaNumbers')->name('callback.paydunya.numbers');
 //Route::any('callback/paydunya/keywords', 'PaymentController@paydunyaKeywords')->name('callback.paydunya.keywords');
 Route::any('callback/paydunya/subscriptions', 'PaymentController@paydunyaSubscriptions')->name('callback.paydunya.subscriptions');

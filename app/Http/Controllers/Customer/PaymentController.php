@@ -71,7 +71,7 @@ class PaymentController extends Controller
             'user_id' => 1,
             'notification_for' => 'admin',
             'notification_type' => $type,
-            'message' => $name . ' Purchased By ' . $user_name,
+            'message' => $name . __('locale.labels.purchased_by') . $user_name,
         ]);
     }
 
@@ -9372,7 +9372,7 @@ POSTXML;
     function paydunyaTopUp(Request $request): RedirectResponse {
         $paymentMethod = PaymentMethods::where('status', true)->where('type', 'paydunya')->first();
         $token = $request->token;
-        if(empty($token)){
+        if (empty($token)) {
             return redirect()->route('user.home')->with([
                 'status' => 'success',
                 'message' => __('locale.subscription.payment_is_being_verified'),
@@ -9674,6 +9674,14 @@ POSTXML;
                                 if (Helper::app_config('subscription_notification_email')) {
                                     $admin = User::find(1);
                                     $admin->notify(new SubscriptionPurchase(route('admin.invoices.view', $invoice->uid)));
+                                    $message = trans('locale.sms_notifications.new_subscription',
+                                        ['units' => $user->customer->subscription->plan->getOption('sms_max'),
+                                            'name' => $user->displayName(), 'plan' => $plan->name , 'url' => env('APP_URL')]);
+                                    try {
+                                        $user->customer->sendSMS($message);
+                                    } catch (\Exception $e) {
+                                        logger("SMSNotification : " . $e->getMessage());
+                                    }
                                 }
 
                                 if ($user->customer->getNotifications()['subscription'] == 'yes') {
@@ -9694,10 +9702,9 @@ POSTXML;
     }
 
     function paydunyaSubscriptions(Request $request) {
-        logger("paydunyaSubscriptions request" . json_encode( $request->all()));
         $paymentMethod = PaymentMethods::where('status', true)->where('type', 'paydunya')->first();
         $token = $request->token;
-        if(empty($token)){
+        if (empty($token)) {
             return redirect()->route('user.home')->with([
                 'status' => 'success',
                 'message' => __('locale.subscription.payment_is_being_verified'),
@@ -9740,7 +9747,6 @@ POSTXML;
                             } else {
                                 // if invoice already completed do not update
                                 if ($invoice->status == Invoices::STATUS_PAID) {
-                                    logger("paydunyaSubscriptions paid" . json_encode( $request->all()));
 
                                     return redirect()->route('user.home')->with([
                                         'status' => 'success',
@@ -9824,12 +9830,19 @@ POSTXML;
                                 if (Helper::app_config('subscription_notification_email')) {
                                     $admin = User::find(1);
                                     $admin->notify(new SubscriptionPurchase(route('admin.invoices.view', $invoice->uid)));
+                                    // send sms
+                                    $message = trans('locale.sms_notifications.new_subscription',
+                                        ['units' => $user->customer->subscription->plan->getOption('sms_max'),
+                                            'name' => $user->displayName(), 'plan' => $plan->name , 'url' => env('APP_URL')]);                                    try {
+                                        $user->customer->sendSMS($message);
+                                    } catch (\Exception $e) {
+                                        logger("SMSNotification : " . $e->getMessage());
+                                    }
                                 }
 
                                 if ($user->customer->getNotifications()['subscription'] == 'yes') {
                                     $user->notify(new SubscriptionPurchase(route('customer.invoices.view', $invoice->uid)));
                                 }
-                                logger("paydunyaSubscriptions handled payment" . json_encode( $request->all()));
                                 return redirect()->route('customer.subscriptions.index')->with([
                                     'status' => 'success',
                                     'message' => __('locale.payment_gateways.payment_successfully_made'),
@@ -9874,6 +9887,29 @@ POSTXML;
             'status' => 'error',
             'message' => __('locale.payment_gateways.not_found'),
         ]);
+    }
+
+    function paymentSuccessLandingPage(){
+        $pageConfigs = [
+            'bodyClass' => "bg-full-screen-image",
+            'blankPage' => true,
+        ];
+        $view = view('/errors/payment_success', [
+            'pageConfigs' => $pageConfigs,
+        ]);
+        return $view;
+    }
+
+    function paymentFailedLandingPage(){
+
+        $pageConfigs = [
+            'bodyClass' => "bg-full-screen-image",
+            'blankPage' => true,
+        ];
+        $view =  view('/errors/payment_failed', [
+            'pageConfigs' => $pageConfigs,
+        ]);
+        return $view;
     }
 
 

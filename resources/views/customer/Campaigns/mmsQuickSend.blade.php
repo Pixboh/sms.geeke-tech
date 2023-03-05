@@ -83,6 +83,7 @@
                                     @if(auth()->user()->customer->getOption('sender_id_verification') == 'yes')
                                         <div class="col-12">
                                             <p class="text-uppercase">{{ __('locale.labels.originator') }}</p>
+<p class="form-label">{{ __('locale.labels.originator_description') }}</p>
                                         </div>
 
                                         @can('view_sender_id')

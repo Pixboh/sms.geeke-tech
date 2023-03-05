@@ -46,6 +46,7 @@ use Stripe\Stripe;
 use Throwable;
 use Illuminate\Support\Facades\Redirect;
 
+
 include(app_path() . '/Library/paydunya-php/paydunya.php');
 
 use Paydunya;
@@ -1339,8 +1340,8 @@ POSTXML;
                         Paydunya_Checkout_Store::setLogoUrl("https://geexsms.com");
 
                         // callbacks config
-                        Paydunya_Checkout_Store::setCancelUrl(route('customer.top_up.payment_cancel'));
-                        Paydunya_Checkout_Store::setReturnUrl(route('customer.callback.paydunya.top_up',
+                        Paydunya_Checkout_Store::setCancelUrl(route('payment.failed'));
+                        Paydunya_Checkout_Store::setReturnUrl(route('payment.success',
                             ['user_id' => auth()->user()->id, 'sms_unit' => $input['sms_unit']]));
                         Paydunya_Checkout_Store::setCallbackUrl($credentials->ipn_url);
 

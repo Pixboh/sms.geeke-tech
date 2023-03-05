@@ -550,6 +550,11 @@ return [
         'Minute' => 'Minute',
         'Second' => 'Second',
         'Month' => 'Month',
+        'purchased_by' => 'Purchased By',
+        'payment_sucess_title' => "Payment Success",
+        "payment_sucess_message" => "Your payment has been successfully completed. You will be redirected to your dashboard in a few seconds.",
+        "payment_failed_title" => "Payment Failed",
+        "payment_failed_message" => "Your payment has been failed. Please try again. You will be redirected to your dashboard in a few seconds.",
     ],
 
     'filezone' => [
@@ -1580,6 +1585,17 @@ on ',
             'unacceptable' => ':provider is not an acceptable login type.',
         ],
     ],
+
+    'sms_notifications' => [
+        'new_subscription' => 'Your have successfully subscribed to :plan plan. You have :sms_units SMS units.',
+        'subscription_cancelled' => 'Your subscription has been cancelled. You can not send SMS to your contacts.',
+        'subscription_renewed' => 'Your subscription has been renewed. You can now send SMS to your contacts.',
+        'subscription_changed' => 'Your subscription has been changed to :plan plan. You can now send SMS to your contacts.',
+        'subscription_expired' => 'Your subscription has been expired. You can not send SMS to your contacts.',
+        'subscription_will_expire' => 'Your subscription will expire in :days days. You can not send SMS to your contacts.',
+        'subscription_will_expire_soon' => 'Your subscription will expire soon. You can not send SMS to your contacts.',
+        'subscription_will_expire_today' => 'Your subscription will expire today. You can not send SMS to your contacts.',
+    ]
 
 
 ];
