@@ -37,7 +37,7 @@
 
 @section('page-script')
     <script type="text/javascript">
-        var timeInterval = 5000;
+        var timeInterval = 7000;
         setTimeout(callBack_func, timeInterval);
         function callBack_func() {
             window.location.href = "/login"
