@@ -35,7 +35,7 @@ class Language extends Model
         parent::boot();
         // Create uid when creating list.
         static::creating(function ($item) {
-            $item->status = true;
+//            $item->status = true;
         });
     }
 
