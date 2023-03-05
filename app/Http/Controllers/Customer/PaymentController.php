@@ -9372,6 +9372,12 @@ POSTXML;
     function paydunyaTopUp(Request $request): RedirectResponse {
         $paymentMethod = PaymentMethods::where('status', true)->where('type', 'paydunya')->first();
         $token = $request->token;
+        if(empty($token)){
+            return redirect()->route('user.home')->with([
+                'status' => 'success',
+                'message' => __('locale.subscription.payment_is_being_verified'),
+            ]);
+        }
         if ($paymentMethod) {
             $credentials = json_decode($paymentMethod->options);
             Paydunya_Setup::setMasterKey($credentials->merchant_key);
@@ -9691,6 +9697,12 @@ POSTXML;
         logger("paydunyaSubscriptions request" . json_encode( $request->all()));
         $paymentMethod = PaymentMethods::where('status', true)->where('type', 'paydunya')->first();
         $token = $request->token;
+        if(empty($token)){
+            return redirect()->route('user.home')->with([
+                'status' => 'success',
+                'message' => __('locale.subscription.payment_is_being_verified'),
+            ]);
+        }
         if ($paymentMethod) {
             $credentials = json_decode($paymentMethod->options);
             Paydunya_Setup::setMasterKey($credentials->merchant_key);
