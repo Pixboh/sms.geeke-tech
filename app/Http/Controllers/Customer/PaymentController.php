@@ -9389,18 +9389,12 @@ POSTXML;
                     $user = User::find($user_id);
 
                     if (empty($request->token) === false && $user) {
-
-
                         $status = $paydunyaInvoice->getStatus();
-                        $status = 'pending';
-                        $invoice_url = $paydunyaInvoice->getReceiptUrl();
-                        // Vous pouvez aussi récupérer le montant total spécifié précédemment
                         $amount = $paydunyaInvoice->getTotalAmount();
                         if (in_array($status, ['pending', 'completed'])) {
                             $invoice_status = Invoices::STATUS_PAID;
                             if ($status == 'pending') {
                                 $invoice_status = Invoices::STATUS_PENDING;
-
                             }
                             $invoice = Invoices::where('transaction_id', $token)->first();
                             if (!$invoice) {
@@ -9471,13 +9465,6 @@ POSTXML;
                     ]);
 
                 }//
-                else {
-//                    $response_code = $invoice->response_code;
-//                    return redirect()->route('user.home')->with([
-//                        'status' => 'error',
-//                        'message' => $error_text
-//                    ]);
-                }
                 return redirect()->route('user.home')->with([
                     'status' => 'error',
                     'message' => __('locale.exceptions.something_went_wrong'),
