@@ -9688,10 +9688,9 @@ POSTXML;
     }
 
     function paydunyaSubscriptions(Request $request) {
+        logger("paydunyaSubscriptions request" . json_encode( $request->all()));
         $paymentMethod = PaymentMethods::where('status', true)->where('type', 'paydunya')->first();
         $token = $request->token;
-
-
         if ($paymentMethod) {
             $credentials = json_decode($paymentMethod->options);
             Paydunya_Setup::setMasterKey($credentials->merchant_key);
@@ -9729,6 +9728,8 @@ POSTXML;
                             } else {
                                 // if invoice already completed do not update
                                 if ($invoice->status == Invoices::STATUS_PAID) {
+                                    logger("paydunyaSubscriptions paid" . json_encode( $request->all()));
+
                                     return redirect()->route('user.home')->with([
                                         'status' => 'success',
                                         'message' => __('locale.payment_gateways.payment_successfully_made'),
@@ -9816,7 +9817,7 @@ POSTXML;
                                 if ($user->customer->getNotifications()['subscription'] == 'yes') {
                                     $user->notify(new SubscriptionPurchase(route('customer.invoices.view', $invoice->uid)));
                                 }
-
+                                logger("paydunyaSubscriptions handled payment" . json_encode( $request->all()));
                                 return redirect()->route('customer.subscriptions.index')->with([
                                     'status' => 'success',
                                     'message' => __('locale.payment_gateways.payment_successfully_made'),
