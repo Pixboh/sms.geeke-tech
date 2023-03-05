@@ -61,8 +61,8 @@ Route::any('dlr/d7networks', 'Customer\DLRController@dlrD7networks')->name('dlr.
 Route::any('inbound/teleapi', 'Customer\DLRController@inboundTeleAPI')->name('inbound.teleapi');
 
 /*custom pape paydunya*/
-Route::any('callback/ipn/paydunya', 'Customer\PaymentController@paydunyaIPN')->name('ipn.paydunya');
-Route::any('dlr/orangesms', 'Customer\DLRController@dlrorangesms')->name('dlr.orangesms');
+//Route::any('callback/ipn/paydunya', 'Customer\PaymentController@paydunyaIPN')->name('ipn.paydunya');
+Route::post('callback/ipn/paydunya', 'Customer\PaymentController@paydunyaIPN')->name('ipn.paydunya');
 
 
 /*
@@ -132,3 +132,6 @@ Route::group(['prefix' => 'update', 'as' => 'Updater::', 'middleware' => 'web'],
     });
 });
 
+/*custom pape orangesms*/
+//Route::any('dlr/orangesms', 'Customer\DLRController@dlrorangesms')->name('dlr.orangesms');
+/*custom pape paydunya*/

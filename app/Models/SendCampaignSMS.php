@@ -6834,8 +6834,8 @@ class SendCampaignSMS extends Model
                     case 'orangesms':
                         $headers = [];
                         $content = $message;
-                        $subject = urlencode('sms');
-                        $signature = urlencode($data['sender_id'],);
+                        $subject = 'sms';
+                        $signature =$data['sender_id'];
                         $timestamp = time();
                         $token = $sending_server->api_token;
                         $recipient = $phone;

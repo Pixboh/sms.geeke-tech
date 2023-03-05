@@ -9392,36 +9392,54 @@ POSTXML;
 
 
                         $status = $paydunyaInvoice->getStatus();
-//                        $status = 'pending';
+                        $status = 'pending';
                         $invoice_url = $paydunyaInvoice->getReceiptUrl();
                         // Vous pouvez aussi récupérer le montant total spécifié précédemment
                         $amount = $paydunyaInvoice->getTotalAmount();
                         if (in_array($status, ['pending', 'completed'])) {
                             $invoice_status = Invoices::STATUS_PAID;
-                            if($status == 'pending'){
+                            if ($status == 'pending') {
                                 $invoice_status = Invoices::STATUS_PENDING;
 
                             }
-                            $invoice = Invoices::create([
-                                'user_id' => $user->id,
-                                'currency_id' => $user->customer->subscription->plan->currency->id,
-                                'payment_method' => $paymentMethod->id,
-                                'amount' => $price,
-                                'type' => Invoices::TYPE_SUBSCRIPTION,
-                                'description' => __('locale.labels.payment_for_top_up'),
-                                'transaction_id' => $token,
-                                'status' => $invoice_status
-                            ]);
+                            $invoice = Invoices::where('transaction_id', $token)->first();
+                            if (!$invoice) {
+                                $invoice = Invoices::create([
+                                    'user_id' => $user->id,
+                                    'currency_id' => $user->customer->subscription->plan->currency->id,
+                                    'payment_method' => $paymentMethod->id,
+                                    'amount' => $price,
+                                    'type' => Invoices::TYPE_SUBSCRIPTION,
+                                    'description' => __('locale.labels.payment_for_top_up'),
+                                    'transaction_id' => $token,
+                                    'status' => $invoice_status
+                                ]);
+                            } else {
+                                // if invoice already completed do not update
+                                if ($invoice->status == Invoices::STATUS_PAID) {
+                                    return redirect()->route('user.home')->with([
+                                        'status' => 'success',
+                                        'message' => __('locale.payment_gateways.payment_successfully_made'),
+                                    ]);
+                                }
+                                $invoice->status = $invoice_status;
+                                $invoice->user_id = $user->id;
+                                $invoice->currency_id = $user->customer->subscription->plan->currency->id;
+                                $invoice->payment_method = $paymentMethod->id;
+                                $invoice->amount = $price;
+                                $invoice->transaction_id = $token;
+                                $invoice->save();
+                            }
 
                             if ($invoice) {
-                                $this->createNotification('topup', 'SMS Unit ' . $sms_unit, $user->displayName());
-                                if ($invoice_status == Invoices::STATUS_PENDING){
+                                if ($invoice_status == Invoices::STATUS_PENDING) {
                                     return redirect()->route('customer.subscriptions.index')->with([
                                         'status' => 'success',
                                         'message' => __('locale.subscription.payment_is_being_verified'),
                                     ]);
 
-                                }else {
+                                } else {
+                                    $this->createNotification('topup', 'SMS Unit ' . $sms_unit, $user->displayName());
                                     if ($user->sms_unit != '-1') {
                                         $user->sms_unit += $sms_unit;
                                         $user->save();
@@ -9434,8 +9452,6 @@ POSTXML;
                                         'title' => 'Add ' . $sms_unit . ' sms units',
                                         'amount' => $sms_unit . ' sms units',
                                     ]);
-
-
                                     return redirect()->route('user.home')->with([
                                         'status' => 'success',
                                         'message' => __('locale.payment_gateways.payment_successfully_made'),
@@ -9456,11 +9472,11 @@ POSTXML;
 
                 }//
                 else {
-                    $response_code = $invoice->response_code;
-                    return redirect()->route('user.home')->with([
-                        'status' => 'error',
-                        'message' => $error_text
-                    ]);
+//                    $response_code = $invoice->response_code;
+//                    return redirect()->route('user.home')->with([
+//                        'status' => 'error',
+//                        'message' => $error_text
+//                    ]);
                 }
                 return redirect()->route('user.home')->with([
                     'status' => 'error',
@@ -9486,7 +9502,209 @@ POSTXML;
     function paydunyaIPN(Request $request) {
         $data = $request->data;
         $paymentMethod = PaymentMethods::where('status', true)->where('type', 'paydunya')->first();
-        $token = $data['invoice']['token'];
+        $hash = $data['hash'];
+        if (!$hash === hash('sha512', Paydunya_Setup::getMasterKey())) {
+            //log error hacking and return
+            return;
+        }
+        if ($paymentMethod) {
+            $user_id = $data['custom_data']['user_id'];
+            $price = $data['custom_data']['price'];
+            $token = $data['invoice']['token'];
+            $status = $data['status'];
+
+            if ($data['custom_data']['payment_type'] == 'topup') {
+                try {
+                    $sms_unit = $data['custom_data']['sms_unit'];
+                    $user = User::find($user_id);
+                    if (empty($token) === false && $user) {
+                        if (in_array($status, ['pending', 'completed'])) {
+                            $invoice_status = Invoices::STATUS_PAID;
+                            if ($status == 'pending') {
+                                $invoice_status = Invoices::STATUS_PENDING;
+                            }
+                            $invoice = Invoices::where('transaction_id', $token)->first();
+                            if (!$invoice) {
+                                $invoice = Invoices::create([
+                                    'user_id' => $user->id,
+                                    'currency_id' => $user->customer->subscription->plan->currency->id,
+                                    'payment_method' => $paymentMethod->id,
+                                    'amount' => $price,
+                                    'type' => Invoices::TYPE_SUBSCRIPTION,
+                                    'description' => __('locale.labels.payment_for_top_up'),
+                                    'transaction_id' => $token,
+                                    'status' => $invoice_status
+                                ]);
+                            } else {
+                                // if invoice already completed do not update
+                                if ($invoice->status == Invoices::STATUS_PAID) {
+                                    // log already paid
+                                    return;
+                                }
+                                $invoice->status = $invoice_status;
+                                $invoice->user_id = $user->id;
+                                $invoice->currency_id = $user->customer->subscription->plan->currency->id;
+                                $invoice->payment_method = $paymentMethod->id;
+                                $invoice->amount = $price;
+                                $invoice->transaction_id = $token;
+                                $invoice->save();
+                            }
+
+                            if ($invoice && $invoice_status == Invoices::STATUS_PAID) {
+                                if ($user->sms_unit != '-1') {
+                                    $user->sms_unit += $sms_unit;
+                                    $user->save();
+                                }
+                                $subscription_status = $invoice_status;
+                                if ($invoice_status == Invoices::STATUS_PAID) {
+                                    $subscription_status = SubscriptionTransaction::STATUS_SUCCESS;
+                                }
+                                $subscription = $user->customer->activeSubscription();
+                                $subscription->addTransaction(SubscriptionTransaction::TYPE_SUBSCRIBE, [
+//                                        'status' => SubscriptionTransaction::STATUS_SUCCESS,
+                                    'status' => $subscription_status,
+                                    'title' => 'Add ' . $sms_unit . ' sms units',
+                                    'amount' => $sms_unit . ' sms units',
+                                ]);
+                                $this->createNotification('topup', 'SMS Unit ' . $sms_unit, $user->displayName());
+                            }
+                        }
+                        // error logs
+                    }
+                    // error logs
+
+                } catch (Exception $exception) {
+                    // error logs
+                }
+            } elseif ($data['custom_data']['payment_type'] == 'subscriptions') {
+                try {
+                    $plan_id = $data['custom_data']['plan_id'];
+                    $plan = Plan::where('uid', $plan_id)->first();
+                    $user = User::find($user_id);
+                    if ($plan && $user) {
+                        if (in_array($status, ['pending', 'completed'])) {
+                            $invoice_status = Invoices::STATUS_PAID;
+                            if ($status == 'pending') {
+                                $invoice_status = Invoices::STATUS_PENDING;
+                            }
+                            $invoice = Invoices::where('transaction_id', $token)->first();
+                            if (!$invoice) {
+                                $invoice = Invoices::create([
+                                    'user_id' => $user->id,
+                                    'currency_id' => $plan->currency_id,
+                                    'payment_method' => $paymentMethod->id,
+                                    'amount' => $plan->price,
+                                    'type' => Invoices::TYPE_SUBSCRIPTION,
+                                    'description' => __('locale.subscription.payment_for_plan') . ' ' . $plan->name,
+                                    'transaction_id' => $token,
+                                    'status' => $invoice_status
+                                ]);
+                            } else {
+                                // if invoice already completed do not update
+                                if ($invoice->status == Invoices::STATUS_PAID) {
+                                    return;
+                                }
+                                $invoice->status = $invoice_status;
+                                $invoice->user_id = $user->id;
+                                $invoice->currency_id = $plan->currency_id;
+                                $invoice->payment_method = $paymentMethod->id;
+                                $invoice->amount = $price;
+                                $invoice->transaction_id = $token;
+                                $invoice->save();
+                            }
+
+                            if ($invoice) {
+                                if ($user->customer->activeSubscription()) {
+                                    $user->customer->activeSubscription()->cancelNow();
+                                }
+
+                                if ($user->customer->subscription) {
+                                    $subscription = $user->customer->subscription;
+
+                                    $get_options = json_decode($subscription->options, true);
+                                    $output = array_replace($get_options, [
+                                        'send_warning' => false,
+                                    ]);
+                                    $subscription->options = json_encode($output);
+
+                                } else {
+                                    $subscription = new Subscription();
+                                    $subscription->user_id = $user->id;
+                                    $subscription->start_at = Carbon::now();
+                                }
+
+                                $subscription->status = Subscription::STATUS_ACTIVE;
+                                $subscription->plan_id = $plan->getBillableId();
+                                $subscription->end_period_last_days = '10';
+                                $subscription->current_period_ends_at = $subscription->getPeriodEndsAt(Carbon::now());
+                                $subscription->end_at = null;
+                                $subscription->end_by = null;
+                                $subscription->payment_method_id = $paymentMethod->id;
+                                $subscription->save();
+
+                                // add transaction
+                                $subscription->addTransaction(SubscriptionTransaction::TYPE_SUBSCRIBE, [
+                                    'end_at' => $subscription->end_at,
+                                    'current_period_ends_at' => $subscription->current_period_ends_at,
+                                    'status' => SubscriptionTransaction::STATUS_SUCCESS,
+                                    'title' => trans('locale.subscription.subscribed_to_plan', ['plan' => $subscription->plan->getBillableName()]),
+                                    'amount' => $subscription->plan->getBillableFormattedPrice(),
+                                ]);
+
+                                // add log
+                                $subscription->addLog(SubscriptionLog::TYPE_ADMIN_PLAN_ASSIGNED, [
+                                    'plan' => $subscription->plan->getBillableName(),
+                                    'price' => $subscription->plan->getBillableFormattedPrice(),
+                                ]);
+
+                                // reload user
+                                $user = User::find($user_id);
+
+                                if ($user->sms_unit == null || $user->sms_unit == '-1' || $plan->getOption('sms_max') == '-1') {
+                                    $user->sms_unit = $plan->getOption('sms_max');
+                                } else {
+                                    if ($plan->getOption('add_previous_balance') == 'yes') {
+                                        $user->sms_unit += $plan->getOption('sms_max');
+                                    } else {
+                                        $user->sms_unit = $plan->getOption('sms_max');
+                                    }
+                                }
+
+                                $user->save();
+
+                                $this->createNotification('plan', $plan->name, $user->displayName());
+
+
+                                //Add default Sender id
+                                $this->planSenderID($plan, $user);
+
+                                if (Helper::app_config('subscription_notification_email')) {
+                                    $admin = User::find(1);
+                                    $admin->notify(new SubscriptionPurchase(route('admin.invoices.view', $invoice->uid)));
+                                }
+
+                                if ($user->customer->getNotifications()['subscription'] == 'yes') {
+                                    $user->notify(new SubscriptionPurchase(route('customer.invoices.view', $invoice->uid)));
+                                }
+                            }
+                        }
+                    }
+                } catch (Exception $exception) {
+                    // error logs
+
+                    $a = 3;
+                }
+
+            } elseif ($data['custom_data']['payment_type'] == 'invoice') {
+            }
+        }
+    }
+
+    function paydunyaSubscriptions(Request $request) {
+        $paymentMethod = PaymentMethods::where('status', true)->where('type', 'paydunya')->first();
+        $token = $request->token;
+
+
         if ($paymentMethod) {
             $credentials = json_decode($paymentMethod->options);
             Paydunya_Setup::setMasterKey($credentials->merchant_key);
@@ -9497,73 +9715,133 @@ POSTXML;
             try {
                 $paydunyaInvoice = new Paydunya_Checkout_Invoice();
                 if ($paydunyaInvoice->confirm($token)) {
-                    $user_id = $data['custom_data']['user_id'];
-                    $sms_unit = $data['custom_data']['sms_unit'];
-                    $price =  $data['custom_data']['price'];
-
+                    $user_id = $paydunyaInvoice->getCustomData('user_id');
+                    $plan_id = $paydunyaInvoice->getCustomData('plan_id');
+                    $plan = Plan::where('uid', $plan_id)->first();
+                    $price = $paydunyaInvoice->getCustomData('price');
                     $user = User::find($user_id);
-
                     if (empty($request->token) === false && $user) {
-
-
                         $status = $paydunyaInvoice->getStatus();
-//                        $status = 'pending';
-                        $invoice_url = $paydunyaInvoice->getReceiptUrl();
-                        // Vous pouvez aussi récupérer le montant total spécifié précédemment
-                        $amount = $paydunyaInvoice->getTotalAmount();
                         if (in_array($status, ['pending', 'completed'])) {
                             $invoice_status = Invoices::STATUS_PAID;
-                            if($status == 'pending'){
+                            if ($status == 'pending') {
                                 $invoice_status = Invoices::STATUS_PENDING;
-
                             }
-                            $invoice = Invoices::create([
-                                'user_id' => $user->id,
-                                'currency_id' => $user->customer->subscription->plan->currency->id,
-                                'payment_method' => $paymentMethod->id,
-                                'amount' => $price,
-                                'type' => Invoices::TYPE_SUBSCRIPTION,
-                                'description' => __('locale.labels.payment_for_top_up'),
-                                'transaction_id' => $token,
-                                'status' => $invoice_status
-                            ]);
-
-                            if ($invoice) {
-                                if ($invoice_status == Invoices::STATUS_PENDING){
-                                    return redirect()->route('customer.subscriptions.index')->with([
-                                        'status' => 'success',
-                                        'message' => __('locale.subscription.payment_is_being_verified'),
-                                    ]);
-                                    $this->createNotification('topup', 'SMS Unit ' . $sms_unit, $user->displayName());
-
-                                }else {
-                                    if ($user->sms_unit != '-1') {
-                                        $user->sms_unit += $sms_unit;
-                                        $user->save();
-                                    }
-
-                                    $subscription = $user->customer->activeSubscription();
-
-                                    $subscription->addTransaction(SubscriptionTransaction::TYPE_SUBSCRIBE, [
-                                        'status' => SubscriptionTransaction::STATUS_SUCCESS,
-                                        'title' => 'Add ' . $sms_unit . ' sms units',
-                                        'amount' => $sms_unit . ' sms units',
-                                    ]);
-
-
+                            $invoice = Invoices::where('transaction_id', $token)->first();
+                            if (!$invoice) {
+                                $invoice = Invoices::create([
+                                    'user_id' => $user->id,
+                                    'currency_id' => $plan->currency_id,
+                                    'payment_method' => $paymentMethod->id,
+                                    'amount' => $plan->price,
+                                    'type' => Invoices::TYPE_SUBSCRIPTION,
+                                    'description' => __('locale.subscription.payment_for_plan') . ' ' . $plan->name,
+                                    'transaction_id' => $token,
+                                    'status' => $invoice_status
+                                ]);
+                            } else {
+                                // if invoice already completed do not update
+                                if ($invoice->status == Invoices::STATUS_PAID) {
                                     return redirect()->route('user.home')->with([
                                         'status' => 'success',
                                         'message' => __('locale.payment_gateways.payment_successfully_made'),
                                     ]);
                                 }
+                                $invoice->status = $invoice_status;
+                                $invoice->user_id = $user->id;
+                                $invoice->currency_id = $plan->currency_id;
+                                $invoice->payment_method = $paymentMethod->id;
+                                $invoice->amount = $price;
+                                $invoice->transaction_id = $token;
+                                $invoice->save();
                             }
-                        }
-                        return redirect()->route('user.home')->with([
-                            'status' => 'error',
-                            'message' => __('locale.exceptions.something_went_wrong'),
-                        ]);
-                    }
 
+                            if ($invoice) {
+                                if (Auth::user()->customer->activeSubscription()) {
+                                    Auth::user()->customer->activeSubscription()->cancelNow();
+                                }
+
+                                if (Auth::user()->customer->subscription) {
+                                    $subscription = Auth::user()->customer->subscription;
+
+                                    $get_options = json_decode($subscription->options, true);
+                                    $output = array_replace($get_options, [
+                                        'send_warning' => false,
+                                    ]);
+                                    $subscription->options = json_encode($output);
+
+                                } else {
+                                    $subscription = new Subscription();
+                                    $subscription->user_id = Auth::user()->id;
+                                    $subscription->start_at = Carbon::now();
+                                }
+
+                                $subscription->status = Subscription::STATUS_ACTIVE;
+                                $subscription->plan_id = $plan->getBillableId();
+                                $subscription->end_period_last_days = '10';
+                                $subscription->current_period_ends_at = $subscription->getPeriodEndsAt(Carbon::now());
+                                $subscription->end_at = null;
+                                $subscription->end_by = null;
+                                $subscription->payment_method_id = $paymentMethod->id;
+                                $subscription->save();
+
+                                // add transaction
+                                $subscription->addTransaction(SubscriptionTransaction::TYPE_SUBSCRIBE, [
+                                    'end_at' => $subscription->end_at,
+                                    'current_period_ends_at' => $subscription->current_period_ends_at,
+                                    'status' => SubscriptionTransaction::STATUS_SUCCESS,
+                                    'title' => trans('locale.subscription.subscribed_to_plan', ['plan' => $subscription->plan->getBillableName()]),
+                                    'amount' => $subscription->plan->getBillableFormattedPrice(),
+                                ]);
+
+                                // add log
+                                $subscription->addLog(SubscriptionLog::TYPE_ADMIN_PLAN_ASSIGNED, [
+                                    'plan' => $subscription->plan->getBillableName(),
+                                    'price' => $subscription->plan->getBillableFormattedPrice(),
+                                ]);
+
+
+                                $user = User::find(auth()->user()->id);
+
+                                if ($user->sms_unit == null || $user->sms_unit == '-1' || $plan->getOption('sms_max') == '-1') {
+                                    $user->sms_unit = $plan->getOption('sms_max');
+                                } else {
+                                    if ($plan->getOption('add_previous_balance') == 'yes') {
+                                        $user->sms_unit += $plan->getOption('sms_max');
+                                    } else {
+                                        $user->sms_unit = $plan->getOption('sms_max');
+                                    }
+                                }
+
+                                $user->save();
+
+                                $this->createNotification('plan', $plan->name, auth()->user()->displayName());
+
+
+                                //Add default Sender id
+                                $this->planSenderID($plan, $user);
+
+                                if (Helper::app_config('subscription_notification_email')) {
+                                    $admin = User::find(1);
+                                    $admin->notify(new SubscriptionPurchase(route('admin.invoices.view', $invoice->uid)));
+                                }
+
+                                if ($user->customer->getNotifications()['subscription'] == 'yes') {
+                                    $user->notify(new SubscriptionPurchase(route('customer.invoices.view', $invoice->uid)));
+                                }
+
+                                return redirect()->route('customer.subscriptions.index')->with([
+                                    'status' => 'success',
+                                    'message' => __('locale.payment_gateways.payment_successfully_made'),
+                                ]);
+                            }
+                        } else {
+                            return redirect()->route('user.home')->with([
+                                'status' => 'error',
+                                'message' => __('locale.exceptions.something_went_wrong'),
+                            ]);
+                        }
+                    }
                     return redirect()->route('user.home')->with([
                         'status' => 'error',
                         'message' => __('locale.exceptions.something_went_wrong'),
@@ -9571,11 +9849,11 @@ POSTXML;
 
                 }//
                 else {
-                    $response_code = $invoice->response_code;
-                    return redirect()->route('user.home')->with([
-                        'status' => 'error',
-                        'message' => $error_text
-                    ]);
+//                    $response_code = $invoice->response_code;
+//                    return redirect()->route('user.home')->with([
+//                        'status' => 'error',
+//                        'message' => $error_text
+//                    ]);
                 }
                 return redirect()->route('user.home')->with([
                     'status' => 'error',
@@ -9597,6 +9875,9 @@ POSTXML;
             'message' => __('locale.payment_gateways.not_found'),
         ]);
     }
+
+
 }
+
 
 

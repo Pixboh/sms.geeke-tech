@@ -125,7 +125,7 @@
                                                     </div>
 
                                                     <div class="list-item-body flex-grow-1">
-                                                        <p class="media-heading"><span class="fw-bolder">New Number sales</span></p>
+                                                        <p class="media-heading"><span class="fw-bolder">{{__('locale.labels.new_number_sales')}}</span></p>
                                                         <small class="notification-text"> {{ str_limit($value->message, 30) }}</small>
                                                     </div>
                                                     @break
@@ -138,7 +138,7 @@
                                                     </div>
 
                                                     <div class="list-item-body flex-grow-1">
-                                                        <p class="media-heading"><span class="fw-bolder">New Keyword sales</span></p>
+                                                        <p class="media-heading"><span class="fw-bolder">{{__('locale.labels.new_keyword_sales')}}</span></p>
                                                         <small class="notification-text"> {{ str_limit($value->message, 30) }}</small>
                                                     </div>
                                                     @break
@@ -151,7 +151,7 @@
                                                     </div>
 
                                                     <div class="list-item-body flex-grow-1">
-                                                        <p class="media-heading"><span class="fw-bolder">New Inbox Message</span></p>
+                                                        <p class="media-heading"><span class="fw-bolder">{{__('locale.labels.new_inbox_chat')}}</span></p>
                                                         <small class="notification-text"> {{ str_limit($value->message, 30) }}</small>
                                                     </div>
                                                     @break
@@ -165,7 +165,7 @@
                                                     </div>
 
                                                     <div class="list-item-body flex-grow-1">
-                                                        <p class="media-heading"><span class="fw-bolder">Subscription Expired!</span></p>
+                                                        <p class="media-heading"><span class="fw-bolder">{{__('locale.labels.subscription_expired')}}</span></p>
                                                         <small class="notification-text"> {{ str_limit($value->message, 60) }}</small>
                                                     </div>
                                                     @break
@@ -178,7 +178,7 @@
                                                     </div>
 
                                                     <div class="list-item-body flex-grow-1">
-                                                        <p class="media-heading"><span class="fw-bolder">SMS Unit Running Low!</span></p>
+                                                        <p class="media-heading"><span class="fw-bolder">{{__('locale.labels.sms_unit_running_low')}}</span></p>
                                                         <small class="notification-text"> {{ str_limit($value->message, 60) }}</small>
                                                     </div>
                                                     @break
@@ -191,7 +191,7 @@
                                                     </div>
 
                                                     <div class="list-item-body flex-grow-1">
-                                                        <p class="media-heading"><span class="fw-bolder">Offline Topup Payment!</span></p>
+                                                        <p class="media-heading"><span class="fw-bolder">{{__('locale.labels.offline_topup_payment')}}</span></p>
                                                         <small class="notification-text">{{ str_limit($value->message, 60) }}</small>
                                                     </div>
                                                     @break

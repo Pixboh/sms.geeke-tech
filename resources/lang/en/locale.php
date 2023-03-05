@@ -531,6 +531,25 @@ return [
         'platform' => 'Platform',
         'hardware' => 'Hardware',
 
+        //
+        'new_number_sales' => 'New Number Sales',
+        'new_keyword_sales' => 'New Keyword Sales',
+        'new_inbox_chat' => 'New Inbox Chat',
+        'subscription_expired' => 'Subscribtion Expired',
+        'sms_unit_running_low' => 'SMS Unit Running Low',
+        'offline_topup_payment' => 'Top up payment',
+        'Months' => 'Months',
+        'Days' => 'Days',
+        'Hours' => 'Hours',
+        'Minutes' => 'Minutes',
+        'Seconds' => 'Seconds',
+        'Years' => 'Years',
+        'Year' => 'Year',
+        'Day' => 'Day',
+        'Hour' => 'Hour',
+        'Minute' => 'Minute',
+        'Second' => 'Second',
+        'Month' => 'Month',
     ],
 
     'filezone' => [

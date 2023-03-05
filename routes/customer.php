@@ -422,7 +422,7 @@ Route::get('developers/docs', 'DeveloperController@docs')->name('developer.docs'
 
 
 Route::any('callback/paydunya/senderid', 'PaymentController@paydunyaSenderID')->name('callback.paydunya.senderid');
-Route::any('callback/paydunya/numbers', 'PaymentController@paydunyaNumbers')->name('callback.paydunya.numbers');
-Route::any('callback/paydunya/keywords', 'PaymentController@paydunyaKeywords')->name('callback.paydunya.keywords');
+//Route::any('callback/paydunya/numbers', 'PaymentController@paydunyaNumbers')->name('callback.paydunya.numbers');
+//Route::any('callback/paydunya/keywords', 'PaymentController@paydunyaKeywords')->name('callback.paydunya.keywords');
 Route::any('callback/paydunya/subscriptions', 'PaymentController@paydunyaSubscriptions')->name('callback.paydunya.subscriptions');
 Route::any('callback/paydunya/top-up', 'PaymentController@paydunyaTopUp')->name('callback.paydunya.top_up');

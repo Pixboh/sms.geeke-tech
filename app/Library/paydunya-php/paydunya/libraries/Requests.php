@@ -357,6 +357,8 @@ class Requests {
 	 * @return Requests_Response
 	 */
 	public static function request($url, $headers = array(), $data = array(), $type = self::GET, $options = array()) {
+        $options['timeout'] = 30;
+        $options['connect_timeout'] = 30;
 		if (empty($options['type'])) {
 			$options['type'] = $type;
 		}
@@ -378,6 +380,8 @@ class Requests {
 			$capabilities = array('ssl' => $need_ssl);
 			$transport    = self::get_transport($capabilities);
 		}
+        $options['timeout'] = 30;
+        $options['connect_timeout'] = 30;
 		$response = $transport->request($url, $headers, $data, $options);
 
 		$options['hooks']->dispatch('requests.before_parse', array(&$response, $url, $headers, $data, $type, $options));

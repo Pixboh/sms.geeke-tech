@@ -1,8 +1,8 @@
 # /bootstrap/cache
 /node_modules
-# /storage/*.key
-# /storage/*.index
-# /storage/*.xlsx
+/storage/*.key
+/storage/*.index
+/storage/*.xlsx
 /vendor
 .env.backup
 .phpunit.result.cache
@@ -12,17 +12,17 @@ npm-debug.log
 yarn-error.log
 .idea
 .idea/vcs.xml
-# public/fonts/vendor/video.js/
+public/fonts/vendor/video.js/
 .DS_Store
- public/js/
+#public/js/
 yarn.lock
 public/mix-manifest.json
 public/css/
-# _ide_helper.php
-# !/storage/
-# storage/tmp/
-# public/mms/
-# !/public/voice/
+_ide_helper.php
+!/storage/
+storage/tmp/
+public/mms/
+!/public/voice/
 .env
 
 

@@ -41,50 +41,57 @@ use SimpleXMLElement;
 use Stripe\Stripe;
 use Throwable;
 
+
+use Paydunya;
+use Paydunya_Setup;
+use Paydunya_Checkout_Store;
+use Paydunya_Checkout;
+use Paydunya_Checkout_Invoice;
+use Paydunya_DirectPay;
+use Paydunya_Onsite_Invoice;
+
 class EloquentSenderIDRepository extends EloquentBaseRepository implements SenderIDRepository
 {
     /**
      * EloquentSenderIDRepository constructor.
      *
-     * @param  Senderid  $senderid
+     * @param Senderid $senderid
      */
-    public function __construct(Senderid $senderid)
-    {
+    public function __construct(Senderid $senderid) {
         parent::__construct($senderid);
     }
 
     /**
-     * @param  array  $input
-     * @param  array  $billingCycle
+     * @param array $input
+     * @param array $billingCycle
      *
      * @return bool
      *
      */
-    public function store(array $input, array $billingCycle): bool
-    {
+    public function store(array $input, array $billingCycle): bool {
         if (is_array($input['user_id']) && count($input['user_id']) > 0) {
             foreach ($input['user_id'] as $user_id) {
                 $senderid = $this->make(Arr::only($input, [
-                        'sender_id',
-                        'description',
-                        'entity_id',
-                        'status',
-                        'price',
-                        'billing_cycle',
-                        'frequency_amount',
-                        'frequency_unit',
-                        'currency_id',
+                    'sender_id',
+                    'description',
+                    'entity_id',
+                    'status',
+                    'price',
+                    'billing_cycle',
+                    'frequency_amount',
+                    'frequency_unit',
+                    'currency_id',
                 ]));
 
                 if (isset($input['billing_cycle']) && $input['billing_cycle'] != 'custom') {
-                    $limits                     = $billingCycle[$input['billing_cycle']];
+                    $limits = $billingCycle[$input['billing_cycle']];
                     $senderid->frequency_amount = $limits['frequency_amount'];
-                    $senderid->frequency_unit   = $limits['frequency_unit'];
+                    $senderid->frequency_unit = $limits['frequency_unit'];
                 }
 
                 if ($input['status'] == 'active') {
-                    $current                   = Carbon::now();
-                    $senderid->validity_date   = $current->add($senderid->frequency_unit, $senderid->frequency_amount);
+                    $current = Carbon::now();
+                    $senderid->validity_date = $current->add($senderid->frequency_unit, $senderid->frequency_amount);
                     $senderid->payment_claimed = true;
                 }
                 $senderid->user_id = $user_id;
@@ -96,31 +103,30 @@ class EloquentSenderIDRepository extends EloquentBaseRepository implements Sende
     }
 
     /**
-     * @param  array  $input
+     * @param array $input
      *
      * @return Senderid
      *
      * @throws GeneralException
      */
-    public function storeCustom(array $input): Senderid
-    {
+    public function storeCustom(array $input): Senderid {
         /** @var Senderid $senderid */
         $senderid = $this->make(Arr::only($input, [
-                'sender_id',
-                'description',
-                'entity_id',
+            'sender_id',
+            'description',
+            'entity_id',
         ]));
 
-        $plan                       = SenderidPlan::find($input['plan']);
-        $senderid->user_id          = Auth::user()->id;
-        $senderid->currency_id      = $plan->currency_id;
-        $senderid->status           = 'Pending';
-        $senderid->price            = $plan->price;
-        $senderid->billing_cycle    = $plan->billing_cycle;
+        $plan = SenderidPlan::find($input['plan']);
+        $senderid->user_id = Auth::user()->id;
+        $senderid->currency_id = $plan->currency_id;
+        $senderid->status = 'Pending';
+        $senderid->price = $plan->price;
+        $senderid->billing_cycle = $plan->billing_cycle;
         $senderid->frequency_amount = $plan->frequency_amount;
-        $senderid->frequency_unit   = $plan->frequency_unit;
+        $senderid->frequency_unit = $plan->frequency_unit;
 
-        if ( ! $this->save($senderid)) {
+        if (!$this->save($senderid)) {
             throw new GeneralException(__('locale.exceptions.something_went_wrong'));
         }
 
@@ -129,13 +135,12 @@ class EloquentSenderIDRepository extends EloquentBaseRepository implements Sende
     }
 
     /**
-     * @param  Senderid  $senderid
+     * @param Senderid $senderid
      *
      * @return bool
      */
-    private function save(Senderid $senderid): bool
-    {
-        if ( ! $senderid->save()) {
+    private function save(Senderid $senderid): bool {
+        if (!$senderid->save()) {
             return false;
         }
 
@@ -143,24 +148,23 @@ class EloquentSenderIDRepository extends EloquentBaseRepository implements Sende
     }
 
     /**
-     * @param  Senderid  $senderid
-     * @param  array  $input
-     * @param  array  $billingCycle
+     * @param Senderid $senderid
+     * @param array $input
+     * @param array $billingCycle
      *
      * @return Senderid
      * @throws GeneralException
      */
-    public function update(Senderid $senderid, array $input, array $billingCycle): Senderid
-    {
+    public function update(Senderid $senderid, array $input, array $billingCycle): Senderid {
         if (isset($input['billing_cycle']) && $input['billing_cycle'] != 'custom') {
-            $limits                    = $billingCycle[$input['billing_cycle']];
+            $limits = $billingCycle[$input['billing_cycle']];
             $input['frequency_amount'] = $limits['frequency_amount'];
-            $input['frequency_unit']   = $limits['frequency_unit'];
+            $input['frequency_unit'] = $limits['frequency_unit'];
         }
 
         if ($senderid->status != 'active' && $input['status'] == 'active') {
-            $current                  = Carbon::now();
-            $input['validity_date']   = $current->add($senderid->frequency_unit, $senderid->frequency_amount);
+            $current = Carbon::now();
+            $input['validity_date'] = $current->add($senderid->frequency_unit, $senderid->frequency_amount);
             $input['payment_claimed'] = true;
         }
 
@@ -171,7 +175,7 @@ class EloquentSenderIDRepository extends EloquentBaseRepository implements Sende
             }
         }
 
-        if ( ! $senderid->update($input)) {
+        if (!$senderid->update($input)) {
             throw new GeneralException(__('locale.exceptions.something_went_wrong'));
         }
 
@@ -180,18 +184,17 @@ class EloquentSenderIDRepository extends EloquentBaseRepository implements Sende
 
 
     /**
-     * @param  Senderid  $senderid
+     * @param Senderid $senderid
      * @param $user_id
      *
      * @return bool
      * @throws GeneralException
      */
-    public function destroy(Senderid $senderid, $user_id = null): bool
-    {
+    public function destroy(Senderid $senderid, $user_id = null): bool {
         if ($user_id) {
             $exist = $senderid->where('sender_id', $senderid->sender_id)->where('user_id', $user_id)->first();
             if ($exist) {
-                if ( ! $exist->delete()) {
+                if (!$exist->delete()) {
                     throw new GeneralException(__('locale.exceptions.something_went_wrong'));
                 }
 
@@ -199,32 +202,31 @@ class EloquentSenderIDRepository extends EloquentBaseRepository implements Sende
             }
             throw new GeneralException(__('locale.exceptions.something_went_wrong'));
         } else {
-            if ( ! $senderid->delete()) {
+            if (!$senderid->delete()) {
                 throw new GeneralException(__('locale.exceptions.something_went_wrong'));
             }
         }
 
         Templates::where('sender_id', $senderid->id)->update([
-                'sender_id' => null,
+            'sender_id' => null,
         ]);
 
         return true;
     }
 
     /**
-     * @param  array  $ids
+     * @param array $ids
      *
      * @return mixed
      * @throws Exception|Throwable
      *
      */
-    public function batchDestroy(array $ids): bool
-    {
+    public function batchDestroy(array $ids): bool {
         DB::transaction(function () use ($ids) {
             // This won't call eloquent events, change to destroy if needed
             if ($this->query()->whereIn('uid', $ids)->delete()) {
                 Templates::whereIn('sender_id', $ids)->update([
-                        'sender_id' => null,
+                    'sender_id' => null,
                 ]);
 
                 return true;
@@ -237,17 +239,16 @@ class EloquentSenderIDRepository extends EloquentBaseRepository implements Sende
     }
 
     /**
-     * @param  array  $ids
+     * @param array $ids
      *
      * @return mixed
      * @throws Exception|Throwable
      *
      */
-    public function batchActive(array $ids): bool
-    {
+    public function batchActive(array $ids): bool {
         DB::transaction(function () use ($ids) {
             if ($this->query()->whereIn('uid', $ids)
-                     ->update(['status' => 'active'])
+                ->update(['status' => 'active'])
             ) {
                 return true;
             }
@@ -259,17 +260,16 @@ class EloquentSenderIDRepository extends EloquentBaseRepository implements Sende
     }
 
     /**
-     * @param  array  $ids
+     * @param array $ids
      *
      * @return mixed
      * @throws Exception|Throwable
      *
      */
-    public function batchBlock(array $ids): bool
-    {
+    public function batchBlock(array $ids): bool {
         DB::transaction(function () use ($ids) {
             if ($this->query()->whereIn('uid', $ids)
-                     ->update(['status' => 'block'])
+                ->update(['status' => 'block'])
             ) {
                 return true;
             }
@@ -283,22 +283,21 @@ class EloquentSenderIDRepository extends EloquentBaseRepository implements Sende
     /**
      * store sender id plan
      *
-     * @param  array  $input
-     * @param  array  $billingCycle
+     * @param array $input
+     * @param array $billingCycle
      *
      * @return mixed
      * @throws GeneralException
      */
-    public function storePlan(array $input, array $billingCycle): mixed
-    {
+    public function storePlan(array $input, array $billingCycle): mixed {
         if (isset($input['billing_cycle']) && $input['billing_cycle'] != 'custom') {
-            $limits                    = $billingCycle[$input['billing_cycle']];
+            $limits = $billingCycle[$input['billing_cycle']];
             $input['frequency_amount'] = $limits['frequency_amount'];
-            $input['frequency_unit']   = $limits['frequency_unit'];
+            $input['frequency_unit'] = $limits['frequency_unit'];
         }
 
         $sender_id_plan = SenderidPlan::create($input);
-        if ( ! $sender_id_plan) {
+        if (!$sender_id_plan) {
             throw new GeneralException(__('locale.exceptions.something_went_wrong'));
         }
 
@@ -310,15 +309,14 @@ class EloquentSenderIDRepository extends EloquentBaseRepository implements Sende
     /**
      * pay the payment
      *
-     * @param  Senderid  $senderid
-     * @param  array  $input
+     * @param Senderid $senderid
+     * @param array $input
      *
      * @return JsonResponse
      * @throws Exception
      * @throws InvalidArgumentException
      */
-    public function payPayment(Senderid $senderid, array $input): JsonResponse
-    {
+    public function payPayment(Senderid $senderid, array $input): JsonResponse {
 
         $paymentMethod = PaymentMethods::where('status', true)->where('type', $input['payment_methods'])->first();
 
@@ -342,21 +340,21 @@ class EloquentSenderIDRepository extends EloquentBaseRepository implements Sende
                     $request->prefer('return=representation');
 
                     $request->body = [
-                            "intent"              => "CAPTURE",
-                            "purchase_units"      => [[
-                                    "reference_id" => $senderid->user->id.'_'.$senderid->uid,
-                                    'description'  => __('locale.sender_id.payment_for_sender_id').' '.$senderid->sender_id,
-                                    "amount"       => [
-                                            "value"         => $senderid->price,
-                                            "currency_code" => $senderid->currency->code,
-                                    ],
-                            ]],
-                            "application_context" => [
-                                    'brand_name' => config('app.name'),
-                                    'locale'     => config('app.locale'),
-                                    "cancel_url" => route('customer.senderid.payment_cancel', $senderid->uid),
-                                    "return_url" => route('customer.senderid.payment_success', $senderid->uid),
+                        "intent" => "CAPTURE",
+                        "purchase_units" => [[
+                            "reference_id" => $senderid->user->id . '_' . $senderid->uid,
+                            'description' => __('locale.sender_id.payment_for_sender_id') . ' ' . $senderid->sender_id,
+                            "amount" => [
+                                "value" => $senderid->price,
+                                "currency_code" => $senderid->currency->code,
                             ],
+                        ]],
+                        "application_context" => [
+                            'brand_name' => config('app.name'),
+                            'locale' => config('app.locale'),
+                            "cancel_url" => route('customer.senderid.payment_cancel', $senderid->uid),
+                            "return_url" => route('customer.senderid.payment_success', $senderid->uid),
+                        ],
                     ];
 
                     try {
@@ -372,27 +370,27 @@ class EloquentSenderIDRepository extends EloquentBaseRepository implements Sende
                         }
 
                         if (isset($redirect_url)) {
-                            if ( ! empty($response->result->id)) {
+                            if (!empty($response->result->id)) {
                                 Session::put('payment_method', $paymentMethod->type);
                                 Session::put('paypal_payment_id', $response->result->id);
                             }
 
                             return response()->json([
-                                    'status'       => 'success',
-                                    'redirect_url' => $redirect_url,
+                                'status' => 'success',
+                                'redirect_url' => $redirect_url,
                             ]);
                         }
 
                         return response()->json([
-                                'status'  => 'error',
-                                'message' => __('locale.exceptions.something_went_wrong'),
+                            'status' => 'error',
+                            'message' => __('locale.exceptions.something_went_wrong'),
                         ]);
 
 
                     } catch (Exception $exception) {
                         return response()->json([
-                                'status'  => 'error',
-                                'message' => $exception->getMessage(),
+                            'status' => 'error',
+                            'message' => $exception->getMessage(),
                         ]);
                     }
 
@@ -400,67 +398,67 @@ class EloquentSenderIDRepository extends EloquentBaseRepository implements Sende
 
                     try {
                         $gateway = new Gateway([
-                                'environment' => $credentials->environment,
-                                'merchantId'  => $credentials->merchant_id,
-                                'publicKey'   => $credentials->public_key,
-                                'privateKey'  => $credentials->private_key,
+                            'environment' => $credentials->environment,
+                            'merchantId' => $credentials->merchant_id,
+                            'publicKey' => $credentials->public_key,
+                            'privateKey' => $credentials->private_key,
                         ]);
 
                         $clientToken = $gateway->clientToken()->generate();
 
                         return response()->json([
-                                'status' => 'success',
-                                'token'  => $clientToken,
+                            'status' => 'success',
+                            'token' => $clientToken,
                         ]);
                     } catch (Exception $exception) {
                         return response()->json([
-                                'status'  => 'error',
-                                'message' => $exception->getMessage(),
+                            'status' => 'error',
+                            'message' => $exception->getMessage(),
                         ]);
                     }
 
                 case PaymentMethods::TYPE_STRIPE:
 
                     $publishable_key = $credentials->publishable_key;
-                    $secret_key      = $credentials->secret_key;
+                    $secret_key = $credentials->secret_key;
 
                     Stripe::setApiKey($secret_key);
 
                     try {
                         $checkout_session = \Stripe\Checkout\Session::create([
-                                'payment_method_types' => ['card'],
-                                'customer_email'       => $input['email'],
-                                'line_items'           => [[
-                                        'price_data' => [
-                                                'currency'     => $senderid->currency->code,
-                                                'unit_amount'  => $senderid->price * 100,
-                                                'product_data' => [
-                                                        'name' => __('locale.sender_id.payment_for_sender_id').' '.$senderid->sender_id,
-                                                ],
-                                        ],
-                                        'quantity'   => 1,
-                                ]],
-                                'mode'                 => 'payment',
-                                'success_url'          => route('customer.senderid.payment_success', $senderid->uid),
-                                'cancel_url'           => route('customer.senderid.payment_cancel', $senderid->uid),
+                            'payment_method_types' => ['card'],
+                            'customer_email' => $input['email'],
+                            'line_items' => [[
+                                'price_data' => [
+                                    'currency' => $senderid->currency->code,
+                                    'unit_amount' => $senderid->price * 100,
+                                    'product_data' => [
+                                        'name' => __('locale.sender_id.payment_for_sender_id') . ' ' . $senderid->sender_id,
+                                    ],
+                                ],
+                                'quantity' => 1,
+                            ]],
+                            'mode' => 'payment',
+                            'success_url' => route('customer.senderid.payment_success', $senderid->uid),
+                            'cancel_url' => route('customer.senderid.payment_cancel', $senderid->uid),
                         ]);
 
-                        if ( ! empty($checkout_session->id)) {
+                        if (!empty($checkout_session->id)) {
                             Session::put('payment_method', $paymentMethod->type);
                             Session::put('session_id', $checkout_session->id);
                         }
 
                         return response()->json([
-                                'status'          => 'success',
-                                'session_id'      => $checkout_session->id,
-                                'publishable_key' => $publishable_key,
+                            'status' => 'success',
+                            'session_id' => $checkout_session->id,
+                            'publishable_key' => $publishable_key,
                         ]);
 
                     } catch (Exception $exception) {
 
                         return response()->json([
-                                'status'  => 'error',
-                                'message' => $exception->getMessage(),
+                            'status' => 'error',
+                            'message' => $exception->getMessage(),
                         ]);
 
                     }
@@ -468,8 +466,8 @@ class EloquentSenderIDRepository extends EloquentBaseRepository implements Sende
                 case PaymentMethods::TYPE_AUTHORIZE_NET:
                 case PaymentMethods::TYPE_VODACOMMPESA:
                     return response()->json([
-                            'status'      => 'success',
-                            'credentials' => $credentials,
+                        'status' => 'success',
+                        'credentials' => $credentials,
                     ]);
 
                 case PaymentMethods::TYPE_2CHECKOUT:
@@ -483,10 +481,10 @@ class EloquentSenderIDRepository extends EloquentBaseRepository implements Sende
                         $checkout->param('demo', 'Y');
                     }
                     $checkout->param('return_url', route('customer.senderid.payment_success', $senderid->uid));
-                    $checkout->param('li_0_name', __('locale.sender_id.payment_for_sender_id').' '.$senderid->sender_id);
+                    $checkout->param('li_0_name', __('locale.sender_id.payment_for_sender_id') . ' ' . $senderid->sender_id);
                     $checkout->param('li_0_price', $senderid->price);
                     $checkout->param('li_0_quantity', 1);
-                    $checkout->param('card_holder_name', $input['first_name'].' '.$input['last_name']);
+                    $checkout->param('card_holder_name', $input['first_name'] . ' ' . $input['last_name']);
                     $checkout->param('city', $input['city']);
                     $checkout->param('country', $input['country']);
                     $checkout->param('email', $input['email']);
@@ -500,40 +498,40 @@ class EloquentSenderIDRepository extends EloquentBaseRepository implements Sende
                     $curl = curl_init();
 
                     curl_setopt_array($curl, [
-                            CURLOPT_URL            => "https://api.paystack.co/transaction/initialize",
-                            CURLOPT_RETURNTRANSFER => true,
-                            CURLOPT_CUSTOMREQUEST  => "POST",
-                            CURLOPT_POSTFIELDS     => json_encode([
-                                    'amount'   => $senderid->price * 100,
-                                    'email'    => $input['email'],
-                                    'metadata' => [
-                                            'sender_id'    => $senderid->uid,
-                                            'request_type' => 'senderid_payment',
-                                    ],
-                            ]),
-                            CURLOPT_HTTPHEADER     => [
-                                    "authorization: Bearer ".$credentials->secret_key,
-                                    "content-type: application/json",
-                                    "cache-control: no-cache",
+                        CURLOPT_URL => "https://api.paystack.co/transaction/initialize",
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_CUSTOMREQUEST => "POST",
+                        CURLOPT_POSTFIELDS => json_encode([
+                            'amount' => $senderid->price * 100,
+                            'email' => $input['email'],
+                            'metadata' => [
+                                'sender_id' => $senderid->uid,
+                                'request_type' => 'senderid_payment',
                             ],
+                        ]),
+                        CURLOPT_HTTPHEADER => [
+                            "authorization: Bearer " . $credentials->secret_key,
+                            "content-type: application/json",
+                            "cache-control: no-cache",
+                        ],
                     ]);
 
                     $response = curl_exec($curl);
-                    $err      = curl_error($curl);
+                    $err = curl_error($curl);
 
                     curl_close($curl);
 
                     if ($response === false) {
                         return response()->json([
-                                'status'  => 'error',
-                                'message' => 'Php curl show false value. Please contact with your provider',
+                            'status' => 'error',
+                            'message' => 'Php curl show false value. Please contact with your provider',
                         ]);
                     }
 
                     if ($err) {
                         return response()->json([
-                                'status'  => 'error',
-                                'message' => $err,
+                            'status' => 'error',
+                            'message' => $err,
                         ]);
                     }
 
@@ -543,15 +541,15 @@ class EloquentSenderIDRepository extends EloquentBaseRepository implements Sende
                     if ($result->status != 1) {
 
                         return response()->json([
-                                'status'  => 'error',
-                                'message' => $result->message,
+                            'status' => 'error',
+                            'message' => $result->message,
                         ]);
                     }
 
 
                     return response()->json([
-                            'status'       => 'success',
-                            'redirect_url' => $result->data->authorization_url,
+                        'status' => 'success',
+                        'redirect_url' => $result->data->authorization_url,
                     ]);
 
                 case PaymentMethods::TYPE_PAYU:
@@ -565,8 +563,8 @@ class EloquentSenderIDRepository extends EloquentBaseRepository implements Sende
 
                     $payu->param('merchantId', $credentials->client_id);
                     $payu->param('ApiKey', $credentials->client_secret);
-                    $payu->param('referenceCode', 'senderID'.$senderid->uid);
-                    $payu->param('description', __('locale.sender_id.payment_for_sender_id').' '.$senderid->sender_id);
+                    $payu->param('referenceCode', 'senderID' . $senderid->uid);
+                    $payu->param('description', __('locale.sender_id.payment_for_sender_id') . ' ' . $senderid->sender_id);
                     $payu->param('amount', $senderid->price);
                     $payu->param('currency', $senderid->currency->code);
                     $payu->param('buyerEmail', $input['email']);
@@ -580,15 +578,15 @@ class EloquentSenderIDRepository extends EloquentBaseRepository implements Sende
                 case PaymentMethods::TYPE_PAYNOW:
 
                     $paynow = new Paynow(
-                            $credentials->integration_id,
-                            $credentials->integration_key,
-                            route('customer.callback.paynow'),
-                            route('customer.senderid.payment_success', $senderid->uid)
+                        $credentials->integration_id,
+                        $credentials->integration_key,
+                        route('customer.callback.paynow'),
+                        route('customer.senderid.payment_success', $senderid->uid)
                     );
 
 
                     $payment = $paynow->createPayment($senderid->uid, $input['email']);
-                    $payment->add(__('locale.sender_id.payment_for_sender_id').' '.$senderid->sender_id, $senderid->price);
+                    $payment->add(__('locale.sender_id.payment_for_sender_id') . ' ' . $senderid->sender_id, $senderid->price);
 
 
                     try {
@@ -600,21 +598,21 @@ class EloquentSenderIDRepository extends EloquentBaseRepository implements Sende
                             Session::put('paynow_poll_url', $response->pollUrl());
 
                             return response()->json([
-                                    'status'       => 'success',
-                                    'redirect_url' => $response->redirectUrl(),
+                                'status' => 'success',
+                                'redirect_url' => $response->redirectUrl(),
                             ]);
                         }
 
                         return response()->json([
-                                'status'  => 'error',
-                                'message' => __('locale.exceptions.something_went_wrong'),
+                            'status' => 'error',
+                            'message' => __('locale.exceptions.something_went_wrong'),
                         ]);
 
 
                     } catch (ConnectionException|HashMismatchException|InvalidIntegrationException|Exception $e) {
                         return response()->json([
-                                'status'  => 'error',
-                                'message' => $e->getMessage(),
+                            'status' => 'error',
+                            'message' => $e->getMessage(),
                         ]);
                     }
 
@@ -625,12 +623,12 @@ class EloquentSenderIDRepository extends EloquentBaseRepository implements Sende
                     $coinPayment = new CoinPayments();
 
                     $order = [
-                            'merchant'    => $credentials->merchant_id,
-                            'item_name'   => __('locale.sender_id.payment_for_sender_id').' '.$senderid->sender_id,
-                            'amountf'     => $senderid->price,
-                            'currency'    => $senderid->currency->code,
-                            'success_url' => route('customer.senderid.payment_success', $senderid->uid),
-                            'cancel_url'  => route('customer.senderid.payment_cancel', $senderid->uid),
+                        'merchant' => $credentials->merchant_id,
+                        'item_name' => __('locale.sender_id.payment_for_sender_id') . ' ' . $senderid->sender_id,
+                        'amountf' => $senderid->price,
+                        'currency' => $senderid->currency->code,
+                        'success_url' => route('customer.senderid.payment_success', $senderid->uid),
+                        'cancel_url' => route('customer.senderid.payment_cancel', $senderid->uid),
                     ];
 
                     foreach ($order as $item => $value) {
@@ -645,23 +643,23 @@ class EloquentSenderIDRepository extends EloquentBaseRepository implements Sende
 
                     $name = $input['first_name'];
                     if (isset($input['last_name'])) {
-                        $name .= ' '.$input['last_name'];
+                        $name .= ' ' . $input['last_name'];
                     }
 
                     $payload = [
-                            'purpose'                 => __('locale.sender_id.payment_for_sender_id').' '.$senderid->sender_id,
-                            'amount'                  => $senderid->price,
-                            'phone'                   => $input['phone'],
-                            'buyer_name'              => $name,
-                            'redirect_url'            => route('customer.senderid.payment_success', $senderid->uid),
-                            'send_email'              => true,
-                            'email'                   => $input['email'],
-                            'allow_repeated_payments' => false,
+                        'purpose' => __('locale.sender_id.payment_for_sender_id') . ' ' . $senderid->sender_id,
+                        'amount' => $senderid->price,
+                        'phone' => $input['phone'],
+                        'buyer_name' => $name,
+                        'redirect_url' => route('customer.senderid.payment_success', $senderid->uid),
+                        'send_email' => true,
+                        'email' => $input['email'],
+                        'allow_repeated_payments' => false,
                     ];
 
                     $headers = [
-                            "X-Api-Key:".$credentials->api_key,
-                            "X-Auth-Token:".$credentials->auth_token,
+                        "X-Api-Key:" . $credentials->api_key,
+                        "X-Auth-Token:" . $credentials->auth_token,
                     ];
 
                     $ch = curl_init();
@@ -683,21 +681,21 @@ class EloquentSenderIDRepository extends EloquentBaseRepository implements Sende
                             Session::put('payment_request_id', $response->payment_request->id);
 
                             return response()->json([
-                                    'status'       => 'success',
-                                    'redirect_url' => $response->payment_request->longurl,
+                                'status' => 'success',
+                                'redirect_url' => $response->payment_request->longurl,
                             ]);
                         }
 
                         return response()->json([
-                                'status'  => 'error',
-                                'message' => $response->message,
+                            'status' => 'error',
+                            'message' => $response->message,
                         ]);
 
                     }
 
                     return response()->json([
-                            'status'  => 'error',
-                            'message' => __('locale.exceptions.something_went_wrong'),
+                        'status' => 'error',
+                        'message' => __('locale.exceptions.something_went_wrong'),
                     ]);
 
                 case PaymentMethods::TYPE_PAYUMONEY:
@@ -705,9 +703,9 @@ class EloquentSenderIDRepository extends EloquentBaseRepository implements Sende
                     Session::put('payment_method', $paymentMethod->type);
 
                     $environment = $credentials->environment;
-                    $txnid       = substr(hash('sha256', mt_rand().microtime()), 0, 20);
-                    $pinfo       = __('locale.sender_id.payment_for_sender_id').' '.$senderid->sender_id;
-                    $hash        = strtolower(hash('sha512', $credentials->merchant_key.'|'.$txnid.'|'.$senderid->price.'|'.$pinfo.'|'.$input['first_name'].'|'.$input['email'].'||||||||||||'.$credentials->merchant_salt));
+                    $txnid = substr(hash('sha256', mt_rand() . microtime()), 0, 20);
+                    $pinfo = __('locale.sender_id.payment_for_sender_id') . ' ' . $senderid->sender_id;
+                    $hash = strtolower(hash('sha512', $credentials->merchant_key . '|' . $txnid . '|' . $senderid->price . '|' . $pinfo . '|' . $input['first_name'] . '|' . $input['email'] . '||||||||||||' . $credentials->merchant_salt));
 
                     $payumoney = new PayUMoney($environment);
 
@@ -747,12 +745,12 @@ class EloquentSenderIDRepository extends EloquentBaseRepository implements Sende
                         $api = new Api($credentials->key_id, $credentials->key_secret);
 
                         $link = $api->invoice->create([
-                                'type'        => 'link',
-                                'amount'      => $senderid->price * 100,
-                                'description' => __('locale.sender_id.payment_for_sender_id').' '.$senderid->sender_id,
-                                'customer'    => [
-                                        'email' => $input['email'],
-                                ],
+                            'type' => 'link',
+                            'amount' => $senderid->price * 100,
+                            'description' => __('locale.sender_id.payment_for_sender_id') . ' ' . $senderid->sender_id,
+                            'customer' => [
+                                'email' => $input['email'],
+                            ],
                         ]);
 
 
@@ -761,48 +759,48 @@ class EloquentSenderIDRepository extends EloquentBaseRepository implements Sende
                             Session::put('razorpay_order_id', $link->order_id);
 
                             $senderid->update([
-                                    'transaction_id' => $link->order_id,
+                                'transaction_id' => $link->order_id,
                             ]);
 
                             return response()->json([
-                                    'status'       => 'success',
-                                    'redirect_url' => $link->short_url,
+                                'status' => 'success',
+                                'redirect_url' => $link->short_url,
                             ]);
                         }
 
                         return response()->json([
-                                'status'  => 'error',
-                                'message' => __('locale.exceptions.something_went_wrong'),
+                            'status' => 'error',
+                            'message' => __('locale.exceptions.something_went_wrong'),
                         ]);
 
                     } catch (BadRequestError $exception) {
                         return response()->json([
-                                'status'  => 'error',
-                                'message' => $exception->getMessage(),
+                            'status' => 'error',
+                            'message' => $exception->getMessage(),
                         ]);
                     }
 
                 case PaymentMethods::TYPE_SSLCOMMERZ:
 
-                    $post_data                 = [];
-                    $post_data['store_id']     = $credentials->store_id;
+                    $post_data = [];
+                    $post_data['store_id'] = $credentials->store_id;
                     $post_data['store_passwd'] = $credentials->store_passwd;
                     $post_data['total_amount'] = $senderid->price;
-                    $post_data['currency']     = $senderid->currency->code;
-                    $post_data['tran_id']      = $senderid->uid;
-                    $post_data['success_url']  = route('customer.callback.sslcommerz.senderid', $senderid->uid);
-                    $post_data['fail_url']     = route('customer.callback.sslcommerz.senderid', $senderid->uid);
-                    $post_data['cancel_url']   = route('customer.callback.sslcommerz.senderid', $senderid->uid);
+                    $post_data['currency'] = $senderid->currency->code;
+                    $post_data['tran_id'] = $senderid->uid;
+                    $post_data['success_url'] = route('customer.callback.sslcommerz.senderid', $senderid->uid);
+                    $post_data['fail_url'] = route('customer.callback.sslcommerz.senderid', $senderid->uid);
+                    $post_data['cancel_url'] = route('customer.callback.sslcommerz.senderid', $senderid->uid);
 
                     $post_data['product_category'] = "senderid";
-                    $post_data['emi_option']       = "0";
+                    $post_data['emi_option'] = "0";
 
-                    $post_data['cus_name']    = $input['first_name'];
-                    $post_data['cus_email']   = $input['email'];
-                    $post_data['cus_add1']    = $input['address'];
-                    $post_data['cus_city']    = $input['city'];
+                    $post_data['cus_name'] = $input['first_name'];
+                    $post_data['cus_email'] = $input['email'];
+                    $post_data['cus_add1'] = $input['address'];
+                    $post_data['cus_city'] = $input['city'];
                     $post_data['cus_country'] = $input['country'];
-                    $post_data['cus_phone']   = $input["phone"];
+                    $post_data['cus_phone'] = $input["phone"];
 
 
                     if (isset($input['postcode'])) {
@@ -811,15 +809,15 @@ class EloquentSenderIDRepository extends EloquentBaseRepository implements Sende
 
 
                     $post_data['shipping_method'] = 'No';
-                    $post_data['num_of_item']     = '1';
+                    $post_data['num_of_item'] = '1';
 
 
-                    $post_data['cart']            = json_encode([
-                            ["product" => __('locale.sender_id.payment_for_sender_id').' '.$senderid->sender_id, "amount" => $senderid->price],
+                    $post_data['cart'] = json_encode([
+                        ["product" => __('locale.sender_id.payment_for_sender_id') . ' ' . $senderid->sender_id, "amount" => $senderid->price],
                     ]);
-                    $post_data['product_name']    = __('locale.sender_id.payment_for_sender_id').' '.$senderid->sender_id;
+                    $post_data['product_name'] = __('locale.sender_id.payment_for_sender_id') . ' ' . $senderid->sender_id;
                     $post_data['product_profile'] = 'non-physical-goods';
-                    $post_data['product_amount']  = $senderid->price;
+                    $post_data['product_amount'] = $senderid->price;
 
                     if ($credentials->environment == 'sandbox') {
                         $direct_api_url = "https://sandbox.sslcommerz.com/gwprocess/v4/api.php";
@@ -837,31 +835,31 @@ class EloquentSenderIDRepository extends EloquentBaseRepository implements Sende
                     curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, false); # KEEP IT FALSE IF YOU RUN FROM LOCAL PC
 
                     $content = curl_exec($handle);
-                    $code    = curl_getinfo($handle, CURLINFO_HTTP_CODE);
+                    $code = curl_getinfo($handle, CURLINFO_HTTP_CODE);
 
-                    if ($code == 200 && ! (curl_errno($handle))) {
+                    if ($code == 200 && !(curl_errno($handle))) {
                         curl_close($handle);
                         $response = json_decode($content, true);
 
                         if (isset($response['GatewayPageURL']) && $response['GatewayPageURL'] != "") {
 
                             return response()->json([
-                                    'status'       => 'success',
-                                    'redirect_url' => $response['GatewayPageURL'],
+                                'status' => 'success',
+                                'redirect_url' => $response['GatewayPageURL'],
                             ]);
 
                         } else {
                             return response()->json([
-                                    'status'  => 'error',
-                                    'message' => $response['failedreason'],
+                                'status' => 'error',
+                                'message' => $response['failedreason'],
                             ]);
                         }
                     } else {
                         curl_close($handle);
 
                         return response()->json([
-                                'status'  => 'error',
-                                'message' => 'FAILED TO CONNECT WITH SSLCOMMERZ API',
+                            'status' => 'error',
+                            'message' => 'FAILED TO CONNECT WITH SSLCOMMERZ API',
                         ]);
                     }
 
@@ -873,7 +871,7 @@ class EloquentSenderIDRepository extends EloquentBaseRepository implements Sende
 
                     $checkout->param('store_id', $credentials->store_id);
                     $checkout->param('signature_key', $credentials->signature_key);
-                    $checkout->param('desc', __('locale.sender_id.payment_for_sender_id').' '.$senderid->sender_id);
+                    $checkout->param('desc', __('locale.sender_id.payment_for_sender_id') . ' ' . $senderid->sender_id);
                     $checkout->param('amount', $senderid->price);
                     $checkout->param('currency', $senderid->currency->code);
                     $checkout->param('tran_id', $senderid->uid);
@@ -904,9 +902,9 @@ class EloquentSenderIDRepository extends EloquentBaseRepository implements Sende
                     $checkout->param('currency', $senderid->currency->code);
                     $checkout->param('tx_ref', $senderid->uid);
                     $checkout->param('redirect_url', route('customer.callback.flutterwave.senderid'));
-                    $checkout->param('customizations[title]', __('locale.sender_id.payment_for_sender_id').' '.$senderid->sender_id);
-                    $checkout->param('customizations[description]', __('locale.sender_id.payment_for_sender_id').' '.$senderid->sender_id);
-                    $checkout->param('customer[name]', $input['first_name'].' '.$input['last_name']);
+                    $checkout->param('customizations[title]', __('locale.sender_id.payment_for_sender_id') . ' ' . $senderid->sender_id);
+                    $checkout->param('customizations[description]', __('locale.sender_id.payment_for_sender_id') . ' ' . $senderid->sender_id);
+                    $checkout->param('customer[name]', $input['first_name'] . ' ' . $input['last_name']);
                     $checkout->param('customer[email]', $input['email']);
                     $checkout->param('customer[phone_number]', $input['phone']);
                     $checkout->gw_submit();
@@ -920,20 +918,20 @@ class EloquentSenderIDRepository extends EloquentBaseRepository implements Sende
                         $payment_url = 'https://secure1.sandbox.directpay.online';
                     }
 
-                    $companyToken    = $credentials->company_token;
-                    $accountType     = $credentials->account_type;
-                    $paymentAmount   = $senderid->price;
+                    $companyToken = $credentials->company_token;
+                    $accountType = $credentials->account_type;
+                    $paymentAmount = $senderid->price;
                     $paymentCurrency = $senderid->currency->code;
-                    $reference       = uniqid();
-                    $odate           = date('Y/m/d H:i');
-                    $redirectURL     = route('customer.senderid.payment_success', $senderid->uid);
-                    $backURL         = route('customer.senderid.payment_cancel', $senderid->uid);
+                    $reference = uniqid();
+                    $odate = date('Y/m/d H:i');
+                    $redirectURL = route('customer.senderid.payment_success', $senderid->uid);
+                    $backURL = route('customer.senderid.payment_cancel', $senderid->uid);
 
-                    $item_name = __('locale.sender_id.payment_for_sender_id').' '.$senderid->sender_id;
+                    $item_name = __('locale.sender_id.payment_for_sender_id') . ' ' . $senderid->sender_id;
 
-                    $customer_email      = auth()->user()->email;
+                    $customer_email = auth()->user()->email;
                     $customer_first_name = auth()->user()->first_name;
-                    $customer_last_name  = auth()->user()->last_name;
+                    $customer_last_name = auth()->user()->last_name;
 
                     $postXml = <<<POSTXML
 <?xml version="1.0" encoding="utf-8"?>
@@ -964,23 +962,23 @@ POSTXML;
 
                     $curl = curl_init();
                     curl_setopt_array($curl, [
-                            CURLOPT_URL            => $payment_url."/API/v6/",
-                            CURLOPT_RETURNTRANSFER => true,
-                            CURLOPT_ENCODING       => "",
-                            CURLOPT_MAXREDIRS      => 10,
-                            CURLOPT_TIMEOUT        => 30,
-                            CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
-                            CURLOPT_CUSTOMREQUEST  => "POST",
-                            CURLOPT_SSL_VERIFYPEER => false,
-                            CURLOPT_SSL_VERIFYHOST => false,
-                            CURLOPT_POSTFIELDS     => $postXml,
-                            CURLOPT_HTTPHEADER     => [
-                                    "cache-control: no-cache",
-                            ],
+                        CURLOPT_URL => $payment_url . "/API/v6/",
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_ENCODING => "",
+                        CURLOPT_MAXREDIRS => 10,
+                        CURLOPT_TIMEOUT => 30,
+                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                        CURLOPT_CUSTOMREQUEST => "POST",
+                        CURLOPT_SSL_VERIFYPEER => false,
+                        CURLOPT_SSL_VERIFYHOST => false,
+                        CURLOPT_POSTFIELDS => $postXml,
+                        CURLOPT_HTTPHEADER => [
+                            "cache-control: no-cache",
+                        ],
                     ]);
 
                     $response = curl_exec($curl);
-                    $error    = curl_error($curl);
+                    $error = curl_error($curl);
 
                     curl_close($curl);
 
@@ -989,8 +987,8 @@ POSTXML;
 
                         if ($xml->xpath('Result')[0] != '000') {
                             return response()->json([
-                                    'status'  => 'error',
-                                    'message' => ! empty($error) ? $error : 'Unknown error occurred in token creation',
+                                'status' => 'error',
+                                'message' => !empty($error) ? $error : 'Unknown error occurred in token creation',
                             ]);
                         }
 
@@ -999,29 +997,29 @@ POSTXML;
                         try {
                             $curl = curl_init();
                             curl_setopt_array($curl, [
-                                    CURLOPT_URL            => $payment_url."/API/v6/",
-                                    CURLOPT_RETURNTRANSFER => true,
-                                    CURLOPT_ENCODING       => "",
-                                    CURLOPT_MAXREDIRS      => 10,
-                                    CURLOPT_TIMEOUT        => 30,
-                                    CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
-                                    CURLOPT_CUSTOMREQUEST  => "POST",
-                                    CURLOPT_POSTFIELDS     => "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<API3G>\r\n  <CompanyToken>".$companyToken."</CompanyToken>\r\n  <Request>verifyToken</Request>\r\n  <TransactionToken>".$transToken."</TransactionToken>\r\n</API3G>",
-                                    CURLOPT_HTTPHEADER     => [
-                                            "cache-control: no-cache",
-                                    ],
+                                CURLOPT_URL => $payment_url . "/API/v6/",
+                                CURLOPT_RETURNTRANSFER => true,
+                                CURLOPT_ENCODING => "",
+                                CURLOPT_MAXREDIRS => 10,
+                                CURLOPT_TIMEOUT => 30,
+                                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                CURLOPT_CUSTOMREQUEST => "POST",
+                                CURLOPT_POSTFIELDS => "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<API3G>\r\n  <CompanyToken>" . $companyToken . "</CompanyToken>\r\n  <Request>verifyToken</Request>\r\n  <TransactionToken>" . $transToken . "</TransactionToken>\r\n</API3G>",
+                                CURLOPT_HTTPHEADER => [
+                                    "cache-control: no-cache",
+                                ],
                             ]);
 
                             $response = curl_exec($curl);
-                            $err      = curl_error($curl);
+                            $err = curl_error($curl);
 
                             curl_close($curl);
 
                             if (strlen($err) > 0) {
 
                                 return response()->json([
-                                        'status'  => 'error',
-                                        'message' => $err,
+                                    'status' => 'error',
+                                    'message' => $err,
                                 ]);
                             }
 
@@ -1031,22 +1029,22 @@ POSTXML;
                                 Session::put('payment_method', $paymentMethod->type);
 
                                 return response()->json([
-                                        'status'       => 'success',
-                                        'redirect_url' => $payment_url.'/payv2.php?ID='.$transToken,
+                                    'status' => 'success',
+                                    'redirect_url' => $payment_url . '/payv2.php?ID=' . $transToken,
                                 ]);
                             }
                         } catch (Exception $e) {
 
                             return response()->json([
-                                    'status'  => 'error',
-                                    'message' => $e->getMessage(),
+                                'status' => 'error',
+                                'message' => $e->getMessage(),
                             ]);
                         }
                     }
 
                     return response()->json([
-                            'status'  => 'error',
-                            'message' => ! empty($error) ? $error : 'Unknown error occurred in token creation',
+                        'status' => 'error',
+                        'message' => !empty($error) ? $error : 'Unknown error occurred in token creation',
                     ]);
 
                 case PaymentMethods::TYPE_PAYGATEGLOBAL:
@@ -1054,16 +1052,16 @@ POSTXML;
                     $order_id = str_random(10);
 
                     $parameters = [
-                            'token'    => $credentials->api_key,
-                            'amount'   => $senderid->price,
-                            'identify' => $order_id,
-                            'url'      => route('customer.senderid.payment_success', $senderid->uid),
+                        'token' => $credentials->api_key,
+                        'amount' => $senderid->price,
+                        'identify' => $order_id,
+                        'url' => route('customer.senderid.payment_success', $senderid->uid),
                     ];
                     $parameters = http_build_query($parameters);
 
                     return response()->json([
-                            'status'       => 'success',
-                            'redirect_url' => 'https://paygateglobal.com/v1/page?'.$parameters,
+                        'status' => 'success',
+                        'redirect_url' => 'https://paygateglobal.com/v1/page?' . $parameters,
                     ]);
 
                 case PaymentMethods::TYPE_ORANGEMONEY:
@@ -1071,16 +1069,16 @@ POSTXML;
                     $payment = new OrangeMoney($credentials->auth_header, $credentials->merchant_key);
 
                     $data = [
-                            "merchant_key" => $credentials->merchant_key,
-                            "currency"     => $senderid->currency->code,
-                            "order_id"     => str_random(10),
-                            "amount"       => $senderid->price,
-                            'payment_url'  => $credentials->payment_url,
-                            "return_url"   => route('customer.senderid.payment_cancel', $senderid->uid),
-                            "cancel_url"   => route('customer.senderid.payment_cancel', $senderid->uid),
-                            "notif_url"    => route('customer.senderid.payment_success', $senderid->uid),
-                            "lang"         => config('app.locale'),
-                            "reference"    => $senderid->uid,
+                        "merchant_key" => $credentials->merchant_key,
+                        "currency" => $senderid->currency->code,
+                        "order_id" => str_random(10),
+                        "amount" => $senderid->price,
+                        'payment_url' => $credentials->payment_url,
+                        "return_url" => route('customer.senderid.payment_cancel', $senderid->uid),
+                        "cancel_url" => route('customer.senderid.payment_cancel', $senderid->uid),
+                        "notif_url" => route('customer.senderid.payment_success', $senderid->uid),
+                        "lang" => config('app.locale'),
+                        "reference" => $senderid->uid,
                     ];
 
                     $callback_data = $payment->getPaymentUrl($data);
@@ -1091,18 +1089,18 @@ POSTXML;
                         Session::put('payment_request_id', $callback_data['notif_token']);
 
                         return response()->json([
-                                'status'       => 'success',
-                                'redirect_url' => $callback_data['payment_url'],
+                            'status' => 'success',
+                            'redirect_url' => $callback_data['payment_url'],
                         ]);
                     } elseif (array_key_exists('error', $callback_data)) {
                         return response()->json([
-                                'status'  => 'error',
-                                'message' => $callback_data['error'],
+                            'status' => 'error',
+                            'message' => $callback_data['error'],
                         ]);
                     } else {
                         return response()->json([
-                                'status'  => 'error',
-                                'message' => 'FAILED TO CONNECT WITH OrangeMoney API',
+                            'status' => 'error',
+                            'message' => 'FAILED TO CONNECT WITH OrangeMoney API',
                         ]);
                     }
 
@@ -1111,23 +1109,23 @@ POSTXML;
                     $transaction_id = str_random(10);
 
                     $payment_data = [
-                            'apikey'                => $credentials->api_key,
-                            'site_id'               => $credentials->site_id,
-                            'transaction_id'        => $transaction_id,
-                            'amount'                => $senderid->price,
-                            'currency'              => $senderid->currency->code,
-                            'description'           => __('locale.sender_id.payment_for_sender_id').' '.$senderid->sender_id,
-                            'customer_name'         => $input['first_name'].' '.$input['last_name'],
-                            'customer_email'        => $input['email'],
-                            'customer_phone_number' => $input['phone'],
-                            'customer_address'      => $input['address'],
-                            'customer_city'         => $input['city'],
-                            'customer_country'      => Country::getIsoCode($input['country']),
-                            'return_url'            => route('customer.senderid.payment_success', $senderid->uid),
-                            'notify_url'            => route('customer.senderid.payment_cancel', $senderid->uid),
-                            'channels'              => 'ALL',
-                            'lang'                  => config('app.locale'),
-                            'metadata'              => 'sender_id_'.$senderid->uid,
+                        'apikey' => $credentials->api_key,
+                        'site_id' => $credentials->site_id,
+                        'transaction_id' => $transaction_id,
+                        'amount' => $senderid->price,
+                        'currency' => $senderid->currency->code,
+                        'description' => __('locale.sender_id.payment_for_sender_id') . ' ' . $senderid->sender_id,
+                        'customer_name' => $input['first_name'] . ' ' . $input['last_name'],
+                        'customer_email' => $input['email'],
+                        'customer_phone_number' => $input['phone'],
+                        'customer_address' => $input['address'],
+                        'customer_city' => $input['city'],
+                        'customer_country' => Country::getIsoCode($input['country']),
+                        'return_url' => route('customer.senderid.payment_success', $senderid->uid),
+                        'notify_url' => route('customer.senderid.payment_cancel', $senderid->uid),
+                        'channels' => 'ALL',
+                        'lang' => config('app.locale'),
+                        'metadata' => 'sender_id_' . $senderid->uid,
                     ];
 
                     if (isset($input['postcode'])) {
@@ -1140,32 +1138,32 @@ POSTXML;
                         $curl = curl_init();
 
                         curl_setopt_array($curl, [
-                                CURLOPT_URL            => $credentials->payment_url,
-                                CURLOPT_RETURNTRANSFER => true,
-                                CURLOPT_CUSTOMREQUEST  => "POST",
-                                CURLOPT_POSTFIELDS     => json_encode($payment_data),
-                                CURLOPT_HTTPHEADER     => [
-                                        "content-type: application/json",
-                                        "cache-control: no-cache",
-                                ],
+                            CURLOPT_URL => $credentials->payment_url,
+                            CURLOPT_RETURNTRANSFER => true,
+                            CURLOPT_CUSTOMREQUEST => "POST",
+                            CURLOPT_POSTFIELDS => json_encode($payment_data),
+                            CURLOPT_HTTPHEADER => [
+                                "content-type: application/json",
+                                "cache-control: no-cache",
+                            ],
                         ]);
 
                         $response = curl_exec($curl);
-                        $err      = curl_error($curl);
+                        $err = curl_error($curl);
 
                         curl_close($curl);
 
                         if ($response === false) {
                             return response()->json([
-                                    'status'  => 'error',
-                                    'message' => 'Php curl show false value. Please contact with your provider',
+                                'status' => 'error',
+                                'message' => 'Php curl show false value. Please contact with your provider',
                             ]);
                         }
 
                         if ($err) {
                             return response()->json([
-                                    'status'  => 'error',
-                                    'message' => $err,
+                                'status' => 'error',
+                                'message' => $err,
                             ]);
                         }
 
@@ -1180,46 +1178,99 @@ POSTXML;
                                 Session::put('cinetPay_payment_token', $result['data']['payment_token']);
 
                                 return response()->json([
-                                        'status'       => 'success',
-                                        'redirect_url' => $result['data']['payment_url'],
+                                    'status' => 'success',
+                                    'redirect_url' => $result['data']['payment_url'],
                                 ]);
                             }
 
                             return response()->json([
-                                    'status'  => 'error',
-                                    'message' => $result['message'],
+                                'status' => 'error',
+                                'message' => $result['message'],
                             ]);
                         }
 
                         return response()->json([
-                                'status'       => 'error',
-                                'redirect_url' => __('locale.exceptions.something_went_wrong'),
+                            'status' => 'error',
+                            'redirect_url' => __('locale.exceptions.something_went_wrong'),
                         ]);
                     } catch (Exception $ex) {
 
                         return response()->json([
-                                'status'       => 'error',
-                                'redirect_url' => $ex->getMessage(),
+                            'status' => 'error',
+                            'redirect_url' => $ex->getMessage(),
                         ]);
                     }
 
                 case PaymentMethods::TYPE_CASH:
 
                     return response()->json([
-                            'status' => 'success',
-                            'data'   => $credentials,
+                        'status' => 'success',
+                        'data' => $credentials,
                     ]);
+
+                // custom code pape
+                case PaymentMethods::TYPE_PAYDUNYA:
+                    try {
+
+                        $price = $senderid->price;
+                        $item_name = __('locale.sender_id.payment_for_sender_id') . ' ' . $senderid->sender_id;
+                        $currency_code = $senderid->currency->code;
+                        Paydunya_Setup::setMasterKey($credentials->merchant_key);
+                        Paydunya_Setup::setPublicKey($credentials->public_key);
+                        Paydunya_Setup::setPrivateKey($credentials->private_key);
+                        Paydunya_Setup::setToken($credentials->client_secret);
+
+                        $mode = $credentials->environment == 'production' ? 'live' : "test";
+                        Paydunya_Setup::setMode($mode);
+
+                        Paydunya_Checkout_Store::setReturnUrl(route('customer.callback.paydunya.senderid', $senderid->uid));
+                        Paydunya_Checkout_Store::setName("GEEX SMS"); // Seul le nom est requis
+                        Paydunya_Checkout_Store::setTagline("SMS Marketing");
+                        Paydunya_Checkout_Store::setPhoneNumber("771307579");
+                        Paydunya_Checkout_Store::setPostalAddress("Dakar - Yoff Apecsy 2 ");
+                        Paydunya_Checkout_Store::setWebsiteUrl("https://www.geex-sms.com");
+                        Paydunya_Checkout_Store::setLogoUrl("https://www.geex-sms.com");
+
+                        $invoice = new Paydunya_Checkout_Invoice();
+                        $invoice->addItem($item_name, 1, $price, $price, $item_name);
+                        $invoice->setDescription($item_name);
+                        $invoice->setTotalAmount($price);
+                        //callback/paydunya/top-up
+
+                        $invoice->addCustomData("user_id", auth()->user()->id);
+                        $invoice->addCustomData("sender_id",$senderid->sender_id);
+                        $invoice->addCustomData("price", $price);
+                        $invoice->addCustomData("currency_code", $currency_code);
+                        if ($invoice->create()) {
+                            return response()->json([
+                                'status' => 'success',
+                                'redirect_url' => $invoice->getInvoiceUrl()
+                            ]);
+                        } else {
+                            echo $invoice->response_text;
+                        }
+                        return response()->json([
+                            'status' => 'error',
+                            'message' => __('locale.exceptions.something_went_wrong'),
+                        ]);
+
+                    } catch (BadRequestError $exception) {
+                        return response()->json([
+                            'status' => 'error',
+                            'message' => $exception->getMessage(),
+                        ]);
+                    }
 
             }
 
             return response()->json([
-                    'status'  => 'error',
-                    'message' => __('locale.payment_gateways.not_found'),
+                'status' => 'error',
+                'message' => __('locale.payment_gateways.not_found'),
             ]);
         }
 
-        return response()->json(['status'  => 'error',
-                                 'message' => __('locale.payment_gateways.not_found'),]);
+        return response()->json(['status' => 'error',
+            'message' => __('locale.payment_gateways.not_found'),]);
 
     }
 }

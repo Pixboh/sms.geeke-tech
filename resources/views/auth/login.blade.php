@@ -25,9 +25,11 @@
             <div class="d-none d-lg-flex col-lg-8 align-items-center p-5">
                 <div class="w-100 d-lg-flex align-items-center justify-content-center px-5">
                     @if($configData['theme'] === 'dark')
-                        <img class="img-fluid" src="{{asset('images/pages/login-v2-dark.svg')}}" alt="{{config('app.name')}}"/>
+                        <img class="img-fluid" src="{{asset('images/pages/login-v2-dark.svg')}}"
+                             alt="{{config('app.name')}}"/>
                     @else
-                        <img class="img-fluid" src="{{asset('images/pages/login-v2.svg')}}" alt="{{config('app.name')}}"/>
+                        <img class="img-fluid" src="{{asset('images/pages/login-v2.svg')}}"
+                             alt="{{config('app.name')}}"/>
                     @endif
                 </div>
             </div>
@@ -36,7 +38,7 @@
             <!-- Login-->
             <div class="d-flex col-lg-4 align-items-center auth-bg px-2 p-lg-5">
                 <div class="col-12 col-sm-8 col-md-6 col-lg-12 px-xl-2 mx-auto">
-                    <h2 class="card-title fw-bold mb-1">{{ __('locale.labels.welcome_to') }} {{config('app.name')}}</h2>
+                    <h2 class="card-title fw-bold mb-1">{{ __('locale.labels.login_welcome_to') }}</h2>
                     <p class="card-text mb-2">{{__('locale.auth.welcome_message')}}</p>
 
 
@@ -51,7 +53,9 @@
                         @csrf
                         <div class="mb-1">
                             <label class="form-label" for="email">{{ __('locale.labels.email') }}</label>
-                            <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" placeholder="{{ __('locale.labels.email') }}" value="{{ old('email') }}" required autocomplete="email" autofocus>
+                            <input id="email" type="email" class="form-control @error('email') is-invalid @enderror"
+                                   name="email" placeholder="{{ __('locale.labels.email') }}" value="{{ old('email') }}"
+                                   required autocomplete="email" autofocus>
 
                             @error('email')
                             <div class="alert alert-danger mt-1 alert-validation-msg" role="alert">
@@ -85,8 +89,10 @@
                             </div>
 
                             <div class="input-group input-group-merge form-password-toggle">
-                                <input id="password" type="password" class="form-control" name="password" placeholder="{{__('locale.labels.password')}}"
-                                       required autocomplete="password" @if(config('app.stage') == 'demo') value="12345678" @endif>
+                                <input id="password" type="password" class="form-control" name="password"
+                                       placeholder="{{__('locale.labels.password')}}"
+                                       required autocomplete="password"
+                                       @if(config('app.stage') == 'demo') value="12345678" @endif>
                                 <span class="input-group-text cursor-pointer"><i data-feather="eye"></i></span>
                             </div>
                         </div>
@@ -100,11 +106,14 @@
 
                         <div class="mb-1">
                             <div class="form-check">
-                                <input class="form-check-input" {{ old('remember') ? 'checked' : '' }} name="remember" id="remember-me" type="checkbox" tabindex="3"/>
-                                <label class="form-check-label" for="remember-me"> {{__('locale.auth.remember_me')}}</label>
+                                <input class="form-check-input" {{ old('remember') ? 'checked' : '' }} name="remember"
+                                       id="remember-me" type="checkbox" tabindex="3"/>
+                                <label class="form-check-label"
+                                       for="remember-me"> {{__('locale.auth.remember_me')}}</label>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100" tabindex="4">{{__('locale.auth.login')}}</button>
+                        <button type="submit" class="btn btn-primary w-100"
+                                tabindex="4">{{__('locale.auth.login')}}</button>
                     </form>
 
                     @if(config('account.can_register'))
@@ -122,25 +131,29 @@
                         <div class="auth-footer-btn d-flex justify-content-center">
 
                             @if(config('services.facebook.active'))
-                                <a class="btn btn-facebook" href="{{route('social.login', 'facebook')}}" data-bs-toggle="tooltip" data-bs-placement="top" title="Facebook">
+                                <a class="btn btn-facebook" href="{{route('social.login', 'facebook')}}"
+                                   data-bs-toggle="tooltip" data-bs-placement="top" title="Facebook">
                                     <i data-feather="facebook"></i>
                                 </a>
                             @endif
 
                             @if(config('services.twitter.active'))
-                                <a class="btn btn-twitter" href="{{route('social.login', 'twitter')}}" data-bs-toggle="tooltip" data-bs-placement="top" title="Twitter">
+                                <a class="btn btn-twitter" href="{{route('social.login', 'twitter')}}"
+                                   data-bs-toggle="tooltip" data-bs-placement="top" title="Twitter">
                                     <i data-feather="twitter"></i>
                                 </a>
                             @endif
 
                             @if(config('services.google.active'))
-                                <a class="btn btn-google" href="{{route('social.login', 'google')}}" data-bs-toggle="tooltip" data-bs-placement="top" title="Google">
+                                <a class="btn btn-google" href="{{route('social.login', 'google')}}"
+                                   data-bs-toggle="tooltip" data-bs-placement="top" title="Google">
                                     <i data-feather="mail"></i>
                                 </a>
                             @endif
 
                             @if(config('services.github.active'))
-                                <a class="btn btn-github" href="{{route('social.login', 'github')}}" data-bs-toggle="tooltip" data-bs-placement="top" title="Github">
+                                <a class="btn btn-github" href="{{route('social.login', 'github')}}"
+                                   data-bs-toggle="tooltip" data-bs-placement="top" title="Github">
                                     <i data-feather="github"></i>
                                 </a>
                             @endif

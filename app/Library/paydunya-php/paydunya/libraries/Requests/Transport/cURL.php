@@ -96,6 +96,7 @@ class Requests_Transport_cURL implements Requests_Transport {
 
 		curl_setopt($this->handle, CURLOPT_HEADER, false);
 		curl_setopt($this->handle, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($this->handle , CURLOPT_TIMEOUT, 90);
 		if ($this->version >= self::CURL_7_10_5) {
 			curl_setopt($this->handle, CURLOPT_ENCODING, '');
 		}

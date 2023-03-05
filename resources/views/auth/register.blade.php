@@ -159,7 +159,8 @@
                                             <label class="form-label required" for="locale">{{ __('locale.labels.language') }}</label>
                                             <select class="select2 w-100" name="locale" id="locale">
                                                 @foreach($languages as $language)
-                                                    <option value="{{ $language->code }}" {{old('locale') == $language->code ? 'selected': null }}> {{ $language->name }}</option>
+{{--                                                    <option value="{{ $language->code }}" {{old('locale') == $language->code ? 'selected': null }}> {{ $language->name }}</option>--}}
+                                                    <option value="{{ $language->code }}" {{config('app.locale') == $language->code ? 'selected': null }}> {{ $language->name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>

@@ -40,7 +40,7 @@
             <div class="d-flex col-lg-4 align-items-center auth-bg px-2 p-lg-5">
                 <div class="col-12 col-sm-8 col-md-6 col-lg-12 px-xl-2 mx-auto">
                     <h2 class="card-title fw-bold mb-1">{{ __('locale.labels.subscribe') }}</h2>
-                    <p class="card-text mb-2">{{ __('locale.labels.welcome_to') }} {{ $contact->name }}</p>
+                    <p class="card-text mb-2">{{ __('locale.labels.login_welcome_to') }} {{ $contact->name }}</p>
                     <form method="POST" class="auth-reset-password-form mt-2" action="{{ route('contacts.subscribe_url', $contact->uid) }}">
                         @csrf
 

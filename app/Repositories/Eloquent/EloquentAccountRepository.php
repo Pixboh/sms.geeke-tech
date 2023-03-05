@@ -1331,25 +1331,29 @@ POSTXML;
                         $mode = $credentials->environment == 'production' ? 'live' : "test";
                         Paydunya_Setup::setMode($mode);
 
-                        Paydunya_Checkout_Store::setReturnUrl($credentials->return_url);
                         Paydunya_Checkout_Store::setName("GEEX SMS"); // Seul le nom est requis
                         Paydunya_Checkout_Store::setTagline("SMS Marketing");
                         Paydunya_Checkout_Store::setPhoneNumber("771307579");
                         Paydunya_Checkout_Store::setPostalAddress("Dakar - Yoff Apecsy 2 ");
-                        Paydunya_Checkout_Store::setWebsiteUrl("https://www.geex-sms.com");
-                        Paydunya_Checkout_Store::setLogoUrl("https://www.geex-sms.com");
+                        Paydunya_Checkout_Store::setWebsiteUrl("https://geexsms.com");
+                        Paydunya_Checkout_Store::setLogoUrl("https://geexsms.com");
+
+                        // callbacks config
+                        Paydunya_Checkout_Store::setCancelUrl(route('customer.top_up.payment_cancel'));
+                        Paydunya_Checkout_Store::setReturnUrl(route('customer.callback.paydunya.top_up',
+                            ['user_id' => auth()->user()->id, 'sms_unit' => $input['sms_unit']]));
+                        Paydunya_Checkout_Store::setCallbackUrl($credentials->ipn_url);
 
                         $invoice = new Paydunya_Checkout_Invoice();
                         $invoice->addItem($item_name, 1, $price, $price, $item_name);
                         $invoice->setDescription($item_name);
                         $invoice->setTotalAmount($price);
-                        //callback/paydunya/top-up
 
                         $invoice->addCustomData("user_id", auth()->user()->id);
                         $invoice->addCustomData("sms_unit", $input['sms_unit']);
+                        $invoice->addCustomData("payment_type", "topup");
                         $invoice->addCustomData("price", $price);
                         $invoice->addCustomData("currency_code", $currency_code);
-
                         if ($invoice->create()) {
                             return response()->json([
                                 'status' => 'success',

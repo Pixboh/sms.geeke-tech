@@ -327,7 +327,7 @@ class EloquentCampaignRepository extends EloquentBaseRepository implements Campa
             $data = null;
 
             if ($sms_type == 'plain' || $sms_type == 'unicode') {
-                $data = $campaign->sendPlainSMS($preparedData);
+            $data = $campaign->sendPlainSMS($preparedData);
             }
 
             if ($sms_type == 'voice') {

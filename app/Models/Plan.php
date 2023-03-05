@@ -278,7 +278,7 @@ class Plan extends Model
             return Tool::getPluralParse($this->frequency_unit, $this->frequency_amount);
         }
 
-        return $this->frequency_amount.' '.Tool::getPluralParse($this->frequency_unit, $this->frequency_amount);
+        return $this->frequency_amount.' '. __('locale.labels.'. Tool::getPluralParse($this->frequency_unit, $this->frequency_amount));
     }
 
     /**
