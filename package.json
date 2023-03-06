@@ -26,6 +26,7 @@
         "bootstrap": "~5.1.0",
         "dotenv": "^16.0.0",
         "flatpickr": "^4.6.9",
+        "intro.js": "^6.0.0",
         "laravel-echo": "^1.11.0",
         "pusher-js": "^7.0.3"
     }

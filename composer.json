@@ -27,6 +27,7 @@
     "alexandr-mironov/php8-smpp": "dev-main",
     "arcanedev/no-captcha": "^13.0",
     "arielmejiadev/larapex-charts": "^2.1",
+    "ashallendesign/short-url": "^7.5",
     "authorizenet/authorizenet": "^2.0",
     "aws/aws-sdk-php": "^3.222",
     "benmorel/gsm-charset-converter": "^0.2.4",

@@ -101,7 +101,7 @@
                                 <div class="row mt-2">
                                     <div class="col-12">
                                         <input type="hidden" value="1" name="is_admin">
-                                        <button type="submit" class="btn btn-primary mr-1 mb-1">
+                                        <button id="submit" type="submit" class="btn btn-primary mr-1 mb-1">
                                             <i data-feather="save"></i> {{__('locale.buttons.save')}}
                                         </button>
                                     </div>
@@ -123,6 +123,61 @@
 
 
 @section('page-script')
+    <script src="https://unpkg.com/intro.js/minified/intro.min.js">
+
+    </script>
+
+    <script>
+
+        let tour = introJs();
+        let tourHint = introJs("#navbar");
+        $(window).on("load", function () {
+            tour.setOptions(
+                {
+                    dontShowAgain: true,
+                    dontShowAgainLabel: "{{__('locale.labels.dontShowAgainLabel') }}",
+                    showProgress: true,
+                    exitOnOverlayClick: false,
+                    nextLabel: "{{__('locale.labels.nextLabel') }}",
+                    prevLabel: "{{__('locale.labels.prevLabel') }}",
+                    doneLabel: "{{__('locale.labels.doneLabel') }}",
+                    steps: [
+                        {
+                            intro: "Entrez ici le nom que vous souhaitez donner à votre groupe de contacts." +
+                                " Il peut s'agir d'un nom de projet, d'une campagne marketing ou de tout autre nom qui" +
+                                " vous permettra de mieux organiser vos contacts.<br> <b>  Exemple : Clients fidéles , Recouvrement </b>",
+                            element: document.querySelector("#name"),
+                        },
+                    ]
+
+                }
+            );
+            tour.onexit(() => {
+                window.localStorage.setItem("tour-contacts_groupe_edit", true);
+            });
+            tour.oncomplete(() => {
+                window.localStorage.setItem("tour-contacts_groupe_edit", true);
+                hintNouveauContact.start();
+                hintNouveauContact.addHints();
+            });
+            tour.start();
+            let hintNouveauContact = introJs();
+            hintNouveauContact.setOptions(
+                {
+                    dontShowAgain: true,
+                    dontShowAgainLabel: "{{__('locale.labels.dontShowAgainLabel') }}",
+                    showProgress: true,
+                    exitOnOverlayClick: false,
+                    nextLabel: "{{__('locale.labels.nextLabel') }}",
+                    prevLabel: "{{__('locale.labels.prevLabel') }}",
+                    hints: [
+                        {
+                            element: "#submit",
+                        }
+                    ]
+                });
+        });
+    </script>
 
     <script>
         let firstInvalid = $('form').find('.is-invalid').eq(0);

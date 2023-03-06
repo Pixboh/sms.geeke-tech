@@ -28,30 +28,37 @@
                         {{ __('locale.labels.actions') }}
                     </button>
                     <div class="dropdown-menu" aria-labelledby="bulk_actions">
-                        <a class="dropdown-item bulk-enable" href="#"><i data-feather="check"></i> {{ __('locale.datatables.bulk_enable') }}</a>
-                        <a class="dropdown-item bulk-disable" href="#"><i data-feather="stop-circle"></i> {{ __('locale.datatables.bulk_disable') }}</a>
-                        <a class="dropdown-item bulk-delete" href="#"><i data-feather="trash"></i> {{ __('locale.datatables.bulk_delete') }}</a>
+                        <a class="dropdown-item bulk-enable" href="#"><i
+                                    data-feather="check"></i> {{ __('locale.datatables.bulk_enable') }}</a>
+                        <a class="dropdown-item bulk-disable" href="#"><i
+                                    data-feather="stop-circle"></i> {{ __('locale.datatables.bulk_disable') }}</a>
+                        <a class="dropdown-item bulk-delete" href="#"><i
+                                    data-feather="trash"></i> {{ __('locale.datatables.bulk_delete') }}</a>
                     </div>
                 </div>
             @endcan
 
             @can('create_contact_group')
-                <div class="btn-group">
-                    <a href="{{route('customer.contacts.create')}}" class="btn btn-success waves-light waves-effect fw-bold mx-1"> {{__('locale.buttons.add_new')}} <i data-feather="plus-circle"></i></a>
+                <div id="add_new_contact_group" class="btn-group">
+                    <a href="{{route('customer.contacts.create')}}"
+                       class="btn btn-success waves-light waves-effect fw-bold mx-1"> {{__('locale.buttons.add_new_contact_group')}}
+                        <i data-feather="plus-circle"></i></a>
                 </div>
             @endcan
 
             @can('view_contact_group')
                 <div class="btn-group">
-                    <a href="{{route('customer.contacts.export')}}" class="btn btn-info waves-light waves-effect fw-bold"> {{__('locale.buttons.export')}} <i data-feather="file-text"></i></a>
+                    <a href="{{route('customer.contacts.export')}}"
+                       class="btn btn-info waves-light waves-effect fw-bold"> {{__('locale.buttons.export')}} <i
+                                data-feather="file-text"></i></a>
                 </div>
             @endcan
 
         </div>
         <div class="row">
             <div class="col-12">
-                <div class="card">
-                    <table class="table datatables-basic">
+                <div id="groups_list" class="card">
+                    <table  class="table datatables-basic">
                         <thead>
                         <tr>
                             <th></th>
@@ -70,7 +77,6 @@
         </div>
     </section>
     <!--/ Basic table -->
-
 
 @endsection
 
@@ -92,9 +98,75 @@
 @endsection
 @section('page-script')
     {{-- Page js files --}}
+    <script src="https://unpkg.com/intro.js/minified/intro.min.js">
+
+    </script>
+
+    <script>
+
+        let tour = introJs();
+        let tourHint = introJs("#navbar");
+        $(window).on("load", function () {
+            tour.setOptions(
+                {
+                    dontShowAgain: true,
+                    dontShowAgainLabel: "{{__('locale.labels.dontShowAgainLabel') }}",
+                    showProgress: true,
+                    exitOnOverlayClick: false,
+                    nextLabel: "{{__('locale.labels.nextLabel') }}",
+                    prevLabel: "{{__('locale.labels.prevLabel') }}",
+                    steps: [
+
+                        {
+                            title: 'Tutoriel',
+                            intro: "<p>Cette page vous permet de créer et de gérer des groupes de contacts pour faciliter l'envoi de SMS groupés.<br>" +
+                                " Vous pouvez ajouter des contacts à un groupe, modifier ou supprimer un groupe existant. " +
+                                "Cette fonctionnalité est utile pour les campagnes de marketing ou les communications de masse</p>",
+                        },
+                        {
+                            intro: "Ici apparaissent les groupes de contacts que vous gerez.",
+                            element: "#groups_list",
+                        },
+                        {
+                            intro: "Vous pouvez ajouter un nouveau groupe de contacts en cliquant sur le bouton Nouveau groupe de contacts.",
+                            element: "#add_new_contact_group",
+                        }
+                    ]
+
+                }
+            );
+            tour.onexit(() => {
+                window.localStorage.setItem("tour-contacts", true);
+            });
+            tour.oncomplete(() => {
+                window.localStorage.setItem("tour-contacts", true);
+                hintNouveauContact.start();
+                hintNouveauContact.addHints();
+            });
+            tour.start();
+            let hintNouveauContact = introJs();
+            hintNouveauContact.setOptions(
+                {
+                    dontShowAgain: true,
+                    dontShowAgainLabel: "{{__('locale.labels.dontShowAgainLabel') }}",
+                    showProgress: true,
+                    exitOnOverlayClick: false,
+                    nextLabel: "{{__('locale.labels.nextLabel') }}",
+                    prevLabel: "{{__('locale.labels.prevLabel') }}",
+                    hints: [
+                        {
+                            hint: "Vous pouvez ajouter un nouveau groupe de contacts en cliquant sur le bouton Nouveau groupe de contacts.",
+                            element: "#add_new_contact_group",
+                        }
+                    ]
+                });
+        });
+    </script>
+
     <script>
         $(document).ready(function () {
             "use strict"
+
 
             //show response message
             function showResponseMessage(data) {
@@ -196,26 +268,26 @@
 
                             let $actions = '';
 
-                            if(full['can_create']){
+                            if (full['can_create']) {
                                 $actions += '<a href="' + full['new_contact'] + '" class="text-info me-1" data-bs-toggle="tooltip" data-bs-placement="top" title="' + full['new_contact_label'] + '">' +
                                     feather.icons['plus-circle'].toSvg({class: 'font-medium-4'}) +
                                     '</a>';
                             }
 
-                            if(full['can_update']){
+                            if (full['can_update']) {
                                 $actions += '<a href="' + full['show'] + '" class="text-primary me-1" data-bs-toggle="tooltip" data-bs-placement="top" title=' + full['show_label'] + '>' +
                                     feather.icons['edit'].toSvg({class: 'font-medium-4'}) +
                                     '</a>';
                             }
 
-                            if(full['can_delete']){
-                                $actions +='<span class="action-delete text-danger cursor-pointer" data-bs-toggle="tooltip" data-bs-placement="top" title=' + full['delete'] + ' data-id=' + full['uid'] + '>' +
+                            if (full['can_delete']) {
+                                $actions += '<span class="action-delete text-danger cursor-pointer" data-bs-toggle="tooltip" data-bs-placement="top" title=' + full['delete'] + ' data-id=' + full['uid'] + '>' +
                                     feather.icons['trash'].toSvg({class: 'font-medium-4'}) +
                                     '</span>';
                             }
 
                             return (
-                                '<span class="action-copy text-success me-1" data-value='+full['name']+' data-bs-toggle="tooltip" data-bs-placement="top" title=' + full['copy'] + ' data-id=' + full['uid'] + '>' +
+                                '<span class="action-copy text-success me-1" data-value=' + full['name'] + ' data-bs-toggle="tooltip" data-bs-placement="top" title=' + full['copy'] + ' data-id=' + full['uid'] + '>' +
                                 feather.icons['copy'].toSvg({class: 'font-medium-4'}) +
                                 '</span>' + $actions
                             );
@@ -305,9 +377,9 @@
                         autocapitalize: 'off'
                     },
                     showCancelButton: true,
-                    cancelButtonText:"{{ __('locale.buttons.cancel') }}",
+                    cancelButtonText: "{{ __('locale.buttons.cancel') }}",
                     cancelButtonAriaLabel: "{{ __('locale.buttons.cancel') }}",
-                    confirmButtonText: feather.icons['copy'].toSvg({ class: 'font-medium-1 me-50' }) + "{{ __('locale.labels.copy') }}",
+                    confirmButtonText: feather.icons['copy'].toSvg({class: 'font-medium-1 me-50'}) + "{{ __('locale.labels.copy') }}",
                     customClass: {
                         confirmButton: 'btn btn-primary',
                         cancelButton: 'btn btn-outline-danger ms-1'

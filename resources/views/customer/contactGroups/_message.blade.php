@@ -53,7 +53,8 @@
                         <div class="row">
                             <div class="col-md-10 col-sm-12 pr-0">
                                 <div class="mb-1">
-                                    <input type="text" class="form-control" id="copy-to-clipboard-input" value="{{route('contacts.subscribe_url', $contact->uid)}}">
+{{--                                    <input type="text" class="form-control" id="copy-to-clipboard-input" value="{{route('contacts.subscribe_url', $contact->uid)}}">--}}
+                                    <input type="text" class="form-control" id="copy-to-clipboard-input" value="{{$contact->subscribe_url}}">
                                 </div>
                             </div>
                             <div class="col-md-2 col-sm-12">

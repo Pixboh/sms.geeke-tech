@@ -8,6 +8,10 @@
     <link rel="stylesheet" href="{{ asset(mix('vendors/css/charts/apexcharts.css')) }}">
 @endsection
 @section('page-style')
+    <link
+            rel="stylesheet"
+            href="https://unpkg.com/intro.js/minified/introjs.min.css"
+    >
     {{-- Page css files --}}
     <link rel="stylesheet" href="{{ asset(mix('css/base/pages/dashboard-ecommerce.css')) }}">
     <link rel="stylesheet" href="{{ asset(mix('css/base/plugins/charts/chart-apex.css')) }}">
@@ -20,7 +24,7 @@
         <div class="row">
 
             <div class="col-lg-3 col-sm-6 col-12">
-                <div class="card">
+                <div id="contact-groups" class="card">
                     <div class="card-header">
                         @if(Auth::user()->customer->activeSubscription() != null)
                             <div>
@@ -44,12 +48,13 @@
 
 
             <div class="col-lg-3 col-sm-6 col-12">
-                <div class="card">
+                <div id="contacts" class="card">
                     <div class="card-header">
                         @if(Auth::user()->customer->activeSubscription() != null)
-                            <div>
+                            <div
+                                     >
                                 <h2 class="fw-bolder mb-0">{{ Auth::user()->customer->subscriberCounts() != null ? Tool::format_number(Auth::user()->customer->subscriberCounts()) : 0 }}</h2>
-                                <p class="card-text">{{ __('locale.menu.Contacts') }}</p>
+                                <p  class="card-text">{{ __('locale.menu.Contacts') }}</p>
                             </div>
                         @else
                             <div>
@@ -69,7 +74,7 @@
 
 
             <div class="col-lg-3 col-sm-6 col-12">
-                <div class="card">
+                <div id="blacklist" class="card">
                     <div class="card-header">
                         <div>
                             <h2 class="fw-bolder mb-0">{{ Auth::user()->customer->blacklistCounts() }}</h2>
@@ -86,7 +91,7 @@
 
 
             <div class="col-lg-3 col-sm-6 col-12">
-                <div class="card">
+                <div id="sms-templates" class="card">
                     <div class="card-header">
                         <div>
                             <h2 class="fw-bolder mb-0">{{ Auth::user()->customer->smsTemplateCounts() }}</h2>
@@ -128,7 +133,8 @@
                                                 'end_at' => Tool::customerDateTime(auth()->user()->customer->subscription->current_period_ends_at)
                                         ]) !!}</p>
                         @endif
-                        <a href="{{ route('customer.subscriptions.index') }}" class="btn btn-primary mt-3"><i data-feather="info"></i> {{ __('locale.labels.more_info') }}</a>
+                        <a href="{{ route('customer.subscriptions.index') }}" class="btn btn-primary mt-3"><i
+                                    data-feather="info"></i> {{ __('locale.labels.more_info') }}</a>
                     </div>
                 </div>
             </div>
@@ -286,8 +292,78 @@
 
 
 @section('page-script')
+    <script src="https://unpkg.com/intro.js/minified/intro.min.js">
+
+    </script>
 
     <script>
+
+        let tour = introJs();
+        let tourHint = introJs("#navbar");
+        $(window).on("load", function () {
+            tour.setOptions(
+                {
+                    dontShowAgain: true,
+                    dontShowAgainLabel: "{{__('locale.labels.dontShowAgainLabel') }}",
+                    showProgress: true,
+                    exitOnOverlayClick: false,
+                    nextLabel: "{{__('locale.labels.nextLabel') }}",
+                    prevLabel: "{{__('locale.labels.prevLabel') }}",
+                    doneLabel: "{{__('locale.labels.gotocontactgroups') }}",
+                    steps: [
+                        {
+                            title: 'Tutoriel',
+                            intro: 'Profitez de ce tutoriel pour découvrir les fonctionnalités de votre compte.',
+                        },
+                        {
+                            title: 'Groupe de contact',
+                            intro: "Un groupe de contact est une liste d'abonnés à laquelle vous pouvez envoyer des messages. Dans cette section, vous pouvez créer, afficher et gérer vos groupes de contact.",
+                            element: document.querySelector('#contact-groups')
+                        },
+                        {
+                            title: 'Contact',
+                            intro: 'La section Contact vous permet de consulter et de gérer la liste des contacts de votre compte. Vous pouvez ajouter, modifier ou supprimer des contacts individuellement ou par groupe.',
+                            element: document.querySelector('#contacts')
+                        },
+                        {
+                            title: "Liste noire",
+                            intro: "La liste noire permet de gérer les numéros de téléphone indésirables. Vous pouvez ajouter des numéros à la liste noire et ces numéros ne recevront plus de SMS de votre part.",
+                            element: document.querySelector('#blacklist')
+                        },
+                        {
+                            title: 'Modèles SMS',
+                            intro: 'Vous pouvez créer des modèles de SMS réutilisables pour faciliter l\'envoi de messages. Pour créer un modèle, cliquez sur "Créer un modèle", donnez un nom à votre modèle et écrivez votre message. Vous pouvez utiliser les variables disponibles pour personnaliser le message selon les informations de chaque contact.',
+                            element: document.querySelector('#sms-templates')
+                        },
+                        {
+                            title: 'Balance SMS',
+                            intro: 'Cette section vous permet de consulter le solde de SMS disponible sur votre compte Geex SMS.',
+                            element: document.querySelector('.show-balance')
+                        },
+                        {
+                            title: 'Profile utilisateur',
+                            intro: 'Dans cette section, vous pouvez voir les informations sur votre compte utilisateur, y compris votre nom et votre adresse e-mail. Vous pouvez également mettre à jour votre mot de passe ici si nécessaire.',
+                            element: document.querySelector('.dropdown-user')
+                        },
+                        {
+                            title: 'Contacts',
+                            intro: "Cette section affiche la liste des contacts que vous avez créés. Pour gérer vos contacts, veuillez cliquer sur le bouton ci-dessous qui vous redirigera vers la page 'Groupe de contacts'.",
+                            element: document.querySelector('#sidebar-contacts')
+                        }
+                    ]
+
+                }
+            );
+            tour.onexit(() => {
+                window.localStorage.setItem("tour-dashboard", true);
+            });
+            tour.oncomplete(() => {
+                window.localStorage.setItem("tour-dashboard", true);
+                window.location.href = "/contacts"
+            });
+            tour.start();
+        });
+
         function percentage(partialValue, totalValue) {
             return (100 * partialValue) / totalValue;
         }
@@ -728,6 +804,7 @@
     @else
 
         <script>
+
 
             let CustomerSendingQuota = "{{ Auth::user()->customer->getSendingQuota() }}";
             let CustomerSendingQuotaUsage = "{{  Auth::user()->customer->getSendingQuotaUsage() }}";

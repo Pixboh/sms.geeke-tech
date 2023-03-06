@@ -129,13 +129,15 @@
 
                     {{-- cotnacts --}}
                     @can('view_contact')
-                        <div class="tab-pane @if (old('tab') == 'contact' || old('tab') == null) active @endif" id="contact" role="tabpanel" aria-labelledby="contact-tab-justified">
+                        <div class="tab-pane @if (old('tab') == 'contact' || old('tab') == null) active @endif"
+                             id="contact" role="tabpanel" aria-labelledby="contact-tab-justified">
                             @include('customer.contactGroups._contacts')
                         </div>
                     @endcan
 
                     @can('update_contact_group')
-                        <div class="tab-pane {{ old('tab') == 'settings' ? 'active':null }}" id="settings" role="tabpanel" aria-labelledby="settings-tab-justified">
+                        <div class="tab-pane {{ old('tab') == 'settings' ? 'active':null }}" id="settings"
+                             role="tabpanel" aria-labelledby="settings-tab-justified">
                             @include('customer.contactGroups._settings')
                         </div>
                     @endcan
@@ -144,24 +146,28 @@
                     {{-- settings --}}
                     @can('update_contact_group')
                         {{-- message --}}
-                        <div class="tab-pane {{ old('tab') == 'message' ? 'active':null }}" id="message" role="tabpanel" aria-labelledby="message-tab-justified">
+                        <div class="tab-pane {{ old('tab') == 'message' ? 'active':null }}" id="message" role="tabpanel"
+                             aria-labelledby="message-tab-justified">
                             @include('customer.contactGroups._message')
                         </div>
 
                         {{-- opt in keywords --}}
-                        <div class="tab-pane {{ old('tab') == 'opt_in_keywords' ? 'active':null }}" id="opt_in_keywords" role="tabpanel" aria-labelledby="opt_in_keywords-tab-justified">
+                        <div class="tab-pane {{ old('tab') == 'opt_in_keywords' ? 'active':null }}" id="opt_in_keywords"
+                             role="tabpanel" aria-labelledby="opt_in_keywords-tab-justified">
                             @include('customer.contactGroups._opt_in_keywords')
                         </div>
 
                         {{-- opt in out keywords --}}
-                        <div class="tab-pane {{ old('tab') == 'opt_out_keywords' ? 'active':null }}" id="opt_out_keywords" role="tabpanel" aria-labelledby="opt_out_keywords-tab-justified">
+                        <div class="tab-pane {{ old('tab') == 'opt_out_keywords' ? 'active':null }}"
+                             id="opt_out_keywords" role="tabpanel" aria-labelledby="opt_out_keywords-tab-justified">
                             @include('customer.contactGroups._opt_out_keywords')
                         </div>
                     @endcan
 
                     {{-- import history --}}
                     @can('create_contact_group')
-                        <div class="tab-pane {{ old('tab') == 'import_history' ? 'active':null }}" id="import-history" role="tabpanel" aria-labelledby="import-history-tab-justified">
+                        <div class="tab-pane {{ old('tab') == 'import_history' ? 'active':null }}" id="import-history"
+                             role="tabpanel" aria-labelledby="import-history-tab-justified">
                             @include('customer.contactGroups._import_history')
                         </div>
                     @endcan
@@ -197,8 +203,93 @@
 
 @section('page-script')
 
+    <script src="https://unpkg.com/intro.js/minified/intro.min.js">
+
+    </script>
+
+    <script>
+
+        let tour = introJs();
+        let tourHint = introJs("#navbar");
+        $(window).on("load", function () {
+            let userText = $("#copy-to-clipboard-input");
+            let clipboardText = "{{route('contacts.subscribe_url', $contact->uid)}}"
+            console.log("clipbord " + clipboardText);
+
+            console.log("pap");
+
+
+            tour.setOptions(
+                {
+                    dontShowAgain: true,
+                    dontShowAgainLabel: "{{__('locale.labels.dontShowAgainLabel') }}",
+                    showProgress: true,
+                    exitOnOverlayClick: false,
+                    nextLabel: "{{__('locale.labels.nextLabel') }}",
+                    prevLabel: "{{__('locale.labels.prevLabel') }}",
+                    steps: [
+
+                        {
+                            title: "Contacts",
+                            intro: "Cette page affiche la liste des contacts qui appartiennent au groupe de contacts sélectionné.",
+
+                        },
+                        {
+                            title: 'Liste des contacts',
+                            intro: 'Cette table affiche tous les contacts faisant partie de ce groupe.' +
+                                'Vous disposez une liste d\'actions rapides à  droite pour chaque contact de la liste.',
+                            element: '#contact-list'
+                        },
+                        {
+                            intro: "Ajouter un nouveau contact dans le groupe.",
+                            element: "#add_new_contact",
+                        },
+                        {
+                            intro: "Importer des contacts dans le groupe via un fichier CSV.",
+                            element: "#import",
+                        }
+                    ]
+
+                }
+            );
+            tour.onexit(() => {
+                window.localStorage.setItem("tour-contacts_group_show", true);
+            });
+            tour.oncomplete(() => {
+                window.localStorage.setItem("tour-contacts_group_show", true);
+                hintNouveauContact.start();
+                hintNouveauContact.addHints();
+            });
+            tour.start();
+            let hintNouveauContact = introJs();
+            hintNouveauContact.setOptions(
+                {
+                    dontShowAgain: true,
+                    dontShowAgainLabel: "{{__('locale.labels.dontShowAgainLabel') }}",
+                    showProgress: true,
+                    hintButtonLabel: "OK",
+                    exitOnOverlayClick: false,
+                    nextLabel: "{{__('locale.labels.nextLabel') }}",
+                    prevLabel: "{{__('locale.labels.prevLabel') }}",
+                    hints: [
+                        {
+                            hint: "Ajouter un nouveau contact dans le groupe.",
+                            element: "#add_new_contact",
+                        },
+                        {
+                            hint: "Importer des contacts dans le groupe via un fichier CSV.",
+                            element: "#import",
+                        }
+                    ]
+                });
+        });
+    </script>
+
+
+
     <script>
         $(document).ready(function () {
+
 
             $('#contact-tab-justified').on('click', function () {
                 $($.fn.dataTable.tables(true)).DataTable()

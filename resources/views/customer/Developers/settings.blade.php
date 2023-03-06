@@ -20,9 +20,12 @@
                     <div class="card-content">
                         <div class="card-body">
                             <span class="btn btn-primary me-1 mb-1 generate-token"><i data-feather="plus-square"></i> {{ __('locale.developers.regenerate_token') }}</span>
-                            <a href="#" class="btn btn-success me-1 mb-1" data-bs-toggle="modal" data-bs-target="#sendingServer"><i data-feather="server"></i> {{ __('locale.labels.sending_server') }}</a>
+                            <a href="#" class="btn btn-success me-1 mb-1" data-bs-toggle="modal"
+                               data-bs-target="#sendingServer"><i
+                                        data-feather="server"></i> {{ __('locale.labels.sending_server') }}</a>
 
-                            <a href="{{ route('customer.developer.docs') }}" class="btn btn-outline-primary mb-1"><i data-feather="book"></i> {{ __('locale.developers.read_the_docs') }}</a>
+                            <a href="{{ route('customer.developer.docs') }}" class="btn btn-outline-primary mb-1"><i
+                                        data-feather="book"></i> {{ __('locale.developers.read_the_docs') }}</a>
                             <hr>
                             <div class="mt-2 row">
                                 <div class="col-12">
@@ -34,8 +37,11 @@
                             <div class="row mt-2">
                                 <div class="col-12">
                                     <p class="font-medium-2">{{ __('locale.developers.api_token') }}</p>
-                                    <span class="font-medium-2 text-primary" id="copy-to-clipboard-input">{{ Auth::user()->api_token }} </span>
-                                    <span id="btn-copy" data-bs-toggle="tooltip" data-placement="top" title="{{ __('locale.labels.copy') }}"><i data-feather="clipboard" class="font-large-1 text-info cursor-pointer"></i></span>
+                                    <span class="font-medium-2 text-primary"
+                                          id="copy-to-clipboard-input">{{ Auth::user()->api_token }} </span>
+                                    <span id="btn-copy" data-bs-toggle="tooltip" data-placement="top"
+                                          title="{{ __('locale.labels.copy') }}"><i data-feather="clipboard"
+                                                                                    class="font-large-1 text-info cursor-pointer"></i></span>
 
                                 </div>
                             </div>
@@ -62,6 +68,7 @@
     <script>
         let userText = $("#copy-to-clipboard-input");
         let btnCopy = $("#btn-copy");
+
 
         // copy text on click
         btnCopy.on("click", function () {

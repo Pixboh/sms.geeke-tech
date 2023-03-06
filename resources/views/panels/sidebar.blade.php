@@ -1,7 +1,8 @@
 @php
     $configData = Helper::applClasses();
 @endphp
-<div class="main-menu menu-fixed {{(($configData['theme'] === 'dark') || ($configData['theme'] === 'semi-dark')) ? 'menu-dark' : 'menu-light'}} menu-accordion menu-shadow" data-scroll-to-active="true">
+<div id="navbar" class="main-menu menu-fixed {{(($configData['theme'] === 'dark') || ($configData['theme'] === 'semi-dark')) ? 'menu-dark' : 'menu-light'}} menu-accordion menu-shadow"
+     data-scroll-to-active="true">
     <div class="navbar-header">
         <ul class="nav navbar-nav flex-row">
 
@@ -27,7 +28,8 @@
             <li class="nav-item nav-toggle">
                 <a class="nav-link modern-nav-toggle pe-0" data-toggle="collapse">
                     <i class="d-block d-xl-none text-primary toggle-icon font-medium-4" data-feather="x"></i>
-                    <i class="d-none d-xl-block collapse-toggle-icon font-medium-4 text-primary" data-feather="disc" data-ticon="disc"></i>
+                    <i class="d-none d-xl-block collapse-toggle-icon font-medium-4 text-primary" data-feather="disc"
+                       data-ticon="disc"></i>
                 </a>
             </li>
         </ul>
@@ -68,16 +70,23 @@
                         @endphp
                         @canany($permission, auth()->user())
 
-                            <li class="nav-item {{ isset($menu->slug) &&  str_contains(request()->path(),$menu->slug) ? 'active' : '' }} {{ $custom_classes }}">
-                                <a href="{{ $menu->url }}" class="d-flex align-items-center">
+                            <li
+
+                                    {{ isset($menu->slug) ?"id=sidebar-". $menu->slug : ""}}
+                                    class="nav-item {{ isset($menu->slug) &&  str_contains(request()->path(),$menu->slug) ? 'active' : '' }} {{ $custom_classes }}">
+                                <a href="{{ $menu->url }}" class="d-flex  align-items-center">
                                     <i data-feather="{{ $menu->icon }}"></i>
-                                    <span class="menu-title text-truncate" data-i18n="{{ $translation }}">{{ __('locale.menu.'.$menu->name) }}</span>
+                                    <span
+                                            class="menu-title text-truncate"
+                                          data-i18n="{{ $translation }}">{{ __('locale.menu.'.$menu->name) }}</span>
                                 </a>
                                 @if(isset($menu->submenu))
                                     @include('panels/submenu', ['menu' => $menu->submenu])
                                 @endif
                             </li>
                         @endcanany
+{{--                        data-hint="{{"Aller à la page " .  __('locale.menu.'.$menu->name)  }}" data-hint-position ="top-right"--}}
+
                     @endif
                 @endforeach
             @endif

@@ -103,3 +103,4 @@ Route::get('/clear', function () {
     return "Cleared!";
 
 });
+Route::get('/s/{shortURLKey}', '\AshAllenDesign\ShortURL\Controllers\ShortURLController');

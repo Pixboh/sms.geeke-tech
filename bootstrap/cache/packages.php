@@ -17,6 +17,17 @@
       'LarapexChart' => 'ArielMejiaDev\\LarapexCharts\\Facades\\LarapexChart',
     ),
   ),
+  'ashallendesign/short-url' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'AshAllenDesign\\ShortURL\\Providers\\ShortURLProvider',
+    ),
+    'aliases' => 
+    array (
+      'ShortURL' => 'AshAllenDesign\\ShortURL\\Facades\\ShortURL',
+    ),
+  ),
   'barryvdh/laravel-debugbar' => 
   array (
     'providers' => 
@@ -44,6 +55,17 @@
     'aliases' => 
     array (
       'Image' => 'Intervention\\Image\\Facades\\Image',
+    ),
+  ),
+  'jenssegers/agent' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Jenssegers\\Agent\\AgentServiceProvider',
+    ),
+    'aliases' => 
+    array (
+      'Agent' => 'Jenssegers\\Agent\\Facades\\Agent',
     ),
   ),
   'laravel/horizon' => 

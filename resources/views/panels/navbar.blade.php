@@ -214,7 +214,7 @@
 
                         @if(Auth::user()->active_portal == 'customer' && Auth::user()->is_customer == 1 && Auth::user()->customer->activeSubscription())
                             <li class="nav-item balance-top-up">
-                                <div class="show-balance">
+                                <div id="show-balance" class="show-balance">
                                     <span class="show-balance-text">{{ __('locale.labels.balance') }}</span>
                                     <span class="show-balance-unit">{{ Auth::user()->sms_unit == '-1' ? __('locale.labels.unlimited') : Auth::user()->sms_unit . ' '.  __('locale.labels.sms_unit_remaining') }}</span>
                                 </div>
