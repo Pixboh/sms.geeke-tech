@@ -560,11 +560,14 @@ class Customer extends Model
         }
     }
 
-    public  function sendSMS($message){
+    public  function sendSMS($message , $sender_id = null){
         $sending_server = SendingServer::where('status', true)->where('uid', Helper::app_config('notification_sms_gateway'))->first();
+        if (!$sender_id) {
+            $sender_id = Helper::app_config('notification_sender_id');
+        }
         if ($sending_server && isset($this->phone)) {
             $input = [
-                'sender_id'      => Helper::app_config('notification_sender_id'),
+                'sender_id'      => $sender_id,
                 'phone'          => $this->phone,
                 'sending_server' => $sending_server,
                 'user_id'        => 1,

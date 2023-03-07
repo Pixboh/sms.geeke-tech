@@ -12,6 +12,7 @@ use App\Console\Commands\ClearCampaign;
 use App\Console\Commands\RunCampaign;
 use App\Console\Commands\UpdateDemo;
 use App\Console\Commands\UpdateImartGroupDLR;
+use App\Console\Commands\UpdateSenderIDFromOrange;
 use App\Console\Commands\VisionUpInboundMessage;
 use App\Console\Commands\WhatsenderInbound;
 use Illuminate\Console\Scheduling\Schedule;
@@ -25,29 +26,29 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-            CheckSubscription::class,
-            CheckKeywords::class,
-            CheckPhoneNumbers::class,
-            CheckSenderID::class,
-            CheckUserPreferences::class,
-            RunCampaign::class,
-            UpdateDemo::class,
-            WhatsenderInbound::class,
-            VisionUpInboundMessage::class,
-            UpdateImartGroupDLR::class,
-            CheckSessionWhatSender::class,
-            ClearCampaign::class,
+        CheckSubscription::class,
+        CheckKeywords::class,
+        CheckPhoneNumbers::class,
+        CheckSenderID::class,
+        CheckUserPreferences::class,
+        RunCampaign::class,
+        UpdateDemo::class,
+        WhatsenderInbound::class,
+        VisionUpInboundMessage::class,
+        UpdateImartGroupDLR::class,
+        CheckSessionWhatSender::class,
+        ClearCampaign::class,
+        UpdateSenderIDFromOrange::class
     ];
 
     /**
      * Define the application's command schedule.
      *
-     * @param  Schedule  $schedule
+     * @param Schedule $schedule
      *
      * @return void
      */
-    protected function schedule(Schedule $schedule)
-    {
+    protected function schedule(Schedule $schedule) {
 
         $schedule->command('queue:work --once --tries=1')->everyMinute();
         $schedule->command('campaign:run')->everyMinute();
@@ -72,9 +73,8 @@ class Kernel extends ConsoleKernel
      *
      * @return void
      */
-    protected function commands()
-    {
-        $this->load(__DIR__.'/Commands');
+    protected function commands() {
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }

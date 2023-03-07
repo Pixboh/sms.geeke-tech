@@ -1395,6 +1395,8 @@ Choisissez MODE TEST, JE VEUX FAIRE DES TESTS DE PAIEMENT. puis ACTIVER LE MODE 
         array(
             'new_subscription' => 'Vous avez souscrit au plan :plan. Vous disposez maintenant de :units unités SMS. Rendez-vous sur :url',
             'subscription_cancelled' => 'Votre abonnement a été annulé. Vous ne pouvez plus envoyer de SMS à vos contacts.',
+            "sender_id_activation" => "Bonjour :name ! Votre nouvelle signature sms :sender_id a été crée. Vous pouvez maintenant envoyer des SMS avec le nom de votre entreprise. Rendez-vous sur :url",
+            "sender_id_rejected" => "Bonjour :name ! Votre demande d'activation de la signature SMS :sender_id a été rejetée. Veuillez vous connecter à votre compte pour plus d'informations. Rendez-vous sur :url",
             'subscription_renewed' => 'Your subscription has been renewed. You can now send SMS to your contacts.',
             'subscription_changed' => 'Your subscription has been changed to :plan plan. You can now send SMS to your contacts.',
             'subscription_expired' => 'Your subscription has been expired. You can not send SMS to your contacts.',

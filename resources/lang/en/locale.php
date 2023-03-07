@@ -1595,6 +1595,8 @@ on ',
         'subscription_will_expire' => 'Your subscription will expire in :days days. You can not send SMS to your contacts.',
         'subscription_will_expire_soon' => 'Your subscription will expire soon. You can not send SMS to your contacts.',
         'subscription_will_expire_today' => 'Your subscription will expire today. You can not send SMS to your contacts.',
+        "sender_id_activation" => "Your sender ID :sender_id has been activated. Go to :url ",
+        "sender_id_rejected" => "Your sender ID :sender_id has been rejected. Go to :url ",
     ]
 
 

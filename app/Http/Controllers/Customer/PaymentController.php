@@ -9833,7 +9833,8 @@ POSTXML;
                                     // send sms
                                     $message = trans('locale.sms_notifications.new_subscription',
                                         ['units' => $user->customer->subscription->plan->getOption('sms_max'),
-                                            'name' => $user->displayName(), 'plan' => $plan->name , 'url' => env('APP_URL')]);                                    try {
+                                            'name' => $user->displayName(), 'plan' => $plan->name , 'url' => env('APP_URL')]);
+                                    try {
                                         $user->customer->sendSMS($message);
                                     } catch (\Exception $e) {
                                         logger("SMSNotification : " . $e->getMessage());

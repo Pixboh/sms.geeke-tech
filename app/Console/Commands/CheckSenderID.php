@@ -6,6 +6,9 @@ use App\Models\Senderid;
 use App\Models\User;
 use App\Notifications\SenderIDConfirmation;
 use Carbon\Carbon;
+use GuzzleHttp\Client;
+use GuzzleHttp\Cookie\CookieJar;
+use GuzzleHttp\Psr7\Request;
 use Illuminate\Console\Command;
 
 class CheckSenderID extends Command
@@ -29,8 +32,7 @@ class CheckSenderID extends Command
      *
      * @return void
      */
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
     }
 
@@ -39,13 +41,12 @@ class CheckSenderID extends Command
      *
      * @return int
      */
-    public function handle(): int
-    {
+    public function handle(): int {
         $senderids = Senderid::where('status', 'active')->where('validity_date', "<", Carbon::now()->endOfDay())->cursor();
 
         foreach ($senderids as $senderid) {
             $senderid->update([
-                    'status' => 'expired',
+                'status' => 'expired',
             ]);
 
             $user = User::find($senderid->user_id);
@@ -53,6 +54,7 @@ class CheckSenderID extends Command
                 $user->notify(new SenderIDConfirmation($senderid->status, route('customer.senderid.index')));
             }
         }
+
 
         return 0;
     }
