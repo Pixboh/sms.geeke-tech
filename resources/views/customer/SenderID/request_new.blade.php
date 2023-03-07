@@ -33,7 +33,7 @@
                                                 <label for="sender_id" class="form-label required">{{ __('locale.menu.Sender ID') }}</label>
                                                 <label for="sender_id" class="form-label">{{ __('locale.menu.sender_id_requirements') }}</label>
 
-                                                <input pattern="/^(?=.*[a-zA-Z])(?=.*[a-zA-Z0-9])([a-zA-Z0-9 ]{1,11})$/m" type="text" maxlength="11" id="sender_id" class="form-control @error('sender_id') is-invalid @enderror" value="{{ old('sender_id') }}" name="sender_id" required placeholder="{{__('locale.labels.required')}}" autofocus>
+                                                <input pattern="^(?=.*[a-zA-Z])(?=.*[a-zA-Z0-9])([a-zA-Z0-9 ]{1,11})$" type="text" maxlength="11" id="sender_id" class="form-control @error('sender_id') is-invalid @enderror" value="{{ old('sender_id') }}" name="sender_id" required placeholder="{{__('locale.labels.required')}}" autofocus>
                                                 @error('sender_id')
                                                 <div class="invalid-feedback">
                                                     {{ $message }}
