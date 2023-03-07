@@ -58,6 +58,9 @@ class Kernel extends ConsoleKernel
         $schedule->command('numbers:check')->daily();
         $schedule->command('senderid:check')->daily();
         $schedule->command('user:preferences')->daily();
+        $schedule->command('senderid_orange:check')->everyThirtyMinutes();
+//        $schedule->command('senderid_orange:check')->everyMinute();
+
 
         // $schedule->command('visionup:inbound')->hourly();
         // $schedule->command('session:whatsender')->everyFiveMinutes();
