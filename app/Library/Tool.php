@@ -144,6 +144,7 @@ class Tool
     public static function getPluralParse($phrase, $value): string
     {
         $plural = '';
+        $phrase = __('locale.labels.' .$phrase);
         if ($value > 1) {
             for ($i = 0; $i < strlen($phrase); ++$i) {
                 if ($i == strlen($phrase) - 1) {

@@ -681,6 +681,7 @@ return [
         "Campaigns" => "Campaigns",
         "Countries" => "Countries",
         "Theme Customizer" => "Theme Customizer",
+        'sender_id_requirements' => 'Sender ID should be 11 characters long and should not contain any special characters',
     ],
 
     'currencies' => [

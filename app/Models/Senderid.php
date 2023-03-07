@@ -200,7 +200,7 @@ class Senderid extends Model
             return __('locale.labels.unlimited');
         }
 
-        return $this->frequency_amount.' '.Tool::getPluralParse($this->frequency_unit, $this->frequency_amount);
+        return $this->frequency_amount.' '.Tool::getPluralParse( $this->frequency_unit, $this->frequency_amount);
     }
 
 

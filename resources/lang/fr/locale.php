@@ -121,7 +121,7 @@
             'day' => 'jour',
             'days' => 'Jours',
             'month' => 'mois',
-            'year' => 'année',
+            'year' => 'an',
             'hour' => 'heure',
             'hours' => 'Heures',
             'minute' => 'minute',
@@ -618,6 +618,7 @@
             'Received Messages' => 'Messages reçus',
             'Sent Messages' => 'Messages envoyés',
             'Campaigns' => 'Campagnes',
+            'sender_id_requirements' => 'La signature doit être composé de 3 à 11 caractères alphanumériques (chiffre et lettre ) et ne peux pas contenir des caractères spéciaux',
         ),
     'currencies' =>
         array(
