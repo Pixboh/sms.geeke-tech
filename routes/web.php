@@ -104,9 +104,3 @@ Route::get('/clear', function () {
 
 });
 Route::get('/s/{shortURLKey}', '\AshAllenDesign\ShortURL\Controllers\ShortURLController');
-
-
-Route::get('/', function () {
-    return view('welcome');
-});
-Route::match(['get', 'post'], '/botman', 'BotManController@handle');
