@@ -500,6 +500,7 @@
             "gotocontactgroups" => "Configurer vos groupes de contacts",
             "skipLabel" => "Passer",
             'dontShowAgainLabel' => "Ne plus afficher",
+            'sender_id_request_from' => 'Nouvelle signature de :name',
         ),
     'filezone' =>
         array(

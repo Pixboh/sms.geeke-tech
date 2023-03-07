@@ -235,7 +235,7 @@ class SenderIDController extends CustomerBaseController
                 'user_id'           => 1,
                 'notification_for'  => 'admin',
                 'notification_type' => 'senderid',
-                'message'           => 'New Sender ID request from '.Auth::user()->displayName(),
+                'message'           => __('locale.labels.sender_id_request_from'). ' '.Auth::user()->displayName(),
         ]);
 
         if (Helper::app_config('sender_id_notification_email')) {

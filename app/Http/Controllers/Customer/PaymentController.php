@@ -71,7 +71,7 @@ class PaymentController extends Controller
             'user_id' => 1,
             'notification_for' => 'admin',
             'notification_type' => $type,
-            'message' => $name . __('locale.labels.purchased_by') . $user_name,
+            'message' => $name .' '.  __('locale.labels.purchased_by') . ' '. $user_name,
         ]);
     }
 
