@@ -6,6 +6,7 @@
 @section('vendor-style')
     {{-- vendor css files --}}
     <link rel="stylesheet" href="{{ asset(mix('vendors/css/charts/apexcharts.css')) }}">
+
 @endsection
 @section('page-style')
     <link
@@ -52,9 +53,9 @@
                     <div class="card-header">
                         @if(Auth::user()->customer->activeSubscription() != null)
                             <div
-                                     >
+                            >
                                 <h2 class="fw-bolder mb-0">{{ Auth::user()->customer->subscriberCounts() != null ? Tool::format_number(Auth::user()->customer->subscriberCounts()) : 0 }}</h2>
-                                <p  class="card-text">{{ __('locale.menu.Contacts') }}</p>
+                                <p class="card-text">{{ __('locale.menu.Contacts') }}</p>
                             </div>
                         @else
                             <div>
@@ -292,9 +293,8 @@
 
 
 @section('page-script')
-    <script src="https://unpkg.com/intro.js/minified/intro.min.js">
+    <script src="https://unpkg.com/intro.js/minified/intro.min.js"></script>
 
-    </script>
 
     <script>
 
