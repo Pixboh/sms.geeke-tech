@@ -1223,14 +1223,14 @@ POSTXML;
                         $mode = $credentials->environment == 'production' ? 'live' : "test";
                         Paydunya_Setup::setMode($mode);
 
-                        Paydunya_Checkout_Store::setReturnUrl(route('customer.callback.paydunya.senderid', $senderid->uid));
                         Paydunya_Checkout_Store::setName("GEEX SMS"); // Seul le nom est requis
                         Paydunya_Checkout_Store::setTagline("SMS Marketing");
                         Paydunya_Checkout_Store::setPhoneNumber("771307579");
                         Paydunya_Checkout_Store::setPostalAddress("Dakar - Yoff Apecsy 2 ");
                         Paydunya_Checkout_Store::setWebsiteUrl("https://www.geex-sms.com");
                         Paydunya_Checkout_Store::setLogoUrl("https://www.geex-sms.com");
-
+                        Paydunya_Checkout_Store::setCancelUrl(route('payment.failed'));
+                        Paydunya_Checkout_Store::setReturnUrl(route('payment.success'));
                         $invoice = new Paydunya_Checkout_Invoice();
                         $invoice->addItem($item_name, 1, $price, $price, $item_name);
                         $invoice->setDescription($item_name);
