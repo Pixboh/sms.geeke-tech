@@ -2302,8 +2302,7 @@ POSTXML;
 
                         // callbacks config
                         Paydunya_Checkout_Store::setCancelUrl(route('payment.failed'));
-                        Paydunya_Checkout_Store::setReturnUrl(route('payment.success',
-                            ['user_id' => auth()->user()->id, 'sms_unit' => $input['sms_unit']]));
+                        Paydunya_Checkout_Store::setReturnUrl(route('payment.success'));
                         Paydunya_Checkout_Store::setCallbackUrl($credentials->ipn_url);
 
                         $invoice = new Paydunya_Checkout_Invoice();
