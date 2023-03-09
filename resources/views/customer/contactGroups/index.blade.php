@@ -105,7 +105,6 @@
     <script>
 
         let tour = introJs();
-        let tourHint = introJs("#navbar");
         $(window).on("load", function () {
             tour.setOptions(
                 {
@@ -136,10 +135,8 @@
                 }
             );
             tour.onexit(() => {
-                window.localStorage.setItem("tour-contacts", true);
             });
             tour.oncomplete(() => {
-                window.localStorage.setItem("tour-contacts", true);
                 hintNouveauContact.start();
                 hintNouveauContact.addHints();
             });

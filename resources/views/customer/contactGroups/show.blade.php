@@ -210,7 +210,6 @@
     <script>
 
         let tour = introJs();
-        let tourHint = introJs("#navbar");
         $(window).on("load", function () {
             let userText = $("#copy-to-clipboard-input");
             let clipboardText = "{{route('contacts.subscribe_url', $contact->uid)}}"
