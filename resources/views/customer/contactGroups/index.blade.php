@@ -102,63 +102,63 @@
 
     </script>
 
-    <script>
+{{--    <script>--}}
 
-        $(window).on("load", function () {
-            let tour = introJs();
-            tour.setOptions(
-                {
-                    dontShowAgain: true,
-                    dontShowAgainLabel: "{{__('locale.labels.dontShowAgainLabel') }}",
-                    showProgress: true,
-                    exitOnOverlayClick: false,
-                    nextLabel: "{{__('locale.labels.nextLabel') }}",
-                    prevLabel: "{{__('locale.labels.prevLabel') }}",
-                    steps: [
+{{--        $(window).on("load", function () {--}}
+{{--            let tour = introJs();--}}
+{{--            tour.setOptions(--}}
+{{--                {--}}
+{{--                    dontShowAgain: true,--}}
+{{--                    dontShowAgainLabel: "{{__('locale.labels.dontShowAgainLabel') }}",--}}
+{{--                    showProgress: true,--}}
+{{--                    exitOnOverlayClick: false,--}}
+{{--                    nextLabel: "{{__('locale.labels.nextLabel') }}",--}}
+{{--                    prevLabel: "{{__('locale.labels.prevLabel') }}",--}}
+{{--                    steps: [--}}
 
-                        {
-                            title: 'Gestion des groupes de contacts',
-                            intro: "<p>Cette page vous permet de créer et de gérer des groupes de contacts pour faciliter l'envoi de SMS groupés.<br>" +
-                                " Vous pouvez ajouter des contacts à un groupe, modifier ou supprimer un groupe existant. " +
-                                "Cette fonctionnalité est utile pour les campagnes de marketing ou les communications de masse</p>",
-                        },
-                        {
-                            intro: "Ici apparaissent les groupes de contacts que vous gerez.",
-                            element: "#groups_list",
-                        },
-                        {
-                            intro: "Vous pouvez ajouter un nouveau groupe de contacts en cliquant sur le bouton Nouveau groupe de contacts.",
-                            element: "#add_new_contact_group",
-                        }
-                    ]
+{{--                        {--}}
+{{--                            title: 'Gestion des groupes de contacts',--}}
+{{--                            intro: "<p>Cette page vous permet de créer et de gérer des groupes de contacts pour faciliter l'envoi de SMS groupés.<br>" +--}}
+{{--                                " Vous pouvez ajouter des contacts à un groupe, modifier ou supprimer un groupe existant. " +--}}
+{{--                                "Cette fonctionnalité est utile pour les campagnes de marketing ou les communications de masse</p>",--}}
+{{--                        },--}}
+{{--                        {--}}
+{{--                            intro: "Ici apparaissent les groupes de contacts que vous gerez.",--}}
+{{--                            element: "#groups_list",--}}
+{{--                        },--}}
+{{--                        {--}}
+{{--                            intro: "Vous pouvez ajouter un nouveau groupe de contacts en cliquant sur le bouton Nouveau groupe de contacts.",--}}
+{{--                            element: "#add_new_contact_group",--}}
+{{--                        }--}}
+{{--                    ]--}}
 
-                }
-            );
-            tour.onexit(() => {
-            });
-            tour.oncomplete(() => {
-                hintNouveauContact.start();
-                hintNouveauContact.addHints();
-            });
-            tour.start();
-            let hintNouveauContact = introJs();
-            hintNouveauContact.setOptions(
-                {
-                    dontShowAgain: true,
-                    dontShowAgainLabel: "{{__('locale.labels.dontShowAgainLabel') }}",
-                    showProgress: true,
-                    exitOnOverlayClick: false,
-                    nextLabel: "{{__('locale.labels.nextLabel') }}",
-                    prevLabel: "{{__('locale.labels.prevLabel') }}",
-                    hints: [
-                        {
-                            hint: "Vous pouvez ajouter un nouveau groupe de contacts en cliquant sur le bouton Nouveau groupe de contacts.",
-                            element: "#add_new_contact_group",
-                        }
-                    ]
-                });
-        });
-    </script>
+{{--                }--}}
+{{--            );--}}
+{{--            tour.onexit(() => {--}}
+{{--            });--}}
+{{--            tour.oncomplete(() => {--}}
+{{--                hintNouveauContact.start();--}}
+{{--                hintNouveauContact.addHints();--}}
+{{--            });--}}
+{{--            tour.start();--}}
+{{--            let hintNouveauContact = introJs();--}}
+{{--            hintNouveauContact.setOptions(--}}
+{{--                {--}}
+{{--                    dontShowAgain: true,--}}
+{{--                    dontShowAgainLabel: "{{__('locale.labels.dontShowAgainLabel') }}",--}}
+{{--                    showProgress: true,--}}
+{{--                    exitOnOverlayClick: false,--}}
+{{--                    nextLabel: "{{__('locale.labels.nextLabel') }}",--}}
+{{--                    prevLabel: "{{__('locale.labels.prevLabel') }}",--}}
+{{--                    hints: [--}}
+{{--                        {--}}
+{{--                            hint: "Vous pouvez ajouter un nouveau groupe de contacts en cliquant sur le bouton Nouveau groupe de contacts.",--}}
+{{--                            element: "#add_new_contact_group",--}}
+{{--                        }--}}
+{{--                    ]--}}
+{{--                });--}}
+{{--        });--}}
+{{--    </script>--}}
 
     <script>
         $(document).ready(function () {
