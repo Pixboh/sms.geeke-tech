@@ -123,15 +123,11 @@
 
 
 @section('page-script')
-    <script src="https://unpkg.com/intro.js/minified/intro.min.js">
-
-    </script>
 
     <script>
 
-        let tour = introJs();
-        let tourHint = introJs("#navbar");
         $(window).on("load", function () {
+            let tour = introJs();
             tour.setOptions(
                 {
                     dontShowAgain: true,
