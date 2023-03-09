@@ -209,8 +209,8 @@
 
     <script>
 
-        let tour = introJs();
         $(window).on("load", function () {
+            let tour = introJs();
             let userText = $("#copy-to-clipboard-input");
             let clipboardText = "{{route('contacts.subscribe_url', $contact->uid)}}"
             console.log("clipbord " + clipboardText);

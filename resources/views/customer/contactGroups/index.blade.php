@@ -104,8 +104,8 @@
 
     <script>
 
-        let tour = introJs();
         $(window).on("load", function () {
+            let tour = introJs();
             tour.setOptions(
                 {
                     dontShowAgain: true,
@@ -117,7 +117,7 @@
                     steps: [
 
                         {
-                            title: 'Tutoriel',
+                            title: 'Gestion des groupes de contacts',
                             intro: "<p>Cette page vous permet de créer et de gérer des groupes de contacts pour faciliter l'envoi de SMS groupés.<br>" +
                                 " Vous pouvez ajouter des contacts à un groupe, modifier ou supprimer un groupe existant. " +
                                 "Cette fonctionnalité est utile pour les campagnes de marketing ou les communications de masse</p>",
