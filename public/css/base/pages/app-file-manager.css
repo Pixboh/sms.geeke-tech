@@ -173,8 +173,8 @@
 }
 .file-manager-application .sidebar-file-manager .sidebar-inner .sidebar-list .active {
   background-color: transparent;
-  border-color: #7367f0;
-  color: #7367f0;
+  border-color: #2C72BC;
+  color: #2C72BC;
 }
 .file-manager-application .sidebar-file-manager.show {
   transition: all 0.25s ease, background 0s !important;
@@ -259,7 +259,7 @@
   margin-bottom: 0;
 }
 .file-manager-application .content-area-wrapper .file-manager-main-content .file-manager-content-body .view-container .file-manager-item.selected {
-  border-color: #7367f0;
+  border-color: #2C72BC;
 }
 .file-manager-application .content-area-wrapper .file-manager-main-content .file-manager-content-body .view-container .file-name {
   width: calc(100% - 26rem);

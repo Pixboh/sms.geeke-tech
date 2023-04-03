@@ -235,7 +235,9 @@
 
         $(window).on("load", function () {
 
-            let $primary = '#7367F0';
+            // let $primary = '#7367F0';
+            // custom pape
+            let $primary = '#2C72BC';
             let $strok_color = '#b9c3cd';
             let $label_color = '#e7eef7';
             let $purple = '#df87f2';
@@ -608,7 +610,9 @@
                     columnWidth: '70%'
                 }
             },
-            colors: ['#7367F0'],
+            // colors: ['#7367F0', '#EA5455'],
+            // custom pape
+            colors: ['#2C72BC'],
             series: {!! $customer_growth->dataSet() !!},
             grid: {
                 borderColor: '#e7eef7',
@@ -697,7 +701,9 @@
             stroke: {
                 width: 5
             },
-            colors: ['#7367F0', '#EA5455'],
+            // colors: ['#7367F0', '#EA5455'],
+            // custom pape
+            colors: ['#2C72BC', '#EA5455'],
             fill: {
                 type: 'gradient',
                 gradient: {

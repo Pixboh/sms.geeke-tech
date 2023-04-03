@@ -51,16 +51,16 @@
 }
 
 .slider-primary {
-  background-color: rgba(115, 103, 240, 0.12);
+  background-color: rgba(44, 114, 188, 0.12);
 }
 .slider-primary .noUi-connect {
-  background: #7367f0 !important;
+  background: #2C72BC !important;
 }
 .slider-primary.noUi-connect {
-  background: #7367f0 !important;
+  background: #2C72BC !important;
 }
 .slider-primary .noUi-handle {
-  border-color: #7367f0 !important;
+  border-color: #2C72BC !important;
 }
 
 .slider-secondary {

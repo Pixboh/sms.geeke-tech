@@ -193,7 +193,7 @@
   box-shadow: none;
 }
 .chat-application .sidebar-content .chat-list-title {
-  color: #7367f0;
+  color: #2C72BC;
   margin: 2rem 1.286rem 0.5rem;
 }
 .chat-application .sidebar-content .chat-user-list-wrapper {
@@ -245,7 +245,7 @@
   background: #f8f8f8;
 }
 .chat-application .sidebar-content .chat-user-list-wrapper li.active {
-  background-image: linear-gradient(80deg, #7367f0, #9e95f5);
+  background-image: linear-gradient(80deg, #2C72BC, #478cd4);
 }
 .chat-application .sidebar-content .chat-user-list-wrapper li.active h1,
 .chat-application .sidebar-content .chat-user-list-wrapper li.active h2,

@@ -107,7 +107,7 @@
 **/
 .knowledge-base-bg {
   background-size: cover;
-  background-color: rgba(115, 103, 240, 0.12) !important;
+  background-color: rgba(44, 114, 188, 0.12) !important;
 }
 .knowledge-base-bg .kb-search-input .input-group:focus-within {
   box-shadow: none;

@@ -117,7 +117,9 @@
                     stroke: {
                         width: 4
                     },
-                    colors: ['#7367F0', '#EA5455'],
+                    // colors: ['#7367F0', '#EA5455'],
+                    // custom pape
+                    colors: ['#2C72BC', '#EA5455'],
                 }
 
                 let customerChart = new ApexCharts(

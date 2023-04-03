@@ -215,7 +215,9 @@
 
             $(window).on("load", function () {
 
-                let $primary = '#7367F0';
+                // let $primary = '#7367F0';
+                // custom pape
+                let $primary = '#2C72BC';
                 let $success = '#00db89';
                 let $strok_color = '#b9c3cd';
                 let $label_color = '#e7eef7';

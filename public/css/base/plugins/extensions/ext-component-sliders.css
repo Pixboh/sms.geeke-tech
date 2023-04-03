@@ -106,7 +106,7 @@
 
 **/
 .noUi-target {
-  background-color: rgba(115, 103, 240, 0.12);
+  background-color: rgba(44, 114, 188, 0.12);
   border-width: 0;
   box-shadow: none;
   border-radius: 1rem;
@@ -151,14 +151,14 @@
   border: none;
   border-radius: 50%;
   background: #fff;
-  border: 2px solid #7367f0;
+  border: 2px solid #2C72BC;
 }
 .noUi-handle:after, .noUi-handle:before {
   display: none;
 }
 
 .noUi-connect {
-  background: #7367f0;
+  background: #2C72BC;
   box-shadow: none;
 }
 
