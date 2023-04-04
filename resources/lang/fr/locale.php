@@ -1133,7 +1133,7 @@
             'new_contact_group' => 'Nouveau groupe de contact',
             'contacts' => 'Contacts',
             'new_contact' => 'Nouveau contact',
-            'update_contact' => 'Update ContactMettre à jour le contact',
+            'update_contact' => 'Editer contact',
             'import_contact' => 'Importation de contacts',
             'view_conversion' => 'Afficher la conversion',
             'send_message' => 'Envoyer le message',
